@@ -129,6 +129,7 @@ details dd{margin:0;color:var(--faint)}
     <label class="k">View <select id="view" aria-label="Show notes for">
       <option value="everyone">Everyone</option><option value="drums">Drums</option><option value="bass">Bass</option>
       <option value="keys">Keys</option><option value="gtr">Guitar</option><option value="vox">Vocals</option>
+      <option value="sax">Saxophone</option><option value="tpt">Trumpet</option><option value="tbn">Trombone</option><option value="vln">Violin</option>
     </select></label>
     <button type="button" class="btn" id="cuesOnly" aria-pressed="false">MD cues only</button>
   </div>
@@ -178,7 +179,7 @@ details dd{margin:0;color:var(--faint)}
 /* ---------- Samples ---------- */
 const SAMPLES = {
 road: String.raw`---
-chartdown: 0.3
+chartdown: 0.4
 title: Open Road (example song)
 artists: ChartDown examples
 key: G
@@ -229,7 +230,7 @@ feel: Straight, building
 4 | 1 | 5sus 5 | <1>~
 `,
 lantern: String.raw`---
-chartdown: 0.3
+chartdown: 0.4
 title: Lantern Bay (example song)
 artists: ChartDown examples
 key: Em
@@ -260,12 +261,13 @@ b3 | b7 | 4m:3 5:3 | 1m
 {p} b6 | b7 | <1m>~
 `,
 tour: String.raw`---
-chartdown: 0.3
+chartdown: 0.4
 title: Syntax Tour
 key: D
 tempo: 90
 meter: 4/4
 feel: Straight
+instruments: cello
 ---
 
 ## Basics
@@ -289,6 +291,8 @@ D | G | A | D
 > MD: Everyone reads this line.
 > MD drums, bass: Lock in together on the push.
 > MD keys: Pad only. Try the View menu to read just your part.
+> MD sax, tpt: Horn line on the second pass.
+> MD cello: Long notes, declared in the header as a custom instrument.
 {p} 1 {drums: in} | 4 | 5 {bass: walk up} | 1
 
 ## Dynamics and cues
@@ -341,13 +345,16 @@ function showRoot(str, mode, srcKey, dispKey){
 /* ---------- Roles ---------- */
 const ROLE_ALIAS = {all:'all',band:'all',everyone:'all',drums:'drums',drum:'drums',perc:'drums',
   bass:'bass',keys:'keys',piano:'keys',pad:'keys',synth:'keys',gtr:'gtr',guitar:'gtr',eg:'gtr',ag:'gtr',
-  vox:'vox',vocals:'vox',lead:'vox',bgv:'vox',bgvs:'vox'};
-const ROLE_LABEL = {drums:'Drums',bass:'Bass',keys:'Keys',gtr:'Guitar',vox:'Vocals'};
+  vox:'vox',vocals:'vox',lead:'vox',bgv:'vox',bgvs:'vox',
+  sax:'sax',saxophone:'sax',tpt:'tpt',trumpet:'tpt',tbn:'tbn',trombone:'tbn',vln:'vln',violin:'vln'};
+const ROLE_LABEL = {drums:'Drums',bass:'Bass',keys:'Keys',gtr:'Guitar',vox:'Vocals',sax:'Saxophone',tpt:'Trumpet',tbn:'Trombone',vln:'Violin'};
+let CUSTOM = {};
+const roleLabel = r => ROLE_LABEL[r] || CUSTOM[r] || (r.charAt(0).toUpperCase() + r.slice(1));
 function parseRoles(s){
   const parts = s.split(/[,\/&\s]+/).filter(Boolean).map(x => x.toLowerCase());
   if(!parts.length) return null;
   const out = [];
-  for(const p of parts){ const r = ROLE_ALIAS[p]; if(!r) return null; if(!out.includes(r)) out.push(r); }
+  for(const p of parts){ const r = ROLE_ALIAS[p] || (CUSTOM[p] ? p : null); if(!r) return null; if(!out.includes(r)) out.push(r); }
   return out;
 }
 function parseNote(t, n, warn){
@@ -437,6 +444,10 @@ function parse(src){
     }
     i++;
   }
+  CUSTOM = {};
+  (doc.meta.instruments || '').split(',').map(x => x.trim().toLowerCase()).filter(Boolean).forEach(id => {
+    if(/^[a-z0-9-]+$/.test(id)) CUSTOM[id] = id.charAt(0).toUpperCase() + id.slice(1); else warn(0, 'Instrument ids use lowercase letters, digits and -: \u201c' + id + '\u201d');
+  });
   const km = /^([A-G][b#]?)(m?)/.exec(doc.meta.key || 'C');
   doc.keyRoot = km ? km[1] : 'C';
   doc.minor = !!(km && km[2]);
@@ -481,8 +492,8 @@ function parse(src){
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const state = {mode:'numbers', dispKey:null, role:'everyone', cuesOnly:false};
 const visible = roles => state.role === 'everyone' || roles.includes('all') || roles.includes(state.role);
-const roleChips = roles => roles.filter(r => r !== 'all').map(r => '<span class="role">' + ROLE_LABEL[r] + '</span>').join('');
-const roleText = roles => roles.filter(r => r !== 'all').map(r => ROLE_LABEL[r]).join(', ');
+const roleChips = roles => roles.filter(r => r !== 'all').map(r => '<span class="role">' + roleLabel(r) + '</span>').join('');
+const roleText = roles => roles.filter(r => r !== 'all').map(r => roleLabel(r)).join(', ');
 
 function chordHTML(c, ctx){
   if(c.t === 'nc')  return '<span class="nc" aria-label="no chord">N.C.</span>';
@@ -549,7 +560,7 @@ function render(){
   if(doc.meta.feel) meta.push('<span>Feel<b>' + esc(doc.meta.feel) + '</b></span>');
   html += '<div class="meta">' + meta.join('') + '</div>';
   if(doc.sections.length) html += '<div class="form" aria-label="Song form">' + doc.sections.map(s => '<span>' + esc(s.name) + '</span>').join('') + '</div>';
-  if(state.role !== 'everyone') html += '<p class="viewing">Showing notes for <b>' + esc(ROLE_LABEL[state.role]) + '</b> and the whole band.</p>';
+  if(state.role !== 'everyone') html += '<p class="viewing">Showing notes for <b>' + esc(roleLabel(state.role)) + '</b> and the whole band.</p>';
   if(!doc.sections.length) html += '<p class="empty">Add a section like <b>## Verse 1</b> and some bars to see your chart.</p>';
 
   doc.sections.forEach(s => {

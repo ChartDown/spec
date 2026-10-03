@@ -1,10 +1,11 @@
 ---
-chartdown: 0.3
+chartdown: 0.4
 title: Syntax Tour
 key: D
 tempo: 90
 meter: 4/4
 feel: Straight
+instruments: cello
 ---
 
 ## Basics
@@ -28,6 +29,8 @@ D | G | A | D
 > MD: Everyone reads this line.
 > MD drums, bass: Lock in together on the push.
 > MD keys: Pad only. Try the View menu to read just your part.
+> MD sax, tpt: Horn line on the second pass.
+> MD cello: Long notes, declared in the header as a custom instrument.
 {p} 1 {drums: in} | 4 | 5 {bass: walk up} | 1
 
 ## Dynamics and cues

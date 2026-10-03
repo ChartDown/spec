@@ -7,7 +7,7 @@ Las reglas completas están en la [especificación](../SPEC.md) (en inglés).
 
 ```
 ---
-chartdown: 0.3
+chartdown: 0.4
 title: Open Road
 key: G
 tempo: 76
@@ -53,7 +53,8 @@ Esto es lo que hace diferente a ChartDown.
 ```
 
 - `> MD:` es para toda la banda.
-- `> MD drums:` es solo para el baterista. Instrumentos: `drums`, `bass`, `keys`, `gtr`, `vox`.
+- `> MD drums:` es solo para el baterista. Instrumentos: `drums`, `bass`, `keys`, `gtr`, `vox`, `sax`, `tpt` (trompeta), `tbn` (trombón), `vln` (violín).
+- Otros instrumentos: decláralos en el encabezado, `instruments: cello, banjo`, y luego escribe `> MD cello: ...`.
 - Una señal en un compás: `{drums: in}` o `{bass: walk up}`.
 
 Una app compatible con ChartDown puede mostrarle a cada músico solo las notas de su instrumento.

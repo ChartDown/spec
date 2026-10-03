@@ -7,7 +7,7 @@ For every rule, see the [specification](../SPEC.md).
 
 ```
 ---
-chartdown: 0.3
+chartdown: 0.4
 title: Open Road
 key: G
 tempo: 76
@@ -53,7 +53,8 @@ This is what makes ChartDown different.
 ```
 
 - `> MD:` is for the whole band.
-- `> MD drums:` is only for the drummer. Roles: `drums`, `bass`, `keys`, `gtr`, `vox`.
+- `> MD drums:` is only for the drummer. Roles: `drums`, `bass`, `keys`, `gtr`, `vox`, `sax`, `tpt` (trumpet), `tbn` (trombone), `vln` (violin).
+- Other instruments: declare them in the header, `instruments: cello, banjo`, then write `> MD cello: ...`.
 - A cue on one bar: `{drums: in}` or `{bass: walk up}`.
 
 A ChartDown app can show each player only the notes for their instrument.

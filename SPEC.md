@@ -1,6 +1,6 @@
 # ChartDown Specification
 
-**Version 0.3 (draft)** · File extension: `.chartdown` · Encoding: UTF-8
+**Version 0.4 (draft)** · File extension: `.chartdown` · Encoding: UTF-8
 
 This specification is released under CC0 1.0 Universal. Anyone may implement,
 extend, or redistribute it, with no permission needed.
@@ -48,7 +48,8 @@ Each line is `name: value`. Names are case-insensitive.
 
 | Name | Meaning | Example |
 |---|---|---|
-| `chartdown` | Version of this spec the file was written for | `0.3` |
+| `chartdown` | Version of this spec the file was written for | `0.4` |
+| `instruments` | Extra instrument roles used in this file (see 4.1) | `cello, banjo` |
 | `title` | Song title | `Open Road` |
 | `artists` | Writers or artists | `A, B` |
 | `key` | Home key. Add `m` for a minor key | `G`, `Bb`, `F#`, `Em` |
@@ -88,9 +89,19 @@ the relative major is `b3`. Example: in `key: Em`, `1m` is Em and `b3` is G.
 | keys | `keys`, `piano`, `pad`, `synth` |
 | guitar | `gtr`, `guitar`, `eg`, `ag` |
 | vocals | `vox`, `vocals`, `lead`, `bgv`, `bgvs` |
+| saxophone | `sax`, `saxophone` |
+| trumpet | `tpt`, `trumpet` |
+| trombone | `tbn`, `trombone` |
+| violin | `vln`, `violin` |
 
-An unknown name is a warning, and the note is shown to everyone so nothing
-is lost. Implementations may add roles in later versions.
+**Custom instruments.** Any other instrument can be used if the header declares
+it in `instruments:`, a comma-separated list of lowercase ids (letters, digits
+and `-`). A declared id works everywhere a role does: `> MD cello: ...` and
+`{cello: in}`. Renderers show it with its id capitalized unless they know a
+better label.
+
+An undeclared, unknown name is a warning, and the note is shown to everyone so
+nothing is lost.
 
 ### 4.2 Views (what players read)
 
@@ -283,6 +294,7 @@ header    = "---" NL { key ":" value NL } "---" NL
 section   = "##" name NL { note | use | keychg | row | comment }
 note      = ">" [ "MD" [ roles ] ":" ] text NL
 roles     = role { ("," | "/" | "&" | " ") role }
+role      = standard role name | id declared in the instruments header
 use       = "@use" name NL
 keychg    = "@key" KEY NL
 row       = [ "|:" | "|" ] bar { "|" bar } [ ":|" [ "x" N ] | "|" ] NL
@@ -302,12 +314,13 @@ Ideas under consideration, not yet part of the format:
 
 - **Layers:** a separate file of MD notes that sits on top of a chart without
   changing it, anchored to section names and bar numbers.
-- **Custom instruments:** declaring extra instrument roles in the header.
 - **JSON form:** a standard JSON shape of a parsed chart for tools.
 - Pickup bars, tempo or meter changes inside a song, rehearsal marks.
 
 ## 17. Changelog
 
+- **0.4** New standard roles: saxophone (`sax`), trumpet (`tpt`), trombone
+  (`tbn`), violin (`vln`). New `instruments` header to declare custom roles.
 - **0.3** `chartdown` version header, `ccli` header removed, lyric landmarks
   limited to 8 words with a parser warning, roadmap updated.
 - **0.2** MD notes per instrument, per-instrument bar cues, views, minor keys,
