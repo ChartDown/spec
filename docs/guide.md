@@ -1,0 +1,99 @@
+# ChartDown quick guide
+
+This guide takes you from a blank file to a full band chart in a few minutes.
+For every rule, see the [specification](../SPEC.md).
+
+## 1. Start with a header
+
+```
+---
+chartdown: 0.3
+title: Open Road
+key: G
+tempo: 76
+meter: 4/4
+---
+```
+
+`key` is the home key. In the Nashville Number System, `1` is that key, so in G,
+`1` = G, `4` = C, `5` = D and `6m` = Em. For a minor key write `key: Em`.
+
+## 2. Add sections and bars
+
+A section starts with `##`. Each line below it is one row of bars, separated by `|`.
+
+```
+## Verse 1
+1 | 4 1 | 6m 5 | 4 1
+```
+
+Chords in the same bar share it evenly, so `4 1` is two beats of 4 and two of 1.
+For an uneven split use beats: `1:3 4:1`.
+
+## 3. Write chords
+
+| You write | Meaning |
+|---|---|
+| `1` `4` `5` | Major chords |
+| `6m` or `6-` | Minor |
+| `5sus` `4add9` `1maj7` | Other qualities |
+| `1/3` | Slash chord (1 over the 3rd in the bass) |
+| `b7` `#4` | Chords outside the key |
+| `G` `Em` `C/E` | Letters work too |
+
+## 4. Add the music director's notes
+
+This is what makes ChartDown different.
+
+```
+## Chorus
+> MD: Open it up a little.
+> MD drums: Light groove, no crashes.
+> MD bass, keys: Root notes only.
+```
+
+- `> MD:` is for the whole band.
+- `> MD drums:` is only for the drummer. Roles: `drums`, `bass`, `keys`, `gtr`, `vox`.
+- A cue on one bar: `{drums: in}` or `{bass: walk up}`.
+
+A ChartDown app can show each player only the notes for their instrument.
+
+## 5. Show how to play it
+
+| You write | Meaning |
+|---|---|
+| `{p}` `{mf}` `{f}` `{cresc}` | Dynamics |
+| `'4` | Push: play it early |
+| `1!` | Stab: short and accented |
+| `<1>` | Hold the chord for the bar |
+| `=` | Keep holding into the next bar |
+| `<1>~` | Fermata: hold until cued |
+| `x` | No chord |
+| `%` | Repeat the previous bar |
+
+## 6. Repeats, endings and reuse
+
+```
+|: 6m | 4 | 1 | [1] 5 :| x2
+[2] 5 4 5 5 |
+```
+
+To play a section again without retyping it:
+
+```
+## Chorus 2
+> MD: A touch bigger.
+@use Chorus
+```
+
+To change key from here on: `@key A`.
+
+## 7. Lyric landmarks
+
+A short quote tells the band where they are: `1 "Every mile" | 4 1`.
+Keep it to 8 words or fewer. ChartDown is not for full lyrics.
+
+## 8. Try it
+
+Open `playground/index.html` in your browser, pick an example and edit it. The chart
+updates as you type, and warnings show the line number of anything it can't read.
