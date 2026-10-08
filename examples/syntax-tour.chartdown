@@ -1,5 +1,5 @@
 ---
-chartdown: 0.4
+chartdown: 0.5
 title: Syntax Tour
 key: D
 tempo: 90
@@ -44,3 +44,9 @@ D | G | A | D
 
 ## Rests and repeats
 x | % | 1 x | 5
+
+## Pickup, short push, stop and riff (0.5)
+> MD gtr: Pickup on beat 3. A leading '' is a sixteenth push.
+> MD gtr, tpt: Unison riff in bar 2. x:3 is a three-beat stop.
+[p:2] 5 | 1 | R[ 1 3 4 #4 5 ] | ''4:2 5:2
+1! x:3 | R[ 5:1 b7:1 x:2 ] | 1 | 5

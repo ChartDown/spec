@@ -103,7 +103,11 @@ details dd{margin:0;color:var(--faint)}
 .ch.hold::before{content:'';position:absolute;left:50%;top:52%;width:1.1em;height:1.1em;border:1.5px solid var(--ink);transform:translate(-50%,-50%) rotate(45deg)}
 .ch .pu{font-size:.65em;margin-right:3px;color:var(--blue)}
 .ch .mk{position:absolute;top:-13px;left:50%;transform:translateX(-50%);font:700 15px/1 var(--ui);color:var(--blue)}
-.nc{font:600 20px var(--num);color:var(--faint)}
+.nc{font:600 20px var(--num);color:var(--faint);text-align:center}
+.riff{display:flex;align-items:baseline;gap:4px;border-bottom:2px solid var(--blue);padding-bottom:1px;font:600 26px/1 var(--num);min-width:0}
+.riff .rn{text-align:center;white-space:nowrap}
+.riff .rest{font-size:18px;color:var(--faint)}
+.bar.pickup{padding-left:4px;padding-right:4px}
 .rep,.tie{font:600 30px var(--num);color:var(--faint)}
 .lyr{position:absolute;left:8px;right:8px;bottom:3px;font-size:12.5px;font-style:italic;color:var(--faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .empty{color:var(--faint)}
@@ -157,8 +161,10 @@ details dd{margin:0;color:var(--faint)}
         <dt>1:3 4:1</dt><dd>Uneven split, in beats</dd>
         <dt>1/3  5sus</dt><dd>Slash and suspended chords</dd>
         <dt>&lt;1&gt;  =</dt><dd>Hold a bar; continue it</dd>
-        <dt>'4  1!  1~</dt><dd>Push, stab, fermata</dd>
-        <dt>x  %</dt><dd>No chord; repeat the last bar</dd>
+        <dt>'4  ''4  1!  1~</dt><dd>Push, short push, stab, fermata</dd>
+        <dt>x  x:3  %</dt><dd>No chord; partial rest; repeat the last bar</dd>
+        <dt>[p:2] 5 | 1</dt><dd>Pickup bar, then full bars</dd>
+        <dt>R[ 1 3 4 5 ]</dt><dd>Unison riff in single notes</dd>
         <dt>{mf}  {drums in}</dt><dd>Dynamic or cue</dd>
         <dt>"short words"</dt><dd>Lyric landmark</dd>
         <dt>|: ... :| x3</dt><dd>Repeat; [1] and [2] for endings</dd>
@@ -179,7 +185,7 @@ details dd{margin:0;color:var(--faint)}
 /* ---------- Samples ---------- */
 const SAMPLES = {
 road: String.raw`---
-chartdown: 0.4
+chartdown: 0.5
 title: Open Road (example song)
 artists: ChartDown examples
 key: G
@@ -230,7 +236,7 @@ feel: Straight, building
 4 | 1 | 5sus 5 | <1>~
 `,
 lantern: String.raw`---
-chartdown: 0.4
+chartdown: 0.5
 title: Lantern Bay (example song)
 artists: ChartDown examples
 key: Em
@@ -261,7 +267,7 @@ b3 | b7 | 4m:3 5:3 | 1m
 {p} b6 | b7 | <1m>~
 `,
 tour: String.raw`---
-chartdown: 0.4
+chartdown: 0.5
 title: Syntax Tour
 key: D
 tempo: 90
@@ -306,6 +312,12 @@ D | G | A | D
 
 ## Rests and repeats
 x | % | 1 x | 5
+
+## Pickup, short push, stop and riff (0.5)
+> MD gtr: Pickup on beat 3. A leading '' is a sixteenth push.
+> MD gtr, tpt: Unison riff in bar 2. x:3 is a three-beat stop.
+[p:2] 5 | 1 | R[ 1 3 4 #4 5 ] | ''4:2 5:2
+1! x:3 | R[ 5:1 b7:1 x:2 ] | 1 | 5
 `};
 
 /* ---------- Music helpers ---------- */
@@ -376,12 +388,14 @@ function parseCue(t){
 function parseToken(tok){
   if(tok === '%') return {t:'rep'};
   if(tok === '=') return {t:'tie'};
-  if(tok === 'x' || tok === 'X') return {t:'nc'};
-  let s = tok, push=false, hold=false, stab=false, ferm=false, beats=1, explicit=false;
+  const xm = /^[xX](?::(\d+(?:\.\d+)?))?$/.exec(tok);
+  if(xm) return {t:'nc', beats:1, explicit:!!xm[1], ...(xm[1] ? {want:parseFloat(xm[1])} : {})};
+  let s = tok, push=0, hold=false, stab=false, ferm=false, beats=1, explicit=false;
   while(/[!~]$/.test(s)){ if(s.endsWith('!')) stab = true; else ferm = true; s = s.slice(0,-1); }
   const bm = s.match(/:(\d+(?:\.\d+)?)$/);
   if(bm){ beats = parseFloat(bm[1]); explicit = true; s = s.slice(0, bm.index); }
-  if(s.startsWith("'")){ push = true; s = s.slice(1); }
+  if(s.startsWith("''")){ push = 2; s = s.slice(2); }
+  else if(s.startsWith("'")){ push = 1; s = s.slice(1); }
   if(s.startsWith('<') && s.endsWith('>')){ hold = true; s = s.slice(1,-1); }
   const cm = s.match(/^([b#]?[1-7]|[A-G][b#]?)([^\/]*)(?:\/([b#]?[1-7]|[A-G][b#]?))?$/);
   if(!cm) return null;
@@ -390,8 +404,34 @@ function parseToken(tok){
   return {t:'chord', root:cm[1], q, bass:cm[3]||null, beats, explicit, push, hold, stab, ferm};
 }
 
+const ROOT_RE = /^(?:[b#]?[1-7]|[A-G][b#]?)$/;
+function parseRiff(tok, n, warn){
+  const m = /^R\[([^\]]*)\](?::(\d+(?:\.\d+)?))?$/.exec(tok);
+  if(!m) return null;
+  const notes = [];
+  m[1].trim().split(/\s+/).filter(Boolean).forEach(w => {
+    const nm = /^(.+?)(?::(\d+(?:\.\d+)?))?$/.exec(w);
+    const body = nm[1], want = nm[2] ? parseFloat(nm[2]) : null;
+    if(body === 'x' || body === 'X') notes.push({rest:true, beats:1, explicit:want !== null, want});
+    else if(ROOT_RE.test(body)) notes.push({root:body, beats:1, explicit:want !== null, want});
+    else warn(n, 'Can\u2019t read \u201c' + w + '\u201d in a riff (notes are scale degrees or letters)');
+  });
+  if(!notes.length) return null;
+  return {t:'riff', notes, beats:1, explicit:!!m[2], want:m[2] ? parseFloat(m[2]) : null};
+}
+
+// Spec 5.1: tokens without :beats share what is left of the bar. Returns the total.
+function layoutBeats(list, total){
+  const fixed = list.filter(i => i.explicit), free = list.filter(i => !i.explicit);
+  fixed.forEach(i => { i.beats = i.want ?? i.beats; });
+  const used = fixed.reduce((a, i) => a + i.beats, 0);
+  const left = fixed.length ? Math.max(total - used, 0) : total;
+  free.forEach(i => { i.beats = free.length ? (fixed.length ? left : total) / free.length : 1; });
+  return used;
+}
+
 function parseBar(seg, n, warn, bpb){
-  const bar = {items:[], lyric:null, cues:[], dyn:null, ending:null};
+  const bar = {items:[], lyric:null, cues:[], dyn:null, ending:null, pickup:null};
   seg = seg.replace(/"([^"]*)"/g, (_, t) => {
     if(t.trim().split(/\s+/).filter(Boolean).length > 8) warn(n, 'Lyric landmarks should be 8 words or fewer');
     bar.lyric = bar.lyric ? bar.lyric + ' / ' + t : t; return ' ';
@@ -401,17 +441,30 @@ function parseBar(seg, n, warn, bpb){
     if(DYN.has(t.toLowerCase())) bar.dyn = t.toLowerCase(); else if(t) bar.cues.push(parseCue(t));
     return ' ';
   });
+  seg = seg.replace(/^\s*\[p:(\d+(?:\.\d+)?)\]/, (_, p) => { bar.pickup = parseFloat(p); return ' '; });
+  if(bar.pickup !== null && !(bar.pickup > 0 && bar.pickup < bpb)){
+    warn(n, 'A pickup needs more than 0 and fewer than ' + bpb + ' beats'); bar.pickup = null;
+  }
   seg = seg.replace(/^\s*\[(\d+(?:[,-]\d+)*)\]/, (_, e) => { bar.ending = e; return ' '; });
-  seg.trim().split(/\s+/).filter(Boolean).forEach(tok => {
-    const it = parseToken(tok);
+  (seg.match(/R\[[^\]]*\](?::\d+(?:\.\d+)?)?|\S+/g) || []).forEach(tok => {
+    const it = /^R\[/.test(tok) ? parseRiff(tok, n, warn) : parseToken(tok);
     if(it) bar.items.push(it); else warn(n, 'Can\u2019t read \u201c' + tok + '\u201d');
   });
   if(!bar.items.length) warn(n, 'This bar has no chords');
-  const ch = bar.items.filter(i => i.t === 'chord');
-  if(ch.some(i => i.explicit)){
-    const sum = ch.reduce((a, i) => a + i.beats, 0);
-    if(Math.abs(sum - bpb) > 0.001) warn(n, 'Beats add up to ' + sum + ', but the meter has ' + bpb);
+  const total = bar.pickup || bpb;
+  const timed = bar.items.filter(i => i.t === 'chord' || i.t === 'nc' || i.t === 'riff');
+  const used = layoutBeats(timed, total);
+  if(timed.some(i => i.explicit)){
+    if(timed.some(i => !i.explicit) ? used > total - 0.001 : Math.abs(used - total) > 0.001)
+      warn(n, 'Beats add up to ' + used + ', but the ' + (bar.pickup ? 'pickup has ' : 'meter has ') + total);
   }
+  bar.items.filter(i => i.t === 'riff').forEach(r => {
+    layoutBeats(r.notes, r.beats);
+    if(r.notes.some(x => x.explicit)){
+      const u = r.notes.filter(x => x.explicit).reduce((a, x) => a + x.want, 0);
+      if(r.notes.every(x => x.explicit) && Math.abs(u - r.beats) > 0.001) warn(n, 'Riff beats add up to ' + u + ', but its space in the bar is ' + r.beats);
+    }
+  });
   return bar;
 }
 
@@ -453,6 +506,7 @@ function parse(src){
   doc.minor = !!(km && km[2]);
   const mm = /^(\d+)\s*\/\s*(\d+)$/.exec(doc.meta.meter || '4/4');
   const bpb = mm ? parseInt(mm[1],10) : 4;
+  doc.bpb = bpb;
 
   let cur = null, docKey = null, pendingLabel = null;
   for(; i < lines.length; i++){
@@ -471,6 +525,9 @@ function parse(src){
     if(line.startsWith('@')){ warn(n, 'Unknown directive \u201c' + line.split(/\s/)[0] + '\u201d'); continue; }
     const row = parseRow(line, n, warn, bpb);
     if(row){
+      row.bars.forEach((b, bi) => {
+        if(b.pickup !== null && (cur.rows.length || bi)){ warn(n, 'A pickup must be the first bar of a section'); b.pickup = null; }
+      });
       row.key = docKey;
       if(pendingLabel){ row.keyLabel = pendingLabel; pendingLabel = null; }
       cur.rows.push(row);
@@ -496,7 +553,12 @@ const roleChips = roles => roles.filter(r => r !== 'all').map(r => '<span class=
 const roleText = roles => roles.filter(r => r !== 'all').map(r => roleLabel(r)).join(', ');
 
 function chordHTML(c, ctx){
-  if(c.t === 'nc')  return '<span class="nc" aria-label="no chord">N.C.</span>';
+  if(c.t === 'nc')  return '<span class="nc" aria-label="no chord"' + (c.explicit ? ' style="flex:' + c.beats + ' 1 0"' : '') + '>N.C.</span>';
+  if(c.t === 'riff'){
+    const notes = c.notes.map(nt => '<span class="rn' + (nt.rest ? ' rest' : '') + '" style="flex:' + nt.beats + ' 1 0">' +
+      (nt.rest ? 'x' : esc(showRoot(nt.root, ctx.mode, ctx.src, ctx.disp))) + '</span>').join('');
+    return '<span class="riff" aria-label="unison riff" style="flex:' + c.beats + ' 1 0">' + notes + '</span>';
+  }
   if(c.t === 'rep') return '<span class="rep" aria-label="repeat previous bar">%</span>';
   if(c.t === 'tie') return '<span class="tie" aria-label="tied">\u2040</span>';
   const root = showRoot(c.root, ctx.mode, ctx.src, ctx.disp);
@@ -506,7 +568,7 @@ function chordHTML(c, ctx){
   const marks = (c.stab ? '^' : '') + (c.ferm ? '\u2312' : '');
   return '<span class="ch' + (c.hold ? ' hold' : '') + '" style="flex:' + c.beats + ' 1 0">' +
     (marks ? '<span class="mk" aria-hidden="true">' + marks + '</span>' : '') +
-    (c.push ? '<span class="pu" aria-label="push">\u2039</span>' : '') +
+    (c.push ? '<span class="pu" aria-label="' + (c.push === 2 ? 'short push' : 'push') + '">' + (c.push === 2 ? '\u2039\u2039' : '\u2039') + '</span>' : '') +
     esc(root) + (q ? '<sup>' + esc(q) + '</sup>' : '') +
     (bass ? '<span class="bass">/' + esc(bass) + '</span>' : '') + '</span>';
 }
@@ -519,7 +581,7 @@ function barHTML(b, ctx){
       return '<span class="cue">' + (rt ? '<b>' + esc(rt) + '</b>' : '') + esc(c.text) + '</span>';
     }).join('') +
     (b.re ? '<span class="times">\u00d7' + b.times + '</span>' : '');
-  return '<div class="bar' + (b.rs ? ' rs' : '') + (b.re ? ' re' : '') + (b.ending ? ' end' : '') + '">' +
+  return '<div class="bar' + (b.pickup ? ' pickup' : '') + (b.rs ? ' rs' : '') + (b.re ? ' re' : '') + (b.ending ? ' end' : '') + '">' +
     (tags ? '<div class="tags">' + tags + '</div>' : '') +
     '<div class="chords">' + b.items.map(c => chordHTML(c, ctx)).join('') + '</div>' +
     (b.lyric ? '<span class="lyr">\u201c' + esc(b.lyric) + '\u201d</span>' : '') +
@@ -564,8 +626,9 @@ function render(){
   if(!doc.sections.length) html += '<p class="empty">Add a section like <b>## Verse 1</b> and some bars to see your chart.</p>';
 
   doc.sections.forEach(s => {
-    const count = s.rows.reduce((a, r) => a + r.bars.length, 0);
-    html += '<section class="sec"><header><h2>' + esc(s.name) + '</h2><span class="count">' + count + (count === 1 ? ' bar' : ' bars') + '</span></header>';
+    const allBars = s.rows.flatMap(r => r.bars);
+    const count = allBars.filter(b => !b.pickup).length;
+    html += '<section class="sec"><header><h2>' + esc(s.name) + '</h2><span class="count">' + (allBars.some(b => b.pickup) ? 'pickup + ' : '') + count + (count === 1 ? ' bar' : ' bars') + '</span></header>';
     const notes = s.notes.filter(t => visible(t.roles));
     notes.forEach(t => {
       html += '<p class="note' + (t.md ? ' md' : '') + '">' + (t.md ? '<b>MD</b>' : '') + roleChips(t.roles) + esc(t.text) + '</p>';
@@ -573,18 +636,19 @@ function render(){
     if(state.cuesOnly){
       let idx = 0, any = notes.length > 0;
       s.rows.forEach(r => r.bars.forEach(b => {
-        idx++;
+        if(!b.pickup) idx++;
         const parts = [];
         if(b.dyn) parts.push(b.dyn);
         b.cues.filter(c => visible(c.roles)).forEach(c => { const rt = roleText(c.roles); parts.push((rt ? rt + ': ' : '') + c.text); });
-        if(parts.length){ any = true; html += '<p class="line"><b>Bar ' + idx + '</b>' + esc(parts.join(', ')) + '</p>'; }
+        if(parts.length){ any = true; html += '<p class="line"><b>' + (b.pickup ? 'Pickup' : 'Bar ' + idx) + '</b>' + esc(parts.join(', ')) + '</p>'; }
       }));
       if(!any) html += '<p class="none">Nothing for this part.</p>';
     }
     s.rows.forEach(r => {
       const ctx = rowCtx(r, srcKey, disp);
       if(r.keyLabel) html += '<div class="keychg">Key change: ' + esc((state.mode === 'letters' ? ctx.disp + minor : r.keyLabel)) + '</div>';
-      html += '<div class="row" style="--n:' + r.bars.length + '">' + r.bars.map(b => barHTML(b, ctx)).join('') + '</div>';
+      const cols = r.bars.map(b => 'minmax(0,' + (b.pickup ? Math.max(b.pickup / doc.bpb, .3) : 1) + 'fr)').join(' ');
+      html += '<div class="row" style="--n:' + r.bars.length + ';grid-template-columns:' + cols + '">' + r.bars.map(b => barHTML(b, ctx)).join('') + '</div>';
     });
     html += '</section>';
   });

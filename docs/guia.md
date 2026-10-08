@@ -7,7 +7,7 @@ Las reglas completas están en la [especificación](../SPEC.md) (en inglés).
 
 ```
 ---
-chartdown: 0.4
+chartdown: 0.5
 title: Open Road
 key: G
 tempo: 76
@@ -64,13 +64,20 @@ Una app compatible con ChartDown puede mostrarle a cada músico solo las notas d
 | Escribes | Significa |
 |---|---|
 | `{p}` `{mf}` `{f}` `{cresc}` | Dinámicas |
-| `'4` | Anticipación (push): se toca antes |
+| `'4` | Anticipación (push): se toca antes (una corchea) |
+| `''4` | Anticipación corta: una semicorchea antes |
 | `1!` | Corte: corto y acentuado |
 | `<1>` | Sostener el acorde todo el compás |
 | `=` | Seguir sosteniendo en el siguiente compás |
 | `<1>~` | Calderón: sostener hasta la señal |
 | `x` | Sin acorde |
+| `1! x:3` | Corte: golpe en el tiempo 1 y tres tiempos de silencio |
+| `R[ 1 3 4 #4 5 ]` | Riff al unísono: notas sueltas en lugar de acordes |
 | `%` | Repetir el compás anterior |
+
+Un pickup (compás corto que lleva al primer compás completo) empieza con `[p:tiempos]`:
+`[p:2] 5 | 1 | 4 | 5`. Es el compás 0 y los compases completos se cuentan desde 1.
+Indica quién toca un riff en una nota MD: `> MD gtr, tpt: Riff al unísono en el compás 2.`
 
 ## 6. Repeticiones, casillas y reutilizar secciones
 

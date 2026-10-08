@@ -1,6 +1,6 @@
 # ChartDown Specification
 
-**Version 0.4 (draft)** · File extension: `.chartdown` · Encoding: UTF-8
+**Version 0.5 (draft)** · File extension: `.chartdown` · Encoding: UTF-8
 
 This specification is released under CC0 1.0 Universal. Anyone may implement,
 extend, or redistribute it, with no permission needed.
@@ -48,7 +48,7 @@ Each line is `name: value`. Names are case-insensitive.
 
 | Name | Meaning | Example |
 |---|---|---|
-| `chartdown` | Version of this spec the file was written for | `0.4` |
+| `chartdown` | Version of this spec the file was written for | `0.5` |
 | `instruments` | Extra instrument roles used in this file (see 4.1) | `cello, banjo` |
 | `title` | Song title | `Open Road` |
 | `artists` | Writers or artists | `A, B` |
@@ -138,8 +138,12 @@ Beats are counted in the units of the meter's top number (4 in 4/4, 3 in 3/4,
 6 in 6/8, 12 in 12/8). If any chord in a bar has `:beats`, the beats SHOULD add
 up to the meter's top number. A renderer SHOULD warn when they do not.
 
+Tokens in the same bar that have no `:beats` share the beats that are left over
+evenly. This also applies to rests (`x`) and riffs (see 7 and 7.1).
+
 ```
 1:3 4:1        four beats in 4/4: three of 1, one of 4
+1! x:3         one beat of 1 (stab), then three beats of rest
 ```
 
 ### 5.2 Reusing a section
@@ -152,6 +156,27 @@ changed since the original, the copied rows use the current key.
 ## Chorus 2
 > MD: A touch bigger.
 @use Chorus
+```
+
+### 5.3 Pickup bars
+
+A bar that starts with `[p:N]` is a **pickup** (anacrusis): an incomplete bar
+of `N` beats that leads into the first full bar. `N` counts in the same units
+as `:beats` (see 5.1) and MUST be greater than 0 and less than the meter's top
+number.
+
+- A pickup MUST be the first bar of a section. Anywhere else it is a warning.
+- The chords in a pickup share its `N` beats. If any has `:beats`, they SHOULD
+  add up to `N` (not to the meter's top number).
+- A pickup is **bar 0**. The first full bar is bar 1, and the pickup is not
+  counted in a section's bar count.
+- A renderer SHOULD draw a pickup narrower than a full bar, in proportion to
+  `N`.
+
+```
+## Intro
+> MD gtr: Pickup on beat 3.
+[p:2] 5 | 1 | 4 | 5 | 1
 ```
 
 ## 6. Chords
@@ -186,24 +211,48 @@ rules as the root.
 
 | Token | Meaning |
 |---|---|
-| `x` | No chord (N.C.) |
+| `x` | No chord (N.C.) for a full bar |
+| `x:beats` | No chord for part of a bar (a partial rest or stop), for example `1! x:3` |
+| `R[ ... ]` | Unison riff: a line played in single notes (see 7.1) |
 | `%` | Repeat the previous bar |
 | `=` | Continue the previous chord, tied across the barline |
+
+### 7.1 Unison riffs
+
+`R[ notes ]` marks a line that the band plays in unison, as single notes
+instead of chords. It is a token like a chord: it shares its bar with the other
+tokens, or takes `:beats` after the closing bracket.
+
+Each note is a root as in 6 (a scale degree such as `3` or `#4`, or a letter
+such as `Bb`), with no quality and no bass. A note may take `:beats`, and `x`
+inside the brackets is a rest. Notes without `:beats` share the riff's beats
+evenly.
+
+```
+> MD gtr, tpt: Unison riff in bar 2.
+1 | R[ 1 3 4 #4 5 ] | 1 | R[ 5:1 b7:1 x:2 ]
+```
+
+A riff says what is played, not who plays it. Name the players in an MD note or
+a cue (see 4 and 9). Octave and exact rhythm are outside the scope of the
+format.
 
 ## 8. Expression marks
 
 Marks attach to a chord. Order inside a token:
 
-`'` (push) · `<` `>` (hold) · chord · `:beats` · `!` and `~`
+`'` or `''` (push) · `<` `>` (hold) · chord · `:beats` · `!` and `~`
 
 | Mark | Where | Meaning | Example |
 |---|---|---|---|
 | `'` | before | **Push**: play early, an eighth note ahead | `'4` |
+| `''` | before | **Short push**: play early, a sixteenth note ahead | `''4` |
 | `<` `>` | around | **Hold**: a long sustained chord (diamond) | `<1>` |
 | `!` | after | **Stab**: short, accented, cut off | `1!` |
 | `~` | after | **Fermata**: hold until cued | `<1>~` |
 
-Several marks can combine: `'4:2!`.
+Pushes are note values (eighth, sixteenth), whatever the meter. Several marks
+can combine: `'4:2!`.
 
 ## 9. Dynamics and cues
 
@@ -264,8 +313,9 @@ A renderer SHOULD be able to show a chart in either style.
 1. Convert every chord to a scale degree relative to the current key.
 2. To show letters, apply the display key (the written key unless transposed).
    A transposed display moves key changes by the same interval.
-3. Number display uses `-` for minor (`6-`). Letter display uses `m` (`Em`).
-4. Use flat spellings in keys of F, Bb, Eb, Ab, Db, Gb. Use sharps otherwise.
+3. Riff notes (see 7.1) convert the same way as chord roots.
+4. Number display uses `-` for minor (`6-`). Letter display uses `m` (`Em`).
+5. Use flat spellings in keys of F, Bb, Eb, Ab, Db, Gb. Use sharps otherwise.
 
 Degree to semitone (major scale): 1=0, 2=2, 3=4, 4=5, 5=7, 6=9, 7=11.
 `b` lowers by one semitone, `#` raises by one.
@@ -298,12 +348,16 @@ role      = standard role name | id declared in the instruments header
 use       = "@use" name NL
 keychg    = "@key" KEY NL
 row       = [ "|:" | "|" ] bar { "|" bar } [ ":|" [ "x" N ] | "|" ] NL
-bar       = { [ ending ] | cue | lyric | token }
+bar       = [ pickup ] { ending | cue | lyric | token }
+pickup    = "[p:" beats "]"
 ending    = "[" N { ("," | "-") N } "]"
 cue       = "{" [ roles ":" ] text "}"
 lyric     = '"' text '"'
-token     = "%" | "=" | "x" | chord-token
-chord-tok = [ "'" ] [ "<" ] chord [ ">" ] [ ":" beats ] { "!" | "~" }
+token     = "%" | "=" | rest | riff | chord-tok
+rest      = "x" [ ":" beats ]
+riff      = "R[" riff-note { riff-note } "]" [ ":" beats ]
+riff-note = ( root | "x" ) [ ":" beats ]
+chord-tok = [ "''" | "'" ] [ "<" ] chord [ ">" ] [ ":" beats ] { "!" | "~" }
 chord     = root [ quality ] [ "/" root ]
 root      = [ "b" | "#" ] DIGIT(1-7)  |  LETTER(A-G) [ "b" | "#" ]
 ```
@@ -312,13 +366,19 @@ root      = [ "b" | "#" ] DIGIT(1-7)  |  LETTER(A-G) [ "b" | "#" ]
 
 Ideas under consideration, not yet part of the format:
 
+- **Navigation:** segno, coda, D.S. and D.C. for compact one-page charts. It
+  needs bar-level markers, an "al coda" jump that only happens on the second
+  pass, and rules for how a renderer expands the jumps.
+- **Tempo and meter changes inside a song,** and rehearsal marks.
 - **Layers:** a separate file of MD notes that sits on top of a chart without
   changing it, anchored to section names and bar numbers.
 - **JSON form:** a standard JSON shape of a parsed chart for tools.
-- Pickup bars, tempo or meter changes inside a song, rehearsal marks.
 
 ## 17. Changelog
 
+- **0.5** Pickup bars (`[p:N]`, 5.3). Partial rests (`x:beats`) and the rule
+  that tokens without `:beats` share what is left of the bar (5.1). Sixteenth
+  push (`''`). Unison riffs (`R[ ... ]`, 7.1).
 - **0.4** New standard roles: saxophone (`sax`), trumpet (`tpt`), trombone
   (`tbn`), violin (`vln`). New `instruments` header to declare custom roles.
 - **0.3** `chartdown` version header, `ccli` header removed, lyric landmarks

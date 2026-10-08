@@ -7,7 +7,7 @@ For every rule, see the [specification](../SPEC.md).
 
 ```
 ---
-chartdown: 0.4
+chartdown: 0.5
 title: Open Road
 key: G
 tempo: 76
@@ -64,13 +64,20 @@ A ChartDown app can show each player only the notes for their instrument.
 | You write | Meaning |
 |---|---|
 | `{p}` `{mf}` `{f}` `{cresc}` | Dynamics |
-| `'4` | Push: play it early |
+| `'4` | Push: play it early (an eighth note) |
+| `''4` | Short push: a sixteenth note early |
 | `1!` | Stab: short and accented |
 | `<1>` | Hold the chord for the bar |
 | `=` | Keep holding into the next bar |
 | `<1>~` | Fermata: hold until cued |
 | `x` | No chord |
+| `1! x:3` | Stop: hit on beat 1, then three beats of rest |
+| `R[ 1 3 4 #4 5 ]` | Unison riff: single notes instead of chords |
 | `%` | Repeat the previous bar |
+
+A pickup (a short bar that leads into the first full bar) starts with `[p:beats]`:
+`[p:2] 5 | 1 | 4 | 5`. It is bar 0, and the full bars are counted from 1.
+Say who plays a riff in an MD note: `> MD gtr, tpt: Unison riff in bar 2.`
 
 ## 6. Repeats, endings and reuse
 
