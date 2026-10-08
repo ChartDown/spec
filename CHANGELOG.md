@@ -9,6 +9,7 @@
 - JSON form of a parsed chart (spec Appendix A).
 - New example: Northbound (D.S. al Coda, 6/8 bridge, 2/4 bar, cues for one pass).
 - Playground: play order, meter and tempo marks, pass tags, Copy JSON.
+- Syntax tour rewritten to show every feature of the spec, one section each, named after its spec section.
 
 ## 0.5 (draft)
 - Pickup bars: `[p:N]` at the start of a section's first bar (spec 5.3).
