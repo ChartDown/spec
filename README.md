@@ -31,7 +31,8 @@ instrument, and eight bars of chords.
 ## Get started
 
 1. Read the [quick guide](docs/guide.md) ([en español](docs/guia.md)).
-2. Open the [playground](playground/index.html) in a browser and edit an example.
+2. Try the [online playground](https://chartdown.github.io/Language/playground/) and edit an
+   example. It also works offline: open `playground/index.html` in a browser.
 3. Check the full rules in the [specification](SPEC.md).
 
 ## Repository
