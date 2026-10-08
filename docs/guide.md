@@ -7,7 +7,7 @@ For every rule, see the [specification](../SPEC.md).
 
 ```
 ---
-chartdown: 0.5
+chartdown: 0.6
 title: Open Road
 key: G
 tempo: 76
@@ -82,7 +82,7 @@ Say who plays a riff in an MD note: `> MD gtr, tpt: Unison riff in bar 2.`
 ## 6. Repeats, endings and reuse
 
 ```
-|: 6m | 4 | 1 | [1] 5 :| x2
+|: 6m | 4 | 1 | [1] 5 :| 2x
 [2] 5 4 5 5 |
 ```
 
@@ -94,7 +94,38 @@ To play a section again without retyping it:
 @use Chorus
 ```
 
-To change key from here on: `@key A`.
+To change key from here on: `@key A`. Meter and tempo work the same way:
+`@meter 6/8` and `@tempo 72`. For one bar in another meter, start it with
+`[m:2/4]`. Gradual tempo changes: `{rit}`, `{accel}`, `{a tempo}`.
+
+### Cues for one pass
+
+Inside a repeat, put the pass before the instruments, the same way you count
+the repeat:
+
+```
+|: 1 {2x drums: in} | 4 | 5 {1x,3x: stop} | 1 :| 3x
+> MD 2x bass: Walk it up on the second pass.
+```
+
+### Navigation
+
+Write the marks the band already knows, in curly braces on a bar: `{segno}`,
+`{coda}`, `{to coda}`, `{fine}`, `{D.S. al coda}`, `{D.C. al fine}` and so on.
+
+```
+## Verse
+{segno} 1 | 4 | 6m | 5
+
+## Chorus
+4 | 1 | 5 {to coda} | 5 {D.S. al coda}
+
+## Outro
+{coda} 4 | 5 | <1>~
+```
+
+`{to coda}` only counts after the jump back. A ChartDown app can show the full
+play order.
 
 ## 7. Lyric landmarks
 

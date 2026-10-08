@@ -7,7 +7,7 @@ Las reglas completas están en la [especificación](../SPEC.md) (en inglés).
 
 ```
 ---
-chartdown: 0.5
+chartdown: 0.6
 title: Open Road
 key: G
 tempo: 76
@@ -82,7 +82,7 @@ Indica quién toca un riff en una nota MD: `> MD gtr, tpt: Riff al unísono en e
 ## 6. Repeticiones, casillas y reutilizar secciones
 
 ```
-|: 6m | 4 | 1 | [1] 5 :| x2
+|: 6m | 4 | 1 | [1] 5 :| 2x
 [2] 5 4 5 5 |
 ```
 
@@ -94,7 +94,40 @@ Para tocar una sección otra vez sin reescribirla:
 @use Chorus
 ```
 
-Para cambiar de tono desde ese punto: `@key A`.
+Para cambiar de tono desde ese punto: `@key A`. El compás y el tempo funcionan
+igual: `@meter 6/8` y `@tempo 72`. Para un solo compás con otra métrica,
+empiézalo con `[m:2/4]`. Cambios graduales de tempo: `{rit}`, `{accel}`,
+`{a tempo}`.
+
+### Indicaciones para una sola pasada
+
+Dentro de una repetición, escribe la pasada antes de los instrumentos, igual que
+cuentas la repetición:
+
+```
+|: 1 {2x drums: in} | 4 | 5 {1x,3x: stop} | 1 :| 3x
+> MD 2x bass: Camina el bajo en la segunda pasada.
+```
+
+### Navegación
+
+Escribe las marcas que la banda ya conoce, entre llaves sobre un compás:
+`{segno}`, `{coda}`, `{to coda}`, `{fine}`, `{D.S. al coda}`, `{D.C. al fine}`,
+etc.
+
+```
+## Verse
+{segno} 1 | 4 | 6m | 5
+
+## Chorus
+4 | 1 | 5 {to coda} | 5 {D.S. al coda}
+
+## Outro
+{coda} 4 | 5 | <1>~
+```
+
+`{to coda}` solo cuenta después del salto. Una app compatible con ChartDown
+puede mostrar el orden de ejecución completo.
 
 ## 7. Referencias de letra
 

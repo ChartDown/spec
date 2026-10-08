@@ -1,6 +1,6 @@
 # ChartDown Specification
 
-**Version 0.5 (draft)** · File extension: `.chartdown` · Encoding: UTF-8
+**Version 0.6 (draft)** · File extension: `.chartdown` · Encoding: UTF-8
 
 This specification is released under CC0 1.0 Universal. Anyone may implement,
 extend, or redistribute it, with no permission needed.
@@ -36,7 +36,8 @@ key: G
 ```
 
 Sections appear in **play order**. If a section plays twice, write it twice
-(use `@use` to avoid retyping, see 5.2).
+(use `@use` to avoid retyping, see 5.2), or jump back to it with the navigation
+marks in 10.1.
 
 Blank lines are ignored. A line beginning with `//` is a comment and is not
 rendered.
@@ -48,13 +49,13 @@ Each line is `name: value`. Names are case-insensitive.
 
 | Name | Meaning | Example |
 |---|---|---|
-| `chartdown` | Version of this spec the file was written for | `0.5` |
+| `chartdown` | Version of this spec the file was written for | `0.6` |
 | `instruments` | Extra instrument roles used in this file (see 4.1) | `cello, banjo` |
 | `title` | Song title | `Open Road` |
 | `artists` | Writers or artists | `A, B` |
 | `key` | Home key. Add `m` for a minor key | `G`, `Bb`, `F#`, `Em` |
-| `tempo` | Beats per minute | `72` |
-| `meter` | Time signature | `4/4`, `3/4`, `6/8`, `12/8` |
+| `tempo` | Beats per minute at the start (see 11.3 for changes) | `72` |
+| `meter` | Time signature at the start (see 11.2 for changes) | `4/4`, `3/4`, `6/8`, `12/8` |
 | `feel` | Groove or style, free text | `Slow shuffle` |
 
 Unknown names are kept and may be shown by a renderer. If `key` is missing,
@@ -69,12 +70,15 @@ the relative major is `b3`. Example: in `key: Em`, `1m` is Em and `b3` is G.
 - `> text` adds a note to the current section.
 - `> MD: text` is a **music director note** for the whole band.
 - `> MD <instruments>: text` is an MD note for specific players.
+- `> MD 2x: text` or `> MD 2x <instruments>: text` is an MD note for one pass
+  of the section's repeat (see 9.1).
 
 ```
 ## Chorus
 > MD: Open it up a little. Don't go all out yet.
 > MD drums: Light groove. Hi-hat or ride, no crashes.
 > MD bass, keys: Root notes only.
+> MD 2x drums: Add the crash on the second pass.
 ```
 
 ### 4.1 Instruments (roles)
@@ -134,9 +138,10 @@ Chords inside one bar are separated by spaces and **share the bar evenly**.
 ```
 
 To split unevenly, add `:beats` to a chord. Beats may be fractional.
-Beats are counted in the units of the meter's top number (4 in 4/4, 3 in 3/4,
-6 in 6/8, 12 in 12/8). If any chord in a bar has `:beats`, the beats SHOULD add
-up to the meter's top number. A renderer SHOULD warn when they do not.
+Beats are counted in the units of the top number of the meter in effect for
+that bar (4 in 4/4, 3 in 3/4, 6 in 6/8, 12 in 12/8; see 11.2). If any chord in
+a bar has `:beats`, the beats SHOULD add up to the meter's top number. A
+renderer SHOULD warn when they do not.
 
 Tokens in the same bar that have no `:beats` share the beats that are left over
 evenly. This also applies to rests (`x`) and riffs (see 7 and 7.1).
@@ -267,6 +272,34 @@ Text in curly braces `{ }` attaches to the bar it appears in.
 {p} 1 {drums: in} | 4 | 5 {bass: walk up} | 1
 ```
 
+- **Tempo marks:** `{rit}`, `{accel}`, `{a tempo}`. Renderers draw these as
+  tempo marks. A lasting tempo change uses `@tempo` (see 11.3).
+- **Navigation marks:** `{segno}`, `{coda}`, `{to coda}` and the jumps listed
+  in 10.1.
+
+Dynamics, tempo marks and navigation marks are **reserved words**: they are
+case-insensitive, and dots and spaces inside them are ignored (`{D.S. al Coda}`
+and `{ds al coda}` are the same mark). Any other text is a cue.
+
+### 9.1 Cues for one pass
+
+Inside a repeat, a cue or an MD note can apply to one pass only. Write the pass
+as a number followed by `x`, the same way a repeat counts passes (`:| 3x`, see
+10), before the instruments. Several passes are separated by commas.
+
+```
+|: 1 {2x drums: in} | 4 | 5 {1x,3x: stop} | 1 :| 3x
+```
+
+- `{2x: text}` is for everyone on the second pass. `{2x drums: text}` is for
+  the drummer on the second pass.
+- `> MD 2x: text` and `> MD 2x bass: text` apply to a pass of the repeat in
+  that section.
+- The pass only counts as a pass when a `:` follows it, with or without
+  instruments in between. `{2x louder}` is ordinary cue text.
+- A pass on a bar outside any repeat, or on a note in a section with no repeat,
+  is a warning.
+
 A quoted string `"like this"` attaches a **lyric landmark** to the bar. Keep it
 short: a few words that tell the band where they are. A landmark SHOULD be at
 most **8 words**, and a parser SHOULD warn when it is longer (see 14).
@@ -275,23 +308,68 @@ most **8 words**, and a parser SHOULD warn when it is longer (see 14).
 {mf} 6m 5 4 1 "You are good" | 6m 5 4 1
 ```
 
-## 10. Repeats and endings
+## 10. Repeats, endings and navigation
 
 | Syntax | Meaning |
 |---|---|
 | `\|:` at the start of a row | Repeat starts at the first bar |
 | `:\|` at the end of a row | Repeat ends at the last bar |
-| `:\| x3` | Play the repeated bars three times in total (default is 2) |
+| `:\| 3x` | Play the repeated bars three times in total (default is 2). `:\| x3` is the same (0.5 and earlier) |
 | `[1]` at the start of a bar | First ending |
 | `[2]` at the start of a bar | Second ending |
 | `[1,2]` | An ending used on several passes |
 
 ```
-|: 1 | 4 | 1 | [1] 5 :| x2
+|: 1 | 4 | 1 | [1] 5 :| 2x
 [2] 5 4 5 1 |
 ```
 
-## 11. Key changes
+A `:|` with no `|:` before it in the same section repeats from the first bar of
+the section. An ending covers its bar and the bars after it, up to the end of
+its row or the next ending.
+
+### 10.1 Navigation
+
+Navigation marks are written as reserved words in curly braces (see 9) and
+attach to a bar, so a jump can land in the middle of a section.
+
+| Mark | Where it acts | Meaning |
+|---|---|---|
+| `{segno}` | start of the bar | The place a D.S. jumps back to |
+| `{coda}` | start of the bar | The place a "to coda" jumps forward to |
+| `{to coda}` | end of the bar | Jump to `{coda}`, only after a D.S. or D.C. |
+| `{fine}` | end of the bar | The end, only after a D.S. or D.C. |
+| `{D.S.}` | end of the bar | Jump back to `{segno}` and play to the end |
+| `{D.S. al coda}` | end of the bar | Jump back to `{segno}`, then take the coda |
+| `{D.S. al fine}` | end of the bar | Jump back to `{segno}`, then stop at `{fine}` |
+| `{D.C.}`, `{D.C. al coda}`, `{D.C. al fine}` | end of the bar | Same, from the first bar of the song |
+
+```
+## Verse
+{segno} 1 | 4 | 6m | 5
+
+## Chorus
+4 | 1 | 5 {to coda} | 6m
+4 | 1 | 5 | 5 {D.S. al coda}
+
+## Outro
+{coda} 4 | 5 | <1>~
+```
+
+Play order: Verse, Chorus, then back to the Verse, the Chorus up to
+`{to coda}`, and the Outro.
+
+- `{to coda}` and `{fine}` are ignored until the jump has been taken.
+- A song has at most one jump. After it, each repeat is played once, taking
+  its last ending.
+- A jump with no target (a D.S. with no `{segno}`, "al coda" with no `{to coda}`
+  or `{coda}`, "al fine" with no `{fine}`), a second jump, or a mark used twice
+  is a warning. The chart still renders as written.
+- A renderer SHOULD be able to show the expanded play order.
+
+## 11. Key, meter and tempo changes
+
+### 11.1 Key
 
 `@key X` on its own line changes the key from the next row onward, and stays
 in effect until the next `@key`. Numbers after it are relative to the new key.
@@ -305,6 +383,29 @@ Renderers SHOULD mark the change.
 ```
 
 Add `m` for a minor key: `@key Am`.
+
+### 11.2 Meter
+
+`@meter N/D` on its own line changes the meter from the next row onward, like
+`@key`. For a single bar in another meter, start that bar with `[m:N/D]`. The
+bar after it goes back to the meter in effect.
+
+```
+## Bridge
+@meter 6/8
+1 | 4 | 5 | 1
+@meter 4/4
+4 | 5 | [m:2/4] 5 | 1
+```
+
+A pickup (see 5.3) counts in the meter in effect, and a bar MUST NOT have both
+`[p:N]` and `[m:N/D]`. Renderers SHOULD mark meter changes.
+
+### 11.3 Tempo
+
+`@tempo N` on its own line changes the tempo (beats per minute) from the next
+row onward. For gradual changes use the tempo marks `{rit}`, `{accel}` and
+`{a tempo}` (see 9). Renderers SHOULD mark tempo changes.
 
 ## 12. Numbers and letters
 
@@ -341,17 +442,22 @@ CCLI) before copying lyrics into any tool.
 ```
 file      = [ header ] { section }
 header    = "---" NL { key ":" value NL } "---" NL
-section   = "##" name NL { note | use | keychg | row | comment }
-note      = ">" [ "MD" [ roles ] ":" ] text NL
+section   = "##" name NL { note | use | keychg | meterchg | tempochg | row | comment }
+note      = ">" [ "MD" [ passes ] [ roles ] ":" ] text NL
+passes    = N "x" { "," N "x" }
 roles     = role { ("," | "/" | "&" | " ") role }
 role      = standard role name | id declared in the instruments header
 use       = "@use" name NL
 keychg    = "@key" KEY NL
-row       = [ "|:" | "|" ] bar { "|" bar } [ ":|" [ "x" N ] | "|" ] NL
-bar       = [ pickup ] { ending | cue | lyric | token }
+meterchg  = "@meter" N "/" N NL
+tempochg  = "@tempo" N NL
+row       = [ "|:" | "|" ] bar { "|" bar } [ ":|" [ N "x" | "x" N ] | "|" ] NL
+bar       = [ pickup | meter ] { ending | cue | lyric | token }
 pickup    = "[p:" beats "]"
+meter     = "[m:" N "/" N "]"
 ending    = "[" N { ("," | "-") N } "]"
-cue       = "{" [ roles ":" ] text "}"
+cue       = "{" [ passes ] [ roles ] ":" text "}" | "{" text "}"
+            (dynamics, tempo marks and navigation marks are reserved words)
 lyric     = '"' text '"'
 token     = "%" | "=" | rest | riff | chord-tok
 rest      = "x" [ ":" beats ]
@@ -366,16 +472,20 @@ root      = [ "b" | "#" ] DIGIT(1-7)  |  LETTER(A-G) [ "b" | "#" ]
 
 Ideas under consideration, not yet part of the format:
 
-- **Navigation:** segno, coda, D.S. and D.C. for compact one-page charts. It
-  needs bar-level markers, an "al coda" jump that only happens on the second
-  pass, and rules for how a renderer expands the jumps.
-- **Tempo and meter changes inside a song,** and rehearsal marks.
 - **Layers:** a separate file of MD notes that sits on top of a chart without
   changing it, anchored to section names and bar numbers.
-- **JSON form:** a standard JSON shape of a parsed chart for tools.
+- **Conformance suite:** example files with the JSON form (Appendix A) that a
+  correct parser produces for each.
+- Rehearsal marks, a `capo` header, hairpins (crescendo and decrescendo
+  wedges).
 
 ## 17. Changelog
 
+- **0.6** Meter and tempo changes (`@meter`, `[m:N/D]`, `@tempo`, 11.2 and
+  11.3), tempo marks (`{rit}`, `{accel}`, `{a tempo}`), cues and MD notes for
+  one pass (`2x`, 9.1), repeat counts written `:| 3x` (`x3` still works),
+  navigation marks (segno, coda, D.S., D.C., fine, 10.1), and the JSON form
+  (Appendix A).
 - **0.5** Pickup bars (`[p:N]`, 5.3). Partial rests (`x:beats`) and the rule
   that tokens without `:beats` share what is left of the bar (5.1). Sixteenth
   push (`''`). Unison riffs (`R[ ... ]`, 7.1).
@@ -387,3 +497,71 @@ Ideas under consideration, not yet part of the format:
   `feel` header, `@key` key changes, beat-count checks, unknown-directive
   warnings.
 - **0.1** First draft.
+
+## Appendix A. JSON form
+
+A tool that exchanges parsed charts as JSON SHOULD use this shape, so that
+apps, converters and tests agree on what a chart means. Field order does not
+matter. Producers MAY add fields, and consumers MUST ignore fields they do not
+know.
+
+```json
+{
+  "chartdown": "0.6",
+  "meta": { "title": "Open Road", "key": "G", "tempo": "76" },
+  "key": "G",
+  "minor": false,
+  "sections": [
+    {
+      "name": "Chorus",
+      "use": null,
+      "notes": [
+        { "md": true, "roles": ["drums"], "passes": [2], "text": "Add the crash." }
+      ],
+      "rows": [
+        {
+          "key": "G", "meter": "4/4", "tempo": 76,
+          "bars": [
+            {
+              "number": 1, "beats": 4, "pickup": false, "meter": null,
+              "repeatStart": false, "repeatEnd": false, "times": null,
+              "ending": null,
+              "dynamic": "mf", "tempoMark": null, "nav": ["segno"],
+              "cues": [ { "roles": ["drums"], "passes": [], "text": "in" } ],
+              "lyric": "Take the open road",
+              "items": [
+                { "type": "chord", "root": "4", "degree": 5, "quality": "",
+                  "bass": null, "bassDegree": null, "beats": 4,
+                  "push": 0, "hold": false, "stab": false, "fermata": false }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "playOrder": [ { "section": 0, "bar": 1, "pass": 1 } ],
+  "warnings": [ { "line": 12, "message": "Can't read \"4zz\"" } ]
+}
+```
+
+| Field | Meaning |
+|---|---|
+| `meta` | Every header field, as written (strings) |
+| `key`, `minor` | Home key root and whether it is minor |
+| `rows[].key`, `meter`, `tempo` | Key, meter and tempo in effect for the row (after `@key`, `@meter`, `@tempo`) |
+| `bars[].number` | Bar number in its section: 0 for a pickup, then 1, 2, ... |
+| `bars[].beats` | Length of the bar in beats (see 5.1, 5.3, 11.2) |
+| `bars[].meter` | The one-bar meter from `[m:N/D]`, or `null` |
+| `bars[].times` | Total passes on the bar that ends a repeat, otherwise `null` |
+| `bars[].ending` | The passes written in `[ ]` on that bar (`[1, 2]`), or `null` |
+| `bars[].nav` | Navigation marks, normalized: `segno`, `coda`, `tocoda`, `fine`, `ds`, `dsalcoda`, `dsalfine`, `dc`, `dcalcoda`, `dcalfine` |
+| `cues[].passes`, `notes[].passes` | Passes from 9.1, empty for every pass |
+| `items[].type` | `chord`, `rest` (`x`), `riff`, `repeat` (`%`) or `tie` (`=`) |
+| `root`, `bass` | As written (number or letter) |
+| `degree`, `bassDegree` | Semitones above the row's key, 0 to 11 (see 12) |
+| `beats` | Share of the bar, after the rules in 5.1 |
+| `push` | 0 none, 1 eighth (`'`), 2 sixteenth (`''`) |
+| riff `notes` | `{ "root", "degree", "beats" }`, or `{ "rest": true, "beats" }` |
+| `playOrder` | Bars in the order they are played, after repeats, endings and navigation (see 10 and 10.1). `section` is an index into `sections`, `bar` is a bar number |
+| `warnings` | Every warning, with its line number (0 when it has none) |

@@ -108,6 +108,11 @@ details dd{margin:0;color:var(--faint)}
 .riff .rn{text-align:center;white-space:nowrap}
 .riff .rest{font-size:18px;color:var(--faint)}
 .bar.pickup{padding-left:4px;padding-right:4px}
+.tmk{font:italic 600 12px var(--ui);color:var(--blue)}
+.nav{font:700 12px var(--ui);color:var(--ink);border:1px solid var(--ink);border-radius:3px;padding:0 4px}
+.role.pass{font-variant-numeric:tabular-nums}
+.order{margin:10px 0 0;font-size:14px;color:var(--faint)}
+.order b{margin-right:8px;color:var(--ink)}
 .rep,.tie{font:600 30px var(--num);color:var(--faint)}
 .lyr{position:absolute;left:8px;right:8px;bottom:3px;font-size:12.5px;font-style:italic;color:var(--faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .empty{color:var(--faint)}
@@ -145,8 +150,10 @@ details dd{margin:0;color:var(--faint)}
     <div class="pick">
       <button type="button" class="btn" data-sample="road">Open Road</button>
       <button type="button" class="btn" data-sample="lantern">Lantern Bay (Em, 6/8)</button>
+      <button type="button" class="btn" data-sample="north">Northbound (D.S. al Coda)</button>
       <button type="button" class="btn" data-sample="tour">Syntax tour</button>
       <button type="button" class="btn" id="copy">Copy text</button>
+      <button type="button" class="btn" id="copyJson">Copy JSON</button>
     </div>
     <textarea id="ed" spellcheck="false" aria-label="ChartDown source"></textarea>
     <p class="status" id="status" aria-live="polite"></p>
@@ -167,7 +174,11 @@ details dd{margin:0;color:var(--faint)}
         <dt>R[ 1 3 4 5 ]</dt><dd>Unison riff in single notes</dd>
         <dt>{mf}  {drums in}</dt><dd>Dynamic or cue</dd>
         <dt>"short words"</dt><dd>Lyric landmark</dd>
-        <dt>|: ... :| x3</dt><dd>Repeat; [1] and [2] for endings</dd>
+        <dt>|: ... :| 3x</dt><dd>Repeat; [1] and [2] for endings</dd>
+        <dt>{2x drums: in}</dt><dd>Cue for one pass of a repeat</dd>
+        <dt>{segno}  {D.S. al coda}</dt><dd>Navigation: also {coda}, {to coda}, {fine}, D.C.</dd>
+        <dt>@meter 6/8  [m:2/4]</dt><dd>Meter change; one bar in another meter</dd>
+        <dt>@tempo 72  {rit}</dt><dd>Tempo change; rit., accel., a tempo</dd>
         <dt>@use Chorus</dt><dd>Reuse an earlier section</dd>
         <dt>&gt; MD drums: text</dt><dd>MD note for one instrument</dd>
         <dt>{drums: in}</dt><dd>Cue for one instrument, on a bar</dd>
@@ -185,7 +196,7 @@ details dd{margin:0;color:var(--faint)}
 /* ---------- Samples ---------- */
 const SAMPLES = {
 road: String.raw`---
-chartdown: 0.5
+chartdown: 0.6
 title: Open Road (example song)
 artists: ChartDown examples
 key: G
@@ -226,7 +237,7 @@ feel: Straight, building
 ## Bridge
 > MD: Strip it back, then build every pass. I'll cue the repeats.
 > MD drums, bass: Out on the first pass, in on the second.
-|: {p} 6m | 4 | 1 | [1] 5 :| x2
+|: {p} 6m | 4 | 1 | [1] 5 :| 2x
 [2] 5 4 5 5 |
 
 ## Last Chorus
@@ -236,7 +247,7 @@ feel: Straight, building
 4 | 1 | 5sus 5 | <1>~
 `,
 lantern: String.raw`---
-chartdown: 0.5
+chartdown: 0.6
 title: Lantern Bay (example song)
 artists: ChartDown examples
 key: Em
@@ -267,7 +278,7 @@ b3 | b7 | 4m:3 5:3 | 1m
 {p} b6 | b7 | <1m>~
 `,
 tour: String.raw`---
-chartdown: 0.5
+chartdown: 0.6
 title: Syntax Tour
 key: D
 tempo: 90
@@ -290,7 +301,7 @@ D | G | A | D
 <1> | = | 4 '5 | 1! 5!
 
 ## Repeats and endings
-|: 1 | 4 | 1 | [1] 5 :| x3
+|: 1 | 4 | 1 | [1] 5 :| 3x
 [2] 5 4 5 1 |
 
 ## Notes for each player
@@ -318,6 +329,55 @@ x | % | 1 x | 5
 > MD gtr, tpt: Unison riff in bar 2. x:3 is a three-beat stop.
 [p:2] 5 | 1 | R[ 1 3 4 #4 5 ] | ''4:2 5:2
 1! x:3 | R[ 5:1 b7:1 x:2 ] | 1 | 5
+
+## Meter, tempo and passes (0.6)
+> MD 2x keys: Pad comes in on the second pass.
+@tempo 80
+|: 1 {2x drums: in} | 4 | [m:2/4] 5 | 1 {1x: stop} :| 2x
+@meter 3/4
+1 | 4 | 5 {rit} | 1 {a tempo}
+`,
+north: String.raw`---
+chartdown: 0.6
+title: Northbound (example song)
+artists: ChartDown examples
+key: A
+tempo: 84
+meter: 4/4
+feel: Driving eighths
+---
+
+// An original example song written for this repository.
+// A D.S. al Coda, a 6/8 bridge, a 2/4 bar and cues for one pass.
+
+## Intro
+> MD gtr, bass: Pickup on beat 4, then the riff in unison.
+[p:1] 5 | R[ 1 5 b7 1 ] | 4 | R[ 1 5 b7 1 ] | 4
+
+## Verse
+> MD: Tight and low. I'll bring us back here from the bridge.
+> MD 2x drums: Ride cymbal on the second pass.
+|: {segno} {p} 1 "Headlights on the northbound" | 4 | 6m | 5 {2x bass: walk up}
+1 | 4 | 6m 5 | [1] 4 :| 2x
+[2] 4 | 4 {cresc}
+
+## Chorus
+> MD: Full band. Big and open.
+{mf} 4 "Keep driving north" | 1 | 5 | 6m
+4 | 1 | 5 {to coda} | 5
+
+## Bridge
+> MD: Half-time in 6/8. Watch me for the way back.
+@meter 6/8
+@tempo 72
+{p} 6m | 4 | 1 | 5 {rit}
+@meter 4/4
+@tempo 84
+4 | [m:2/4] 5 | 5 {D.S. al coda}
+
+## Outro
+> MD: Last time. Hold the end on my cue.
+{coda} {f} 4 | 5 | 6m 5 | <1>~
 `};
 
 /* ---------- Music helpers ---------- */
@@ -327,6 +387,12 @@ const SHARP = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
 const FLAT  = ['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
 const NUMS  = ['1','b2','2','b3','3','4','#4','5','b6','6','b7','7'];
 const DYN = new Set(['pp','p','mp','mf','f','ff','cresc','decresc']);
+// Reserved words in { } (spec 9): compared without case, dots or spaces.
+const TEMPO_MARK = {rit:'rit.', accel:'accel.', atempo:'a tempo'};
+const NAV = {segno:'Segno', coda:'Coda', tocoda:'To Coda', fine:'Fine', ds:'D.S.', dsalcoda:'D.S. al Coda',
+  dsalfine:'D.S. al Fine', dc:'D.C.', dcalcoda:'D.C. al Coda', dcalfine:'D.C. al Fine'};
+const JUMPS = ['ds','dsalcoda','dsalfine','dc','dcalcoda','dcalfine'];
+const normWord = t => t.toLowerCase().replace(/[.\s]/g, '');
 const KEY_LIST = ['C','Db','D','Eb','E','F','F#','G','Ab','A','Bb','B'];
 
 const isNum = s => /^[b#]?[1-7]$/.test(s);
@@ -369,19 +435,31 @@ function parseRoles(s){
   for(const p of parts){ const r = ROLE_ALIAS[p] || (CUSTOM[p] ? p : null); if(!r) return null; if(!out.includes(r)) out.push(r); }
   return out;
 }
+// Spec 9.1: "2x" or "1x,3x" before the instruments.
+const PASS_RE = /^(\d+x(?:\s*,\s*\d+x)*)\s*(.*)$/i;
+const parsePasses = s => s.split(',').map(x => parseInt(x, 10));
 function parseNote(t, n, warn){
   const m = /^MD(?:\s+([^:]+?))?\s*:\s*(.*)$/i.exec(t);
   if(m){
-    let roles = ['all'];
-    if(m[1]){ const r = parseRoles(m[1]); if(r) roles = r; else warn(n, 'Unknown instrument \u201c' + m[1] + '\u201d in an MD note'); }
-    return {md:true, roles, text:m[2]};
+    let roles = ['all'], passes = [], who = m[1] || '';
+    const pm = PASS_RE.exec(who);
+    if(pm){ passes = parsePasses(pm[1]); who = pm[2].trim(); }
+    if(who){ const r = parseRoles(who); if(r) roles = r; else warn(n, 'Unknown instrument \u201c' + who + '\u201d in an MD note'); }
+    return {md:true, roles, passes, text:m[2], line:n};
   }
-  return {md:false, roles:['all'], text:t};
+  return {md:false, roles:['all'], passes:[], text:t, line:n};
 }
 function parseCue(t){
+  const pm = PASS_RE.exec(t);
+  if(pm){
+    const rest = pm[2];
+    if(rest.startsWith(':')) return {roles:['all'], passes:parsePasses(pm[1]), text:rest.slice(1).trim()};
+    const m = /^([A-Za-z][A-Za-z,\/& ]*?)\s*:\s*(.+)$/.exec(rest);
+    if(m){ const r = parseRoles(m[1]); if(r) return {roles:r, passes:parsePasses(pm[1]), text:m[2].trim()}; }
+  }
   const m = /^([A-Za-z][A-Za-z,\/& ]*?)\s*:\s*(.+)$/.exec(t);
-  if(m){ const r = parseRoles(m[1]); if(r) return {roles:r, text:m[2].trim()}; }
-  return {roles:['all'], text:t};
+  if(m){ const r = parseRoles(m[1]); if(r) return {roles:r, passes:[], text:m[2].trim()}; }
+  return {roles:['all'], passes:[], text:t};
 }
 
 /* ---------- Parser ---------- */
@@ -431,17 +509,25 @@ function layoutBeats(list, total){
 }
 
 function parseBar(seg, n, warn, bpb){
-  const bar = {items:[], lyric:null, cues:[], dyn:null, ending:null, pickup:null};
+  const bar = {items:[], lyric:null, cues:[], dyn:null, tempo:null, nav:[], ending:null, pickup:null, meter:null, line:n};
   seg = seg.replace(/"([^"]*)"/g, (_, t) => {
     if(t.trim().split(/\s+/).filter(Boolean).length > 8) warn(n, 'Lyric landmarks should be 8 words or fewer');
     bar.lyric = bar.lyric ? bar.lyric + ' / ' + t : t; return ' ';
   });
   seg = seg.replace(/\{([^}]*)\}/g, (_, t) => {
     t = t.trim();
-    if(DYN.has(t.toLowerCase())) bar.dyn = t.toLowerCase(); else if(t) bar.cues.push(parseCue(t));
+    const w = normWord(t);
+    if(DYN.has(w)) bar.dyn = w;
+    else if(TEMPO_MARK[w]) bar.tempo = w;
+    else if(NAV[w]) bar.nav.push(w);
+    else if(t) bar.cues.push(parseCue(t));
     return ' ';
   });
   seg = seg.replace(/^\s*\[p:(\d+(?:\.\d+)?)\]/, (_, p) => { bar.pickup = parseFloat(p); return ' '; });
+  seg = seg.replace(/^\s*\[m:(\d+)\s*\/\s*(\d+)\]/, (_, a, b) => { bar.meter = a + '/' + b; return ' '; });
+  if(bar.meter && bar.pickup !== null){ warn(n, 'A bar can\u2019t have both a pickup and a one-bar meter'); bar.meter = null; }
+  if(bar.meter) bpb = parseInt(bar.meter, 10);
+  bar.top = bpb;
   if(bar.pickup !== null && !(bar.pickup > 0 && bar.pickup < bpb)){
     warn(n, 'A pickup needs more than 0 and fewer than ' + bpb + ' beats'); bar.pickup = null;
   }
@@ -452,6 +538,7 @@ function parseBar(seg, n, warn, bpb){
   });
   if(!bar.items.length) warn(n, 'This bar has no chords');
   const total = bar.pickup || bpb;
+  bar.total = total;
   const timed = bar.items.filter(i => i.t === 'chord' || i.t === 'nc' || i.t === 'riff');
   const used = layoutBeats(timed, total);
   if(timed.some(i => i.explicit)){
@@ -472,8 +559,8 @@ function parseRow(line, n, warn, bpb){
   let rs = false, re = false, times = 2;
   if(line.startsWith('|:')){ rs = true; line = line.slice(2); }
   else if(line.startsWith('|')) line = line.slice(1);
-  const m = line.match(/:\|\s*(?:x\s*(\d+))?\s*$/);
-  if(m){ re = true; if(m[1]) times = parseInt(m[1],10); line = line.slice(0, m.index); }
+  const m = line.match(/:\|\s*(?:[xX]\s*(\d+)|(\d+)\s*[xX])?\s*$/);
+  if(m){ re = true; if(m[1] || m[2]) times = parseInt(m[1] || m[2], 10); line = line.slice(0, m.index); }
   else if(line.endsWith('|')) line = line.slice(0,-1);
   const bars = line.split('|').map(s => s.trim()).filter(Boolean).map(s => parseBar(s, n, warn, bpb));
   if(!bars.length) return null;
@@ -505,10 +592,11 @@ function parse(src){
   doc.keyRoot = km ? km[1] : 'C';
   doc.minor = !!(km && km[2]);
   const mm = /^(\d+)\s*\/\s*(\d+)$/.exec(doc.meta.meter || '4/4');
-  const bpb = mm ? parseInt(mm[1],10) : 4;
-  doc.bpb = bpb;
+  doc.meter = mm ? mm[1] + '/' + mm[2] : '4/4';
+  doc.tempo = parseFloat(doc.meta.tempo) || null;
 
   let cur = null, docKey = null, pendingLabel = null;
+  let meter = doc.meter, tempo = doc.tempo, pendingMeter = null, pendingTempo = null;
   for(; i < lines.length; i++){
     const line = lines[i].trim(), n = i + 1;
     if(!line || line.startsWith('//')) continue;
@@ -522,14 +610,27 @@ function parse(src){
     if(u){ cur.use = u[1].trim(); continue; }
     const kc = line.match(/^@key\s+([A-G][b#]?)(m?)\s*$/);
     if(kc){ docKey = kc[1]; pendingLabel = kc[1] + kc[2]; continue; }
+    if(/^@meter\b/i.test(line)){
+      const mc = line.match(/^@meter\s+(\d+)\s*\/\s*(\d+)\s*$/i);
+      if(mc){ meter = mc[1] + '/' + mc[2]; pendingMeter = meter; } else warn(n, 'Write a meter change like  @meter 3/4');
+      continue;
+    }
+    if(/^@tempo\b/i.test(line)){
+      const tc = line.match(/^@tempo\s+(\d+(?:\.\d+)?)\s*$/i);
+      if(tc){ tempo = parseFloat(tc[1]); pendingTempo = tc[1]; } else warn(n, 'Write a tempo change like  @tempo 96');
+      continue;
+    }
     if(line.startsWith('@')){ warn(n, 'Unknown directive \u201c' + line.split(/\s/)[0] + '\u201d'); continue; }
-    const row = parseRow(line, n, warn, bpb);
+    const row = parseRow(line, n, warn, parseInt(meter, 10));
     if(row){
       row.bars.forEach((b, bi) => {
-        if(b.pickup !== null && (cur.rows.length || bi)){ warn(n, 'A pickup must be the first bar of a section'); b.pickup = null; }
+        if(b.pickup !== null && (cur.rows.length || bi)){ warn(n, 'A pickup must be the first bar of a section'); b.pickup = null; b.total = b.top; }
       });
       row.key = docKey;
+      row.meter = meter; row.tempo = tempo;
       if(pendingLabel){ row.keyLabel = pendingLabel; pendingLabel = null; }
+      if(pendingMeter){ row.meterLabel = pendingMeter; pendingMeter = null; }
+      if(pendingTempo){ row.tempoLabel = pendingTempo; pendingTempo = null; }
       cur.rows.push(row);
     }
   }
@@ -542,7 +643,125 @@ function parse(src){
       } else warn(0, 'Can\u2019t find an earlier section named \u201c' + s.use + '\u201d');
     }
   });
+  analyze(doc, warn);
   return doc;
+}
+
+const endingList = e => e.split(',').flatMap(p => {
+  const [a, b] = p.split('-').map(Number);
+  return b ? Array.from({length: Math.max(b - a + 1, 0)}, (_, k) => a + k) : [a];
+});
+
+// Bar numbers, repeat spans, pass checks (9.1), navigation checks (10.1) and the play order.
+function analyze(doc, warn){
+  const F = [];
+  doc.sections.forEach((s, si) => {
+    let num = 0;
+    s.rows.forEach(r => {
+      let end = null;
+      r.bars.forEach(b => {
+        b.number = b.pickup ? 0 : ++num;
+        if(b.ending) end = endingList(b.ending);
+        b.endSet = end;
+        F.push({si, b});
+      });
+    });
+  });
+  // Repeat spans: from the last |: (or the bar after the previous :|, or the section start) to each :|.
+  const startToRe = new Map(), reStart = new Map(), inRep = new Set();
+  let secStart = 0, from = 0;
+  F.forEach((f, i) => {
+    if(i === 0 || F[i-1].si !== f.si){ secStart = i; from = i; }
+    if(f.b.rs) from = i;
+    if(f.b.re){
+      startToRe.set(from, i); reStart.set(i, from);
+      for(let k = from; k <= i; k++) inRep.add(k);
+      from = i + 1;
+    }
+  });
+  F.forEach((f, i) => {
+    if(f.b.endSet) inRep.add(i);
+    if(f.b.cues.some(c => c.passes.length) && !inRep.has(i)) warn(f.b.line, 'A cue for one pass (like 2x) needs a repeat');
+  });
+  doc.sections.forEach(s => {
+    if(!s.rows.some(r => r.bars.some(b => b.re)))
+      s.notes.filter(t => t.passes.length).forEach(t => warn(t.line, 'An MD note for one pass (like 2x) needs a repeat in its section'));
+  });
+  // Navigation marks.
+  const find = w => F.map((f, i) => f.b.nav.includes(w) ? i : -1).filter(i => i >= 0);
+  ['segno','coda','tocoda','fine'].forEach(w => {
+    const at = find(w);
+    if(at.length > 1) warn(F[at[1]].b.line, 'There is more than one {' + NAV[w] + '}');
+  });
+  const jumps = F.map((f, i) => ({i, w: f.b.nav.find(x => JUMPS.includes(x))})).filter(j => j.w);
+  if(jumps.length > 1) warn(F[jumps[1].i].b.line, 'A song can have only one D.S. or D.C. jump');
+  let jump = jumps[0] || null;
+  const segno = find('segno')[0], coda = find('coda')[0], toCoda = find('tocoda')[0], fine = find('fine')[0];
+  if(jump){
+    const line = F[jump.i].b.line, w = jump.w;
+    if(w.startsWith('ds') && segno === undefined){ warn(line, 'D.S. needs a {segno}'); jump = null; }
+    else if(w.endsWith('alcoda') && (coda === undefined || toCoda === undefined)){ warn(line, NAV[w] + ' needs a {to coda} and a {coda}'); jump = null; }
+    else if(w.endsWith('alfine') && fine === undefined){ warn(line, NAV[w] + ' needs a {fine}'); jump = null; }
+  }
+  doc.hasJump = !!jump;
+  // Expand into the play order.
+  const order = [];
+  let i = 0, pass = 1, curRe = -1, inSpan = false, jumped = false, back = false, steps = 0, after = false;
+  while(i < F.length && steps++ < 20000){
+    const f = F[i];
+    if(startToRe.has(i) && !back){
+      curRe = startToRe.get(i); inSpan = true;
+      pass = jumped ? (F[curRe].b.times || 2) : 1;
+    }
+    back = false;
+    if(f.b.endSet && !f.b.endSet.includes(pass)){ if(i === curRe) inSpan = false; i++; continue; }
+    if(!f.b.endSet && !inSpan) pass = 1;
+    order.push({section: f.si, bar: f.b.number, pass, jump: after});
+    after = false;
+    if(jumped && jump.w.endsWith('alcoda') && i === toCoda){ i = coda; inSpan = false; pass = 1; after = true; continue; }
+    if(jumped && jump.w.endsWith('alfine') && i === fine) break;
+    if(f.b.re && i === curRe){
+      inSpan = false;
+      if(!jumped && pass < (f.b.times || 2)){ pass++; i = reStart.get(i); inSpan = true; back = true; continue; }
+    }
+    if(jump && !jumped && i === jump.i){ jumped = true; i = jump.w.startsWith('ds') ? segno : 0; pass = 1; inSpan = false; after = true; continue; }
+    i++;
+  }
+  doc.playOrder = order;
+}
+
+/* ---------- JSON form (spec Appendix A) ---------- */
+function toJSON(doc){
+  const deg = (root, key) => root ? rel(root, key) : null;
+  const item = (it, key) => {
+    if(it.t === 'rep') return {type:'repeat'};
+    if(it.t === 'tie') return {type:'tie'};
+    if(it.t === 'nc') return {type:'rest', beats:it.beats};
+    if(it.t === 'riff') return {type:'riff', beats:it.beats, notes:it.notes.map(n => n.rest ? {rest:true, beats:n.beats} : {root:n.root, degree:deg(n.root, key), beats:n.beats})};
+    return {type:'chord', root:it.root, degree:deg(it.root, key), quality:it.q, bass:it.bass, bassDegree:deg(it.bass, key),
+      beats:it.beats, push:it.push, hold:it.hold, stab:it.stab, fermata:it.ferm};
+  };
+  const cue = c => ({roles:c.roles, passes:c.passes, text:c.text});
+  return {
+    chartdown: doc.meta.chartdown || null,
+    meta: doc.meta, key: doc.keyRoot, minor: doc.minor,
+    sections: doc.sections.map(s => ({
+      name: s.name, use: s.use,
+      notes: s.notes.map(t => ({md:t.md, roles:t.roles, passes:t.passes, text:t.text})),
+      rows: s.rows.map(r => {
+        const key = r.key || doc.keyRoot;
+        return {key, meter:r.meter, tempo:r.tempo, bars: r.bars.map(b => ({
+          number:b.number, beats:b.total, pickup:!!b.pickup, meter:b.meter,
+          repeatStart:!!b.rs, repeatEnd:!!b.re, times:b.re ? b.times : null,
+          ending:b.ending ? endingList(b.ending) : null,
+          dynamic:b.dyn, tempoMark:b.tempo, nav:b.nav, cues:b.cues.map(cue), lyric:b.lyric,
+          items:b.items.map(it => item(it, key))
+        }))};
+      })
+    })),
+    playOrder: doc.playOrder.map(o => ({section:o.section, bar:o.bar, pass:o.pass})),
+    warnings: doc.warnings.map(w => ({line:w.line, message:w.msg}))
+  };
 }
 
 /* ---------- Render ---------- */
@@ -551,6 +770,8 @@ const state = {mode:'numbers', dispKey:null, role:'everyone', cuesOnly:false};
 const visible = roles => state.role === 'everyone' || roles.includes('all') || roles.includes(state.role);
 const roleChips = roles => roles.filter(r => r !== 'all').map(r => '<span class="role">' + roleLabel(r) + '</span>').join('');
 const roleText = roles => roles.filter(r => r !== 'all').map(r => roleLabel(r)).join(', ');
+const passText = passes => passes.map(p => p + 'x').join(',');
+const cueWho = c => [passText(c.passes), roleText(c.roles)].filter(Boolean).join(' ');
 
 function chordHTML(c, ctx){
   if(c.t === 'nc')  return '<span class="nc" aria-label="no chord"' + (c.explicit ? ' style="flex:' + c.beats + ' 1 0"' : '') + '>N.C.</span>';
@@ -576,16 +797,36 @@ function chordHTML(c, ctx){
 function barHTML(b, ctx){
   const tags = (b.ending ? '<span class="endlab">' + esc(b.ending) + '.</span>' : '') +
     (b.dyn ? '<span class="dyn">' + esc(b.dyn === 'cresc' ? 'cresc.' : b.dyn === 'decresc' ? 'decresc.' : b.dyn) + '</span>' : '') +
+    (b.meter ? '<span class="tmk">' + esc(b.meter) + '</span>' : '') +
+    (b.tempo ? '<span class="tmk">' + esc(TEMPO_MARK[b.tempo]) + '</span>' : '') +
+    b.nav.map(w => '<span class="nav">' + esc(NAV[w]) + '</span>').join('') +
     b.cues.filter(c => visible(c.roles)).map(c => {
-      const rt = roleText(c.roles);
+      const rt = cueWho(c);
       return '<span class="cue">' + (rt ? '<b>' + esc(rt) + '</b>' : '') + esc(c.text) + '</span>';
     }).join('') +
-    (b.re ? '<span class="times">\u00d7' + b.times + '</span>' : '');
+    (b.re ? '<span class="times">' + b.times + 'x</span>' : '');
   return '<div class="bar' + (b.pickup ? ' pickup' : '') + (b.rs ? ' rs' : '') + (b.re ? ' re' : '') + (b.ending ? ' end' : '') + '">' +
     (tags ? '<div class="tags">' + tags + '</div>' : '') +
     '<div class="chords">' + b.items.map(c => chordHTML(c, ctx)).join('') + '</div>' +
     (b.lyric ? '<span class="lyr">\u201c' + esc(b.lyric) + '\u201d</span>' : '') +
     '</div>';
+}
+
+// Groups the play order into section runs; a run that skips bars shows its range.
+function playOrderText(doc){
+  const runs = [];
+  doc.playOrder.forEach(o => {
+    const last = runs[runs.length - 1];
+    if(last && last.section === o.section && !o.jump) last.bars.push(o.bar);
+    else runs.push({section: o.section, bars: [o.bar]});
+  });
+  return runs.map(r => {
+    const s = doc.sections[r.section];
+    const all = s.rows.flatMap(x => x.bars.map(b => b.number));
+    const lo = Math.min(...r.bars), hi = Math.max(...r.bars);
+    const full = lo === Math.min(...all) && hi === Math.max(...all);
+    return s.name + (full ? '' : ' (bars ' + lo + '\u2013' + hi + ')');
+  }).join(' \u2192 ');
 }
 
 function rowCtx(row, srcRoot, disp){
@@ -622,6 +863,7 @@ function render(){
   if(doc.meta.feel) meta.push('<span>Feel<b>' + esc(doc.meta.feel) + '</b></span>');
   html += '<div class="meta">' + meta.join('') + '</div>';
   if(doc.sections.length) html += '<div class="form" aria-label="Song form">' + doc.sections.map(s => '<span>' + esc(s.name) + '</span>').join('') + '</div>';
+  if(doc.hasJump) html += '<p class="order"><b>Play order</b>' + esc(playOrderText(doc)) + '</p>';
   if(state.role !== 'everyone') html += '<p class="viewing">Showing notes for <b>' + esc(roleLabel(state.role)) + '</b> and the whole band.</p>';
   if(!doc.sections.length) html += '<p class="empty">Add a section like <b>## Verse 1</b> and some bars to see your chart.</p>';
 
@@ -631,23 +873,26 @@ function render(){
     html += '<section class="sec"><header><h2>' + esc(s.name) + '</h2><span class="count">' + (allBars.some(b => b.pickup) ? 'pickup + ' : '') + count + (count === 1 ? ' bar' : ' bars') + '</span></header>';
     const notes = s.notes.filter(t => visible(t.roles));
     notes.forEach(t => {
-      html += '<p class="note' + (t.md ? ' md' : '') + '">' + (t.md ? '<b>MD</b>' : '') + roleChips(t.roles) + esc(t.text) + '</p>';
+      html += '<p class="note' + (t.md ? ' md' : '') + '">' + (t.md ? '<b>MD</b>' : '') +
+        (t.passes.length ? '<span class="role pass">' + esc(passText(t.passes)) + '</span>' : '') + roleChips(t.roles) + esc(t.text) + '</p>';
     });
     if(state.cuesOnly){
-      let idx = 0, any = notes.length > 0;
+      let any = notes.length > 0;
       s.rows.forEach(r => r.bars.forEach(b => {
-        if(!b.pickup) idx++;
         const parts = [];
         if(b.dyn) parts.push(b.dyn);
-        b.cues.filter(c => visible(c.roles)).forEach(c => { const rt = roleText(c.roles); parts.push((rt ? rt + ': ' : '') + c.text); });
-        if(parts.length){ any = true; html += '<p class="line"><b>' + (b.pickup ? 'Pickup' : 'Bar ' + idx) + '</b>' + esc(parts.join(', ')) + '</p>'; }
+        if(b.tempo) parts.push(TEMPO_MARK[b.tempo]);
+        b.nav.forEach(w => parts.push(NAV[w]));
+        b.cues.filter(c => visible(c.roles)).forEach(c => { const rt = cueWho(c); parts.push((rt ? rt + ': ' : '') + c.text); });
+        if(parts.length){ any = true; html += '<p class="line"><b>' + (b.pickup ? 'Pickup' : 'Bar ' + b.number) + '</b>' + esc(parts.join(', ')) + '</p>'; }
       }));
       if(!any) html += '<p class="none">Nothing for this part.</p>';
     }
     s.rows.forEach(r => {
       const ctx = rowCtx(r, srcKey, disp);
       if(r.keyLabel) html += '<div class="keychg">Key change: ' + esc((state.mode === 'letters' ? ctx.disp + minor : r.keyLabel)) + '</div>';
-      const cols = r.bars.map(b => 'minmax(0,' + (b.pickup ? Math.max(b.pickup / doc.bpb, .3) : 1) + 'fr)').join(' ');
+      if(r.meterLabel || r.tempoLabel) html += '<div class="keychg">' + esc([r.meterLabel ? 'Meter: ' + r.meterLabel : '', r.tempoLabel ? 'Tempo: ' + r.tempoLabel + ' bpm' : ''].filter(Boolean).join(' \u00b7 ')) + '</div>';
+      const cols = r.bars.map(b => 'minmax(0,' + (b.pickup ? Math.max(b.pickup / b.top, .3) : 1) + 'fr)').join(' ');
       html += '<div class="row" style="--n:' + r.bars.length + ';grid-template-columns:' + cols + '">' + r.bars.map(b => barHTML(b, ctx)).join('') + '</div>';
     });
     html += '</section>';
@@ -684,13 +929,15 @@ document.querySelectorAll('[data-sample]').forEach(b => b.addEventListener('clic
   render();
 }));
 
-document.getElementById('copy').addEventListener('click', async () => {
+async function copyOut(text, fallback){
   let ok = false;
-  try { await navigator.clipboard.writeText(ed.value); ok = true; } catch(e) {}
-  if(!ok){ ed.select(); try { ok = document.execCommand('copy'); } catch(e) {} }
+  try { await navigator.clipboard.writeText(text); ok = true; } catch(e) {}
+  if(!ok && fallback){ ed.select(); try { ok = document.execCommand('copy'); } catch(e) {} }
   statusEl.textContent = ok ? 'Copied to clipboard.' : 'Couldn\u2019t copy. Select the text and copy it manually.';
   setTimeout(() => { statusEl.textContent = ''; }, 2500);
-});
+}
+document.getElementById('copy').addEventListener('click', () => copyOut(ed.value, true));
+document.getElementById('copyJson').addEventListener('click', () => copyOut(JSON.stringify(toJSON(parse(ed.value)), null, 2), false));
 
 ed.value = SAMPLES.road;
 render();
