@@ -1,0 +1,786 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ChartDown: Markdown for band charts</title>
+<meta name="description" content="ChartDown is an open plain-text notation for Nashville Number System charts, with music director cues for every player.">
+<meta name="theme-color" content="#1b1c1e">
+<meta property="og:title" content="ChartDown: Markdown for band charts">
+<meta property="og:description" content="Write the chart once, in plain text. Every player reads their part.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%231b1c1e'/%3E%3Cpath d='M6 9l20 14M26 9L6 23' stroke='%23e5432d' stroke-width='6'/%3E%3C/svg%3E">
+<link rel="preload" href="assets/fonts/permanent-marker.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/big-shoulders-stencil.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:"Stencil";src:url(assets/fonts/big-shoulders-stencil.woff2) format("woff2");font-weight:800;font-display:swap}
+@font-face{font-family:"Shoulders";src:url(assets/fonts/big-shoulders-display.woff2) format("woff2");font-weight:100 900;font-display:swap}
+@font-face{font-family:"Marker";src:url(assets/fonts/permanent-marker.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Archivo";src:url(assets/fonts/archivo.woff2) format("woff2");font-weight:100 900;font-display:swap}
+@font-face{font-family:"JetBrains Mono";src:url(assets/fonts/jetbrains-mono.woff2) format("woff2");font-weight:100 800;font-display:swap}
+
+:root{
+  --floor:#1b1c1e;
+  --floor-2:#242528;
+  --floor-line:#34353a;
+  --chalk:#eeeae0;
+  --chalk-dim:#aaa69c;
+  --tape:#efece4;
+  --tape-edge:#d9d5ca;
+  --gaff:#2b2c30;
+  --ink:#16171a;
+  --ink-soft:#4a4a4f;
+  --drums:#e5432d;
+  --bass:#f3c316;
+  --keys:#2f7de1;
+  --gtr:#2ead5b;
+  --vox:#e85a9c;
+  --all:#eeeae0;
+  --stencil:"Stencil","Shoulders",system-ui,sans-serif;
+  --display:"Shoulders",system-ui,sans-serif;
+  --marker:"Marker","Comic Sans MS",cursive;
+  --body:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  --ease:cubic-bezier(.16,1,.3,1);
+  --gut:clamp(16px,4vw,56px);
+  --noise:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+  --scuff:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='900' height='700'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.004 .03' numOctaves='4' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 -2.2 1.05'/%3E%3C/filter%3E%3Crect width='900' height='700' filter='url(%23s)' opacity='.07'/%3E%3C/svg%3E");
+  --torn-l:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 60' preserveAspectRatio='none'%3E%3Cpath d='M10 0H3L5 4 1 8l4 4-3 5 4 3-5 5 3 4-2 5 4 4-3 4 2 5-3 4 3 4-2 3h7z'/%3E%3C/svg%3E");
+  --torn-r:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 60' preserveAspectRatio='none'%3E%3Cpath d='M0 0h7L5 4l4 4-4 4 3 5-4 3 5 5-3 4 2 5-4 4 3 4-2 5 3 4-3 4 2 3H0z'/%3E%3C/svg%3E");
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scrollbar-color:#4a4b50 var(--floor)}
+body{
+  margin:0;background-color:var(--floor);color:var(--chalk);
+  background-image:var(--scuff),radial-gradient(120% 80% at 70% 0%,#26272b 0%,transparent 60%);
+  background-attachment:fixed;background-size:100% 100%,auto;
+  font:400 1.0625rem/1.55 var(--body);font-kerning:normal;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--bass);color:var(--ink)}
+::-webkit-scrollbar{width:12px;height:12px}
+::-webkit-scrollbar-track{background:var(--floor)}
+::-webkit-scrollbar-thumb{background:#45464b;border:3px solid var(--floor);border-radius:6px}
+a{color:inherit;text-underline-offset:.22em;text-decoration-thickness:2px}
+:focus-visible{outline:3px solid var(--bass);outline-offset:3px;border-radius:2px}
+button{font:inherit;color:inherit}
+img,svg{display:block}
+.vh{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.skip{position:absolute;left:12px;top:-60px;z-index:10;background:var(--bass);color:var(--ink);padding:10px 14px;font-weight:600;text-decoration:none}
+.skip:focus{top:12px}
+
+/* ---------- Materials ---------- */
+.tape{
+  position:relative;color:var(--ink);
+  background:var(--tape) var(--noise);background-blend-mode:multiply;
+  -webkit-mask:var(--torn-l) left/9px 100% no-repeat,var(--torn-r) right/9px 100% no-repeat,linear-gradient(#000 0 0) center/calc(100% - 16px) 100% no-repeat;
+          mask:var(--torn-l) left/9px 100% no-repeat,var(--torn-r) right/9px 100% no-repeat,linear-gradient(#000 0 0) center/calc(100% - 16px) 100% no-repeat;
+  padding:.2em 1.05em .25em;display:inline-block;max-width:100%;
+}
+.tape-wrap{display:inline-block;max-width:100%;filter:drop-shadow(0 2px 1.5px rgba(0,0,0,.45)) drop-shadow(0 10px 12px rgba(0,0,0,.28))}
+.stencil{font-family:var(--stencil);font-weight:800;text-transform:uppercase;letter-spacing:.02em;line-height:.9}
+.marker{font-family:var(--marker);font-weight:400}
+
+/* ---------- Header ---------- */
+.top{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:22px var(--gut) 0;position:relative;z-index:3}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+.brand .stencil{font-size:clamp(1.9rem,1.4rem + 1.6vw,2.6rem);color:var(--chalk)}
+.spike-x{width:30px;height:30px;flex:none}
+.nav{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.nav a,.lang button{
+  font:600 .92rem/1 var(--body);text-decoration:none;color:var(--chalk);
+  padding:10px 16px;background:#303136 var(--noise);background-blend-mode:screen;
+  -webkit-mask:var(--torn-l) left/6px 100% no-repeat,var(--torn-r) right/6px 100% no-repeat,linear-gradient(#000 0 0) center/calc(100% - 10px) 100% no-repeat;mask:var(--torn-l) left/6px 100% no-repeat,var(--torn-r) right/6px 100% no-repeat,linear-gradient(#000 0 0) center/calc(100% - 10px) 100% no-repeat;transition:background-color .2s var(--ease),color .2s var(--ease),transform .25s var(--ease);
+}
+.nav a:nth-child(odd){transform:rotate(-1.2deg)}
+.nav a:nth-child(even){transform:rotate(.9deg)}
+.nav a:hover{background-color:#45464c;transform:rotate(0) translateY(-1px)}
+.nav a:focus-visible,.lang button:focus-visible{outline-offset:-5px}
+.lang{display:flex;gap:2px;margin-left:8px}
+.lang button{border:0;cursor:pointer;padding:9px 13px;letter-spacing:.04em}
+.lang button[aria-pressed="true"]{background-color:var(--tape);background-blend-mode:multiply;color:var(--ink)}
+.lang button:not([aria-pressed="true"]):hover{background-color:#45464c}
+
+/* ---------- Hero: the stage floor ---------- */
+.hero{
+  display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(24px,3.4vw,56px);
+  padding:clamp(24px,3vw,40px) var(--gut) clamp(40px,5vw,72px);align-items:start;overflow-x:clip;
+}
+.pitch{display:flex;flex-direction:column;gap:22px;padding-top:6px;min-width:0}
+h1{margin:0;font-weight:400}
+h1 .tape-wrap{display:inline-block;transform:rotate(-1.6deg);transform-origin:left center}
+h1 .tape{display:inline-block;font-family:var(--marker);font-size:clamp(2.2rem,1.3rem + 3.2vw,4.1rem);line-height:1.08;padding:.18em .7em .22em}
+.lede{margin:0;max-width:30ch;font-size:clamp(1.15rem,1rem + .5vw,1.45rem);line-height:1.4;color:var(--chalk)}
+.lede b{font-weight:600;color:var(--chalk);background:linear-gradient(transparent 62%,rgba(243,195,22,.38) 62%,rgba(243,195,22,.38) 92%,transparent 92%)}
+
+.source{margin:0;display:flex;flex-direction:column;gap:8px}
+.source-label{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font-size:.9rem;color:var(--chalk-dim)}
+.source-label code{font-family:var(--mono);font-size:.85rem;color:var(--chalk)}
+.source textarea{
+  width:100%;min-height:270px;resize:vertical;display:block;
+  font:400 .84rem/1.6 var(--mono);color:var(--chalk);caret-color:var(--bass);
+  background:rgba(0,0,0,.28);border:2px dashed var(--floor-line);border-radius:4px;
+  padding:14px 16px;tab-size:2;white-space:pre;overflow:auto;
+  transition:border-color .2s var(--ease);
+}
+.source textarea:hover{border-color:#4a4b51}
+.source textarea:focus{outline:none;border-color:var(--bass);border-style:solid}
+.source details summary{display:none}
+
+.actions{display:flex;flex-wrap:wrap;align-items:center;gap:14px 22px}
+.go{
+  display:inline-flex;align-items:center;gap:12px;text-decoration:none;
+  font:600 1.12rem/1 var(--body);color:var(--ink);
+  transition:transform .25s var(--ease),filter .25s var(--ease);
+}
+.go .tape{background-color:var(--bass);padding:16px 30px 17px;display:inline-flex;align-items:center;gap:12px}
+.go:hover{transform:translateY(-2px) rotate(-.6deg)}
+.go:active{transform:translateY(0)}
+.go svg{width:20px;height:20px}
+.link{font-weight:600;color:var(--chalk);text-decoration-color:rgba(238,234,224,.4)}
+.link:hover{text-decoration-color:var(--bass)}
+
+/* The set list sheet */
+.board{position:relative;min-width:0}
+.sheet-wrap{position:relative;transform:rotate(.7deg);filter:drop-shadow(0 3px 2px rgba(0,0,0,.4)) drop-shadow(0 24px 30px rgba(0,0,0,.45))}
+.sheet{
+  position:relative;color:var(--ink);background:#f4f2ec var(--noise);background-blend-mode:multiply;
+  padding:clamp(22px,2.6vw,38px) clamp(20px,2.6vw,40px) clamp(24px,2.6vw,36px);min-height:420px;
+}
+.gaff{position:absolute;width:92px;height:30px;background:var(--gaff) var(--noise);background-blend-mode:screen;z-index:2;
+  -webkit-mask:var(--torn-l) left/7px 100% no-repeat,var(--torn-r) right/7px 100% no-repeat,linear-gradient(#000 0 0) center/calc(100% - 12px) 100% no-repeat;
+          mask:var(--torn-l) left/7px 100% no-repeat,var(--torn-r) right/7px 100% no-repeat,linear-gradient(#000 0 0) center/calc(100% - 12px) 100% no-repeat;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
+.gaff.tl{top:-12px;left:-30px;transform:rotate(-38deg)}
+.gaff.tr{top:-12px;right:-30px;transform:rotate(36deg)}
+.gaff.bl{bottom:-12px;left:-28px;transform:rotate(34deg)}
+.gaff.br{bottom:-10px;right:-30px;transform:rotate(-32deg)}
+
+.sh-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;border-bottom:3px solid var(--ink);padding-bottom:10px;margin-bottom:14px}
+.sh-title{font-family:var(--marker);font-size:clamp(1.7rem,1.2rem + 1.4vw,2.4rem);line-height:1;margin:0}
+.readouts{display:flex;gap:16px;font-family:var(--display);font-weight:700;text-transform:uppercase;font-size:.82rem;letter-spacing:.06em;color:var(--ink-soft);text-align:right}
+.readouts b{display:block;font-family:var(--marker);font-weight:400;font-size:1.3rem;letter-spacing:0;color:var(--ink);text-transform:none;line-height:1.05}
+.viewing{margin:-4px 0 12px;font-size:.92rem;color:var(--ink-soft)}
+.viewing b{color:var(--ink)}
+
+.cs{margin-top:10px}
+.cs:first-of-type{margin-top:6px}
+.cs-name{display:inline-block;margin:0 0 6px;font-family:var(--display);font-weight:900;text-transform:uppercase;letter-spacing:.05em;font-size:1rem;background:var(--ink);color:#f4f2ec;padding:3px 9px 2px;transform:rotate(-1deg)}
+.note{display:flex;align-items:baseline;gap:9px;margin:2px 0;font-family:var(--marker);font-size:1.02rem;line-height:1.3}
+.who{flex:none;display:inline-flex;align-items:center;gap:5px;font-family:var(--display);font-weight:800;text-transform:uppercase;letter-spacing:.05em;font-size:.76rem;line-height:1;padding:4px 6px 3px;border:2px solid var(--ink);border-radius:2px;transform:translateY(-2px)}
+.who i{width:9px;height:9px;flex:none;background:var(--c,var(--ink));box-shadow:0 0 0 1px rgba(0,0,0,.35)}
+.who.all{background:var(--ink);color:#f4f2ec}
+.row{display:grid;margin:8px 0 4px}
+.bar{position:relative;display:flex;flex-direction:column;justify-content:flex-end;min-width:0;border-left:3px solid var(--ink);padding:0 8px 0 10px;min-height:48px}
+.bar:last-child{border-right:3px solid var(--ink)}
+.bar.rs{border-left-width:7px;border-left-style:double}
+.bar.re{border-right:7px double var(--ink)}
+.tags{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:3px}
+.cue{font:700 .78rem/1.15 var(--body);background:var(--bass);color:var(--ink);padding:3px 6px;border-radius:2px;box-shadow:0 1px 2px rgba(0,0,0,.25)}
+.cue[data-r]{background:#fff;box-shadow:inset 0 0 0 2px var(--c),0 1px 2px rgba(0,0,0,.25)}
+.dyn{font:italic 700 .95rem/1 var(--body);color:var(--ink)}
+.chords{display:flex;align-items:baseline}
+.ch{flex:1 1 0;min-width:0;white-space:nowrap;font-family:var(--display);font-weight:900;font-size:clamp(1.5rem,1.1rem + 1vw,2rem);line-height:1.1;position:relative;letter-spacing:.01em}
+.ch sup{font-size:.55em;margin-left:1px}
+.ch .bs{font-size:.7em}
+.ch.hold::before{content:"";position:absolute;left:-.38em;top:-.04em;width:1.15em;height:1.15em;border:2.5px solid var(--ink);transform:rotate(45deg) scale(.82);border-radius:3px}
+.ch .fm{position:absolute;left:.05em;top:-.5em;width:1em;height:.55em}
+.ch .pu,.ch .st{font-size:.6em;vertical-align:.5em}
+.lyr{font:italic 500 .82rem/1.2 var(--body);color:var(--ink-soft);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.keychg{font:800 .76rem/1 var(--display);text-transform:uppercase;letter-spacing:.06em;margin:10px 0 0}
+.sh-empty,.sh-wait{font-family:var(--marker);font-size:1.2rem;color:var(--ink-soft);padding:30px 0}
+.sh-warn{margin:14px 0 0;padding:10px 12px;border:2px dashed var(--drums);font-size:.88rem;color:var(--ink)}
+.sh-warn li{margin-left:1em}
+
+/* Spike marks and key: the controls along the edge of the stage */
+.marks{margin-top:26px;display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px 22px;justify-content:space-between}
+.marks fieldset{border:0;margin:0;padding:0;min-width:0}
+.marks legend{padding:0;margin-bottom:8px;font-size:.9rem;color:var(--chalk-dim)}
+.spikes,.keys{display:flex;flex-wrap:wrap;gap:6px}
+.spike{
+  position:relative;display:inline-flex;align-items:center;gap:8px;cursor:pointer;
+  background:none;border:0;padding:8px 10px 8px 6px;border-radius:3px;color:var(--chalk);
+  font:600 .95rem/1 var(--body);transition:background-color .2s var(--ease);
+}
+.spike:hover{background:var(--floor-2)}
+.spike svg:not(.ring){width:22px;height:22px;flex:none;transition:transform .35s var(--ease)}
+.spike[aria-pressed="true"] svg:not(.ring){transform:rotate(90deg) scale(1.12)}
+.spike svg.ring{position:absolute;inset:-4px -6px;width:calc(100% + 12px);height:calc(100% + 8px);pointer-events:none;opacity:0;color:var(--chalk)}
+.spike[aria-pressed="true"] .ring{opacity:1}
+.spike[aria-pressed="true"] .ring path{animation:draw .5s var(--ease) both}
+@keyframes draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+.keys.tape{display:flex;flex-wrap:nowrap;gap:0;padding:5px 14px;transform:rotate(-.5deg)}
+.key{
+  position:relative;cursor:pointer;background:none;border:0;border-left:2px solid var(--ink);color:var(--ink);
+  font:800 1.12rem/1 var(--display);letter-spacing:.03em;min-width:42px;padding:9px 10px 8px;transition:background-color .2s var(--ease);
+}
+.key:first-child{border-left:0}
+.key.num{font:600 .9rem/1 var(--body);padding:10px 12px}
+.key:hover{background:rgba(0,0,0,.07)}
+.key:focus-visible{outline-color:var(--drums);outline-offset:-4px}
+.key svg.ring{position:absolute;inset:3px 1px;width:calc(100% - 2px);height:calc(100% - 6px);pointer-events:none;color:var(--ink);opacity:0}
+.key[aria-pressed="true"] svg.ring{opacity:1}
+.key[aria-pressed="true"] .ring path{animation:draw .5s var(--ease) both}
+
+/* tape laid down: the one authored motion */
+.laid{animation:lay .5s var(--ease) both}
+@keyframes lay{from{clip-path:inset(0 100% 0 0);transform:translateX(-6px)}to{clip-path:inset(0 0 0 0);transform:none}}
+.swap .ch{animation:flip .38s var(--ease) both}
+@keyframes flip{from{opacity:.15;filter:blur(3px)}to{opacity:1;filter:none}}
+
+/* ---------- Sections ---------- */
+main>section{padding:clamp(52px,6.5vw,92px) var(--gut)}
+h2{margin:0 0 .35em;font-family:var(--stencil);font-weight:800;text-transform:uppercase;font-size:clamp(2.4rem,1.5rem + 3.6vw,5.4rem);line-height:.9;letter-spacing:.01em;max-width:16ch;text-wrap:balance;color:var(--chalk)}
+.sub{margin:0;max-width:62ch;font-size:clamp(1.08rem,1rem + .3vw,1.25rem);color:var(--chalk);text-wrap:pretty}
+.sub code,.inline code{font-family:var(--mono);font-size:.86em;background:rgba(0,0,0,.3);border:1px solid var(--floor-line);padding:1px 6px;border-radius:3px;white-space:nowrap}
+
+/* Stage plot */
+.plot{position:relative;margin:clamp(36px,5vw,64px) 0 46px;aspect-ratio:16/7.2;border:3px solid #3b3c41;border-radius:6px;
+  background:repeating-linear-gradient(90deg,transparent 0 139px,rgba(255,255,255,.035) 139px 141px),var(--floor-2) var(--noise);background-blend-mode:normal,overlay}
+.plot::after{content:"";position:absolute;left:-3px;right:-3px;bottom:-3px;height:14px;background:repeating-linear-gradient(90deg,var(--chalk) 0 22px,transparent 22px 34px);opacity:.55;border-radius:0 0 6px 6px}
+.edge{position:absolute;left:50%;bottom:-38px;transform:translateX(-50%);font:700 .8rem/1 var(--display);letter-spacing:.24em;text-transform:uppercase;color:var(--chalk-dim);white-space:nowrap}
+.pos{position:absolute;width:min(31%,330px);display:flex;flex-direction:column;align-items:flex-start;gap:8px}
+.pos .mark{display:flex;align-items:center;gap:8px;font:800 1rem/1 var(--display);text-transform:uppercase;letter-spacing:.08em;color:var(--chalk)}
+.pos .mark svg{width:28px;height:28px}
+.pos .tape{font-family:var(--marker);font-size:1.05rem;line-height:1.3;padding:.45em 1.1em .5em}
+.pos code{display:block;font:500 .8rem/1.45 var(--mono);color:var(--ink-soft);margin-bottom:3px;white-space:normal}
+.pos.drums{left:50%;top:7%;transform:translateX(-50%)}
+.pos.bass{left:4%;top:12%}
+.pos.keys{right:4%;top:12%;align-items:flex-end}
+.pos.gtr{left:7%;bottom:12%}
+.pos.vox{left:50%;bottom:9%;transform:translateX(-50%)}
+.pos.md{right:7%;bottom:12%;align-items:flex-end}
+.pos .tape-wrap:nth-child(2){transform:rotate(-1.2deg)}
+.pos.keys .tape-wrap,.pos.md .tape-wrap{transform:rotate(1.3deg)}
+
+/* Keys section */
+.transpose{margin-top:clamp(32px,4.5vw,56px);display:grid;grid-template-columns:auto minmax(0,620px);justify-content:start;gap:10px 22px;align-items:center;max-width:980px}
+.transpose .k{font:800 1rem/1 var(--display);text-transform:uppercase;letter-spacing:.08em;color:var(--chalk-dim);text-align:right}
+.transpose .strip{display:grid;grid-template-columns:repeat(4,1fr)}
+.transpose .strip span{font-family:var(--display);font-weight:900;font-size:clamp(1.6rem,1rem + 2.4vw,3rem);line-height:1.1;padding:.12em .5em;border-left:3px solid currentColor}
+.transpose .strip span:last-child{border-right:3px solid currentColor}
+.transpose .nums .tape-wrap{display:block}
+.transpose .nums .tape{width:100%;display:grid;grid-template-columns:repeat(4,1fr);padding:.1em .6em}
+.transpose .nums span{border-color:var(--ink)}
+.transpose .letters{color:var(--chalk)}
+.transpose .letters span{border-color:var(--floor-line)}
+.transpose .at{color:var(--bass)}
+.transpose .kl{text-transform:none;font-size:1.2rem}
+
+/* Syntax road case */
+.case{margin-top:clamp(36px,5vw,64px);position:relative;transform:rotate(-.4deg);filter:drop-shadow(0 3px 2px rgba(0,0,0,.4)) drop-shadow(0 20px 26px rgba(0,0,0,.4))}
+.paper{position:relative;color:var(--ink);background:#f4f2ec var(--noise);background-blend-mode:multiply;padding:clamp(24px,3vw,44px) clamp(20px,3vw,44px)}
+.labels{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,290px),1fr));gap:20px 30px}
+.labels li{display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding-top:12px;border-top:2px solid var(--ink)}
+.labels code{font:600 1.02rem/1.3 var(--mono);color:var(--ink);background:rgba(22,23,26,.06);border:1px solid #cdc9bd;border-radius:3px;padding:5px 9px}
+.labels span{font-family:var(--marker);font-size:1.12rem;line-height:1.25}
+
+/* Builders */
+.open{display:grid;grid-template-columns:minmax(0,6fr) minmax(0,5fr);gap:clamp(28px,5vw,80px);align-items:start}
+.facts{list-style:none;margin:26px 0 0;padding:0;display:flex;flex-direction:column;gap:2px;max-width:58ch}
+.facts li{display:flex;gap:14px;align-items:baseline;padding:12px 0;border-top:1px solid var(--floor-line)}
+.facts li:last-child{border-bottom:1px solid var(--floor-line)}
+.facts b{flex:none;width:8.5em;font:800 .95rem/1.2 var(--display);text-transform:uppercase;letter-spacing:.06em;color:var(--chalk)}
+.facts span{color:var(--chalk-dim)}
+.facts a{color:var(--chalk)}
+.cmd{display:flex;flex-direction:column;gap:14px;padding-top:clamp(0px,4vw,70px)}
+.cmd .tape{font:500 .9rem/1.6 var(--mono);padding:.9em 1.4em;white-space:pre;overflow-x:auto}
+.cmd .tape-wrap:first-child{transform:rotate(-1deg)}
+.json{position:relative;margin-top:22px;transform:rotate(.8deg);filter:drop-shadow(0 3px 2px rgba(0,0,0,.4)) drop-shadow(0 18px 22px rgba(0,0,0,.4))}
+.json .paper{padding:22px 24px 20px}
+.json .paper p{margin:0 0 10px;font:600 .9rem/1.4 var(--body);color:var(--ink-soft);max-width:none}
+.json p code{font-family:var(--mono);color:var(--ink)}
+.json pre{margin:0;font:500 .82rem/1.55 var(--mono);color:var(--ink);white-space:pre;overflow-x:auto}
+.cmd p{margin:0;color:var(--chalk-dim);font-size:.98rem;max-width:44ch}
+
+/* Close */
+.close{text-align:left;padding-bottom:clamp(80px,10vw,140px)!important}
+.close h2{max-width:13ch;font-size:clamp(2.8rem,1.6rem + 5vw,6rem)}
+.close .actions{margin-top:30px}
+footer{padding:28px var(--gut) 40px;border-top:1px solid var(--floor-line);display:flex;flex-wrap:wrap;gap:12px 28px;justify-content:space-between;font-size:.9rem;color:var(--chalk-dim)}
+footer a{color:var(--chalk)}
+
+/* ---------- Responsive ---------- */
+@media (max-width:1080px){
+  .hero{grid-template-columns:minmax(0,1fr)}
+  .pitch{display:contents}
+  h1{order:1}.lede{order:2}.board{order:3}.hero .actions{order:4}.source{order:5}
+  .lede{max-width:40ch}
+  .open{grid-template-columns:minmax(0,1fr)}
+  .plot{aspect-ratio:auto;display:grid;grid-template-columns:1fr 1fr;gap:34px 26px;padding:30px 24px 60px;background:var(--floor-2) var(--noise)}
+  .pos{position:static;width:auto;transform:none!important;align-items:flex-start!important}
+  .pos.drums{grid-area:drums}.pos.bass{grid-area:bass}.pos.keys{grid-area:keys}.pos.gtr{grid-area:gtr}.pos.vox{grid-area:vox}.pos.md{grid-area:md}
+  .plot{grid-template-areas:"bass drums" "keys gtr" "vox md"}
+}
+@media (max-width:640px){
+  .top{flex-direction:column;align-items:flex-start;gap:10px}
+  .nav{justify-content:flex-start;margin-left:-12px}
+  .nav a.hide-s{display:none}
+  .sheet{padding:20px 16px 22px}
+  .sheet-wrap{transform:none}
+  .gaff{width:70px;height:24px}
+  .gaff.tl{left:-18px}.gaff.tr{right:-18px}.gaff.bl{left:-18px}.gaff.br{right:-18px}
+  .readouts{gap:10px}
+  .bar{padding:0 4px 0 6px;min-height:50px}
+  .ch{font-size:1.3rem}
+  .lyr{display:none}
+  .plot{grid-template-areas:"drums drums" "bass keys" "gtr md" "vox vox";gap:26px 14px;padding:24px 14px 56px}
+  .pos.drums,.pos.vox{justify-self:center;align-items:center!important;max-width:280px}
+  .pos .tape{font-size:.95rem;padding:.4em .9em .45em}
+  .pos code{font-size:.74rem}
+  .hero .actions{order:3}.board{order:4}
+  .key{min-width:36px;padding:9px 7px 8px;font-size:1.02rem}
+  .key.num{padding:10px 8px;font-size:.84rem}
+  .keys.tape{padding:5px 10px}
+  .nav a,.lang button{padding:9px 12px}
+  .transpose{grid-template-columns:1fr;gap:6px}
+  .transpose .k{text-align:left;margin-top:10px}
+  .source textarea{min-height:220px;font-size:.8rem}
+  .facts li{flex-direction:column;gap:4px}
+  .cmd .tape{font-size:.78rem;white-space:pre-wrap;word-break:break-all}
+  .json pre{font-size:.72rem}
+  .json .paper{padding:20px 16px 18px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  html{scroll-behavior:auto}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main" data-i18n="skip">Skip to content</a>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="x" viewBox="0 0 32 32"><path d="M5 8.5l3.5-3.5 18.5 18.5-3.5 3.5z" fill="currentColor"/><path d="M23.5 5L27 8.5 8.5 27 5 23.5z" fill="currentColor" opacity=".92"/></symbol>
+  <symbol id="arrow" viewBox="0 0 20 20"><path d="M3 10h13M11 4.5L16.5 10 11 15.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="ring" viewBox="0 0 120 50" preserveAspectRatio="none"><path pathLength="1" stroke-dasharray="1" d="M14 9C40 1 98 2 113 14c10 9 3 27-25 31-29 4-66 3-80-6C-3 32 2 15 22 8" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></symbol>
+</svg>
+
+<header class="top">
+  <a class="brand" href="./" aria-label="ChartDown">
+    <svg class="spike-x" style="color:var(--drums)" aria-hidden="true"><use href="#x"/></svg>
+    <span class="stencil">ChartDown</span>
+  </a>
+  <nav class="nav" aria-label="Main" data-i18n-attr="aria-label:navLabel">
+    <a href="https://github.com/ChartDown/spec/blob/main/docs/guide.md" data-guide data-i18n="navGuide">Guide</a>
+    <a href="https://github.com/ChartDown/spec/blob/main/SPEC.md" data-i18n="navSpec">Spec</a>
+    <a href="playground/">Playground</a>
+    <a href="https://github.com/ChartDown/spec" class="hide-s">GitHub</a>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" data-lang="en" aria-pressed="true" lang="en">EN</button>
+      <button type="button" data-lang="es" aria-pressed="false" lang="es">ES</button>
+    </div>
+  </nav>
+</header>
+
+<main id="main">
+  <div class="hero">
+    <div class="pitch">
+      <h1><span class="tape-wrap"><span class="tape" data-i18n="tagline">Markdown for band charts</span></span></h1>
+      <p class="lede" data-i18n-html="lede">Write the chart once, in plain text. <b>Every player reads their part</b>, in numbers or in any key.</p>
+      <div class="actions">
+        <a class="go" href="playground/"><span class="tape-wrap"><span class="tape"><span data-i18n="ctaPlay">Open the playground</span><svg aria-hidden="true"><use href="#arrow"/></svg></span></span></a>
+        <a class="link" href="https://github.com/ChartDown/spec/blob/main/docs/guide.md" data-guide data-i18n="ctaGuide">Read the 5-minute guide</a>
+      </div>
+      <div class="source">
+        <label class="source-label" for="src"><span data-i18n="srcLabel">This is the whole file. Change anything.</span><code>open-road.chartdown</code></label>
+        <textarea id="src" spellcheck="false" autocapitalize="off" autocomplete="off" rows="16"></textarea>
+      </div>
+    </div>
+
+    <div class="board">
+      <div class="sheet-wrap">
+        <span class="gaff tl" aria-hidden="true"></span><span class="gaff tr" aria-hidden="true"></span>
+        <span class="gaff bl" aria-hidden="true"></span><span class="gaff br" aria-hidden="true"></span>
+        <div class="sheet" id="sheet" aria-live="polite">
+          <p class="sh-wait" data-i18n="loading">Taping down the chart…</p>
+        </div>
+      </div>
+
+      <div class="marks">
+        <fieldset>
+          <legend data-i18n="standOn">Stand on your mark</legend>
+          <div class="spikes" id="spikes"></div>
+        </fieldset>
+        <fieldset>
+          <legend data-i18n="readIn">Read it in</legend>
+          <div class="keys tape" id="keys"></div>
+        </fieldset>
+      </div>
+    </div>
+
+  </div>
+
+  <section aria-labelledby="h-plot">
+    <h2 id="h-plot" data-i18n="plotTitle">Every player gets their part</h2>
+    <p class="sub" data-i18n-html="plotSub">Write <code>&gt; MD drums:</code> and only the drummer has to read it. A note with no instrument, <code>&gt; MD:</code>, is for the whole band. One chart, and nobody digs through the others' notes.</p>
+    <div class="plot" id="plot"></div>
+  </section>
+
+  <section aria-labelledby="h-keys">
+    <h2 id="h-keys" data-i18n="keysTitle">The key changes. The chart doesn't.</h2>
+    <p class="sub" data-i18n-html="keysSub">ChartDown is written in the Nashville Number System. When a different voice leads this Sunday and wants it a step up, every number stays put; each player picks the key when they read it. Need a lift for the last chorus? Write <code>@key A</code>.</p>
+    <div class="transpose" aria-label="The same row in three keys" data-i18n-attr="aria-label:keysAria">
+      <span class="k" data-i18n="written">Written</span>
+      <div class="nums"><span class="tape-wrap"><span class="tape strip"><span>1</span><span>4</span><span>5</span><span>6m</span></span></span></div>
+      <span class="k kl">G</span><div class="strip letters"><span>G</span><span>C</span><span>D</span><span>Em</span></div>
+      <span class="k kl at">A</span><div class="strip letters at"><span>A</span><span>D</span><span>E</span><span>F#m</span></div>
+      <span class="k kl">Bb</span><div class="strip letters"><span>Bb</span><span>Eb</span><span>F</span><span>Gm</span></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-talk">
+    <h2 id="h-talk" data-i18n="talkTitle">Write it the way the band talks</h2>
+    <p class="sub" data-i18n="talkSub">Pushes, stabs, holds, repeats and cues for one pass. If you call it out at rehearsal, there is a short way to write it.</p>
+    <div class="case">
+      <span class="gaff tl" aria-hidden="true"></span><span class="gaff tr" aria-hidden="true"></span>
+      <span class="gaff bl" aria-hidden="true"></span><span class="gaff br" aria-hidden="true"></span>
+      <div class="paper"><ul class="labels" id="labels"></ul></div>
+    </div>
+  </section>
+
+  <section aria-labelledby="h-open" class="open">
+    <div>
+      <h2 id="h-open" data-i18n="openTitle">Open, all the way down</h2>
+      <p class="sub" data-i18n="openSub">ChartDown is a specification, not an app's file format. Anyone can build a reader, an editor or a converter for it, and charts stay plain text you own.</p>
+      <ul class="facts" id="facts"></ul>
+    </div>
+    <div class="cmd">
+      <span class="tape-wrap"><span class="tape">node conformance/run.mjs ./my-parser.mjs</span></span>
+      <p data-i18n="cmdNote">Write a small adapter for your parser and run every case in the suite. Node.js 18, nothing to install.</p>
+      <div class="json">
+        <span class="gaff tl" aria-hidden="true"></span><span class="gaff br" aria-hidden="true"></span>
+        <div class="paper">
+          <p data-i18n-html="jsonNote">A first bar written <code>4 {drums: in}</code>, in the JSON form (shortened):</p>
+<pre>{
+  "number": 1,
+  "beats": 4,
+  "cues": [
+    { "roles": ["drums"], "text": "in" }
+  ],
+  "items": [
+    { "type": "chord", "root": "4",
+      "degree": 5, "quality": "" }
+  ]
+}</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="close" aria-labelledby="h-close">
+    <h2 id="h-close" data-i18n="closeTitle">Bring a chart to the next rehearsal</h2>
+    <p class="sub" data-i18n="closeSub">Start from one of the example songs, or paste a chart you already have and fix the warnings. When it plays, share it so other bands can learn from it.</p>
+    <div class="actions">
+      <a class="go" href="playground/"><span class="tape-wrap"><span class="tape"><span data-i18n="ctaPlay">Open the playground</span><svg aria-hidden="true"><use href="#arrow"/></svg></span></span></a>
+      <a class="link" href="https://github.com/ChartDown/spec/discussions/categories/show-and-tell" data-i18n="ctaShare">Share your chart</a>
+      <a class="link" href="https://github.com/ChartDown/spec/issues/new/choose" data-i18n="ctaIdea">Suggest a change</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span data-i18n-html="license">Spec, guides and examples: <a href="https://github.com/ChartDown/spec/blob/main/LICENSE-SPEC">CC0</a>. Playground: <a href="https://github.com/ChartDown/spec/blob/main/LICENSE">MIT</a>.</span>
+  <span data-i18n-html="version">ChartDown 0.7, draft · <a href="https://github.com/ChartDown/spec">github.com/ChartDown/spec</a></span>
+</footer>
+
+<script>
+"use strict";
+/* ---------- Copy (US English, Mexican Spanish) ---------- */
+const CHART = {
+en: String.raw`---
+chartdown: 0.7
+title: Open Road
+key: G
+tempo: 76
+meter: 4/4
+---
+
+## Verse
+> MD: Intimate. Vocal front and center.
+> MD drums: Sit out until the chorus.
+> MD gtr: Clean, light picking. Leave space.
+{p} 1 "Morning on the" | 4 1 | 6m 5 | 4 1
+
+## Chorus
+> MD: Open it up. Don't go all out yet.
+> MD bass: Root notes, long and warm.
+> MD keys: Pad swell, long notes.
+> MD vox: Harmonies on the second line.
+{mf} 4 "Take the open road" {drums: in} | 1 | 5 | 6m
+4 | 1 | 5sus 5 | <1>~
+`,
+es: String.raw`---
+chartdown: 0.7
+title: Camino abierto
+key: G
+tempo: 76
+meter: 4/4
+---
+
+## Verso
+> MD: Íntimo. La voz al frente.
+> MD drums: No entres hasta el coro.
+> MD gtr: Limpio, arpegio suave. Deja espacio.
+{p} 1 "Amanece en el" | 4 1 | 6m 5 | 4 1
+
+## Coro
+> MD: Ábrelo, pero sin llegar al máximo.
+> MD bass: Solo raíces, notas largas.
+> MD keys: Pad que crece, notas largas.
+> MD vox: Armonías en la segunda línea.
+{mf} 4 "Toma el camino" {drums: in} | 1 | 5 | 6m
+4 | 1 | 5sus 5 | <1>~
+`};
+
+const T = {
+en:{
+  title:"ChartDown: Markdown for band charts",
+  desc:"ChartDown is an open plain-text notation for Nashville Number System charts, with music director cues for every player.",
+  skip:"Skip to content", navLabel:"Main", navGuide:"Guide", navSpec:"Spec",
+  tagline:"Markdown for band charts",
+  lede:"Write the chart once, in plain text. <b>Every player reads their part</b>, in numbers or in any key.",
+  ctaPlay:"Open the playground", ctaGuide:"Read the 5-minute guide", ctaShare:"Share your chart", ctaIdea:"Suggest a change",
+  loading:"Taping down the chart…", failed:"The chart couldn't load here. Open the playground to see it.",
+  standOn:"Stand on your mark", readIn:"Read it in", numbers:"Numbers",
+  srcLabel:"This is the whole file. Change anything.", file:"open-road.chartdown",
+  everyone:"Band", key:"Key", tempo:"Tempo", time:"Time",
+  viewing:r=>`Showing notes for <b>${r}</b> and the whole band.`,
+  keyChange:"Key change", empty:"Add a section like ## Verse and a row of bars.",
+  warnings:"Lines the parser couldn't read:", line:"Line",
+  roles:{drums:"Drums",bass:"Bass",keys:"Keys",gtr:"Guitar",vox:"Vocals"},
+  plotTitle:"Every player gets their part",
+  plotSub:"Write <code>&gt; MD drums:</code> and only the drummer has to read it. A note with no instrument, <code>&gt; MD:</code>, is for the whole band. One chart, and nobody digs through the others' notes.",
+  front:"Front of stage", md:"Whole band",
+  plot:{
+    drums:["> MD drums: Sit out until the chorus.","{drums: in}","Sit out. Come in on the chorus."],
+    bass:["> MD bass: Root notes, long and warm.",null,"Root notes, long and warm."],
+    keys:["> MD keys: Pad swell, long notes.",null,"Pad swell, long notes."],
+    gtr:["> MD gtr: Clean, light picking.",null,"Clean, light picking. Leave space."],
+    vox:["> MD vox: Harmonies on the second line.",null,"Harmonies on the second line."],
+    md:["> MD: Open it up. Don't go all out yet.",null,"Open it up. Don't go all out yet."]
+  },
+  keysTitle:"The key changes. The chart doesn't.",
+  keysSub:"ChartDown is written in the Nashville Number System. When a different voice leads this Sunday and wants it a step up, every number stays put; each player picks the key when they read it. Need a lift for the last chorus? Write <code>@key A</code>.",
+  keysAria:"The same row in three keys", written:"Written",
+  talkTitle:"Write it the way the band talks",
+  talkSub:"Pushes, stabs, holds, repeats and cues for one pass. If you call it out at rehearsal, there is a short way to write it.",
+  labels:[["6m","Minor"],["1/3","1 with the 3rd in the bass"],["'4","Push: play it an eighth early"],["1!","Stab: short and accented"],["<1>~","Hold it until I cue"],["|: 6m | 4 :| 2x","Repeat it twice"],["@use Chorus","Play the chorus again"],["{2x drums: in}","Drums in on the second pass"],["\"Every mile\"","Lyric landmark, 8 words max"]],
+  openTitle:"Open, all the way down",
+  openSub:"ChartDown is a specification, not an app's file format. Anyone can build a reader, an editor or a converter for it, and charts stay plain text you own.",
+  facts:[["The spec","Every rule in one file, released under CC0.","SPEC.md"],["The grammar","A formal ABNF grammar for the whole format.","SPEC.md#15-grammar"],["The JSON form","One shape every parser produces, so tools can share charts.","SPEC.md#appendix-a-json-form"],["The tests","142 conformance cases, one rule each.","conformance/"]],
+  jsonNote:"A first bar written <code>4 {drums: in}</code>, in the JSON form (shortened):",
+  cmdNote:"Write a small adapter for your parser and run every case in the suite. Node.js 18, nothing to install.",
+  closeTitle:"Bring a chart to the next rehearsal",
+  closeSub:"Start from one of the example songs, or paste a chart you already have and fix the warnings. When it plays, share it so other bands can learn from it.",
+  license:'Spec, guides and examples: <a href="https://github.com/ChartDown/spec/blob/main/LICENSE-SPEC">CC0</a>. Playground: <a href="https://github.com/ChartDown/spec/blob/main/LICENSE">MIT</a>.',
+  version:'ChartDown 0.7, draft · <a href="https://github.com/ChartDown/spec">github.com/ChartDown/spec</a>',
+  guide:"docs/guide.md"
+},
+es:{
+  title:"ChartDown: Markdown para charts de banda",
+  desc:"ChartDown es una notación abierta en texto plano para charts del sistema Nashville, con indicaciones del director musical para cada músico.",
+  skip:"Saltar al contenido", navLabel:"Principal", navGuide:"Guía", navSpec:"Spec",
+  tagline:"Markdown para charts de banda",
+  lede:"Escribe el chart una vez, en texto. <b>Cada músico lee su parte</b>, en números o en el tono que quiera.",
+  ctaPlay:"Abrir el playground", ctaGuide:"Lee la guía de 5 minutos", ctaShare:"Comparte tu chart", ctaIdea:"Propón un cambio",
+  loading:"Pegando el chart…", failed:"No se pudo cargar el chart aquí. Ábrelo en el playground.",
+  standOn:"Párate en tu marca", readIn:"Léelo en", numbers:"Números",
+  srcLabel:"Este es el archivo completo. Cambia lo que quieras.", file:"camino-abierto.chartdown",
+  everyone:"Banda", key:"Tono", tempo:"Tempo", time:"Compás",
+  viewing:r=>`Mostrando las notas de <b>${r}</b> y de toda la banda.`,
+  keyChange:"Cambio de tono", empty:"Agrega una sección como ## Verso y una fila de compases.",
+  warnings:"Líneas que el parser no entendió:", line:"Línea",
+  roles:{drums:"Batería",bass:"Bajo",keys:"Teclados",gtr:"Guitarra",vox:"Voces"},
+  plotTitle:"Cada músico, su parte",
+  plotSub:"Escribe <code>&gt; MD drums:</code> y solo el baterista tiene que leerlo. Una nota sin instrumento, <code>&gt; MD:</code>, es para toda la banda. Un solo chart, y nadie busca entre las notas de los demás.",
+  front:"Frente del escenario", md:"Toda la banda",
+  plot:{
+    drums:["> MD drums: No entres hasta el coro.","{drums: in}","No toques. Entra en el coro."],
+    bass:["> MD bass: Solo raíces, notas largas.",null,"Solo raíces, notas largas."],
+    keys:["> MD keys: Pad que crece, notas largas.",null,"Pad que crece, notas largas."],
+    gtr:["> MD gtr: Limpio, arpegio suave.",null,"Limpio, arpegio suave. Deja espacio."],
+    vox:["> MD vox: Armonías en la segunda línea.",null,"Armonías en la segunda línea."],
+    md:["> MD: Ábrelo, pero sin llegar al máximo.",null,"Ábrelo, pero sin llegar al máximo."]
+  },
+  keysTitle:"El tono cambia. El chart no.",
+  keysSub:"ChartDown se escribe con el sistema de números Nashville. Si este domingo dirige otra voz y lo quiere un tono arriba, los números no se mueven: cada músico elige el tono al leerlo. ¿Quieres subir el último coro? Escribe <code>@key A</code>.",
+  keysAria:"La misma fila en tres tonos", written:"Escrito",
+  talkTitle:"Escríbelo como habla la banda",
+  talkSub:"Anticipaciones, cortes, notas sostenidas, repeticiones e indicaciones para una sola pasada. Si lo dices en el ensayo, hay una forma corta de escribirlo.",
+  labels:[["6m","Menor"],["1/3","1 con la tercera en el bajo"],["'4","Anticipa: una corchea antes"],["1!","Corte: corto y acentuado"],["<1>~","Sostenlo hasta mi señal"],["|: 6m | 4 :| 2x","Repítelo dos veces"],["@use Coro","Toca el coro otra vez"],["{2x drums: in}","Entra la batería en la segunda pasada"],["\"Cada kilómetro\"","Referencia de letra, máximo 8 palabras"]],
+  openTitle:"Abierto de punta a punta",
+  openSub:"ChartDown es una especificación, no el formato de una app. Cualquiera puede hacer un lector, un editor o un convertidor, y tus charts siguen siendo texto que es tuyo.",
+  facts:[["La spec","Todas las reglas en un archivo, con licencia CC0.","SPEC.md"],["La gramática","Una gramática formal en ABNF para todo el formato.","SPEC.md#15-grammar"],["El JSON","Una forma que produce todo parser, para que las herramientas compartan charts.","SPEC.md#appendix-a-json-form"],["Las pruebas","142 casos de conformidad, una regla cada uno.","conformance/"]],
+  jsonNote:"Un primer compás escrito <code>4 {drums: in}</code>, en la forma JSON (abreviado):",
+  cmdNote:"Escribe un adaptador pequeño para tu parser y corre todos los casos. Node.js 18, sin instalar nada.",
+  closeTitle:"Lleva un chart al próximo ensayo",
+  closeSub:"Empieza con una de las canciones de ejemplo, o pega un chart que ya tengas y corrige los avisos. Cuando suene bien, compártelo para que otras bandas aprendan.",
+  license:'Spec, guías y ejemplos: <a href="https://github.com/ChartDown/spec/blob/main/LICENSE-SPEC">CC0</a>. Playground: <a href="https://github.com/ChartDown/spec/blob/main/LICENSE">MIT</a>.',
+  version:'ChartDown 0.7, borrador · <a href="https://github.com/ChartDown/spec">github.com/ChartDown/spec</a>',
+  guide:"docs/guia.md"
+}};
+
+const REPO = "https://github.com/ChartDown/spec/blob/main/";
+const ROLES = ["drums","bass","keys","gtr","vox"];
+const KEYS = ["G","A","Bb","C","D","E"];
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const flat = s => s;
+const store = {
+  get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
+  set(k, v){ try { localStorage.setItem(k, v); } catch(e){} }
+};
+
+const ui = {lang:"en", role:"everyone", key:null, edited:false};
+let pg = null;
+
+/* ---------- The reference parser, read from the playground ---------- */
+async function loadParser(){
+  const html = await (await fetch("playground/index.html")).text();
+  const a = html.indexOf('"use strict";'), b = html.indexOf("const ed = document");
+  if(a < 0 || b < 0) throw new Error("parser not found");
+  return new Function(html.slice(a, b) + "\nreturn {parse, showRoot, showQuality, rowCtx, state};")();
+}
+
+/* ---------- The set list sheet ---------- */
+const spike = (r, extra = "") => `<svg ${extra} style="color:var(--${r})" aria-hidden="true"><use href="#x"/></svg>`;
+const whoTag = roles => roles.includes("all")
+  ? `<span class="who all">MD</span>`
+  : roles.map(r => `<span class="who" style="--c:var(--${r})"><i></i>${esc(T[ui.lang].roles[r] || r)}</span>`).join("");
+const visible = roles => ui.role === "everyone" || roles.includes("all") || roles.includes(ui.role);
+const fermata = `<svg class="fm" viewBox="0 0 20 11" aria-hidden="true"><path d="M2 10C2 4 6 1.5 10 1.5S18 4 18 10" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><circle cx="10" cy="8.4" r="1.9" fill="currentColor"/></svg>`;
+
+function chord(c, ctx){
+  if(c.t === "nc") return `<span class="ch" style="flex:${c.beats} 1 0">N.C.</span>`;
+  if(c.t === "rep") return `<span class="ch">%</span>`;
+  if(c.t === "tie") return `<span class="ch">=</span>`;
+  const root = x => esc(flat(pg.showRoot(x, ctx.mode, ctx.src, ctx.disp, ctx.minor)));
+  if(c.t === "riff") return `<span class="ch" style="flex:${c.beats} 1 0">R[ ${c.notes.map(n => n.rest ? "x" : root(n.root)).join(" ")} ]</span>`;
+  const q = pg.showQuality(c.q, ctx.mode);
+  return `<span class="ch${c.hold ? " hold" : ""}" style="flex:${c.beats} 1 0">` +
+    (c.ferm ? fermata : "") +
+    (c.push ? `<span class="pu" aria-label="push">${c.push === 2 ? "‹‹" : "‹"}</span>` : "") +
+    root(c.root) + (q ? `<sup>${esc(flat(q))}</sup>` : "") +
+    (c.bass ? `<span class="bs">/${root(c.bass)}</span>` : "") +
+    (c.stab ? `<span class="st" aria-label="stab">^</span>` : "") + `</span>`;
+}
+
+function bar(b, ctx, fresh){
+  const cues = b.cues.filter(c => visible(c.roles)).map(c => {
+    const r = c.roles.find(x => x !== "all");
+    const who = r ? (T[ui.lang].roles[r] || r) + ": " : "";
+    return `<span class="cue${fresh ? " laid" : ""}"${r ? ` data-r="${r}" style="--c:var(--${r})"` : ""}>${esc(who + c.text)}</span>`;
+  }).join("");
+  const dyn = b.dyn ? `<span class="dyn">${esc(b.dyn)}</span>` : "";
+  return `<div class="bar${b.rs ? " rs" : ""}${b.re ? " re" : ""}">` +
+    (cues || dyn ? `<div class="tags">${dyn}${cues}</div>` : "") +
+    `<div class="chords">${b.items.map(it => chord(it, ctx)).join("")}</div>` +
+    (b.lyric ? `<span class="lyr">“${esc(b.lyric)}”</span>` : "") + `</div>`;
+}
+
+function renderSheet(change){
+  const L = T[ui.lang], sheet = $("#sheet");
+  if(!pg){ return; }
+  const doc = pg.parse($("#src").value);
+  const src = doc.keyRoot, m = doc.minor ? "m" : "";
+  pg.state.mode = ui.key ? "letters" : "numbers";
+  const disp = ui.key || src;
+  let h = `<div class="sh-head"><p class="sh-title">${esc(doc.meta.title || "Untitled")}</p><div class="readouts">` +
+    `<span>${L.key}<b>${esc(flat(disp + m))}</b></span>` +
+    (doc.meta.tempo ? `<span>${L.tempo}<b>${esc(doc.meta.tempo)}</b></span>` : "") +
+    `<span>${L.time}<b>${esc(doc.meta.meter || "4/4")}</b></span></div></div>`;
+  if(ui.role !== "everyone") h += `<p class="viewing">${L.viewing(esc(L.roles[ui.role]))}</p>`;
+  if(!doc.sections.length) h += `<p class="sh-empty">${esc(L.empty)}</p>`;
+  const roleFresh = change === "role";
+  doc.sections.forEach(s => {
+    h += `<section class="cs"><h3 class="cs-name">${esc(s.name)}</h3>`;
+    s.notes.filter(n => visible(n.roles)).forEach(n => {
+      const fresh = roleFresh && !n.roles.includes("all");
+      h += `<p class="note${fresh ? " laid" : ""}">${n.md ? whoTag(n.roles) : ""}<span>${esc(n.text)}</span></p>`;
+    });
+    s.rows.forEach(r => {
+      const ctx = pg.rowCtx(r, src, disp);
+      if(r.keyLabel) h += `<p class="keychg">${L.keyChange}: ${esc(flat(ui.key ? ctx.disp + (r.minor ? "m" : "") : r.keyLabel))}</p>`;
+      h += `<div class="row" style="grid-template-columns:repeat(${r.bars.length},minmax(0,1fr))">` + r.bars.map(b => bar(b, ctx, roleFresh)).join("") + `</div>`;
+    });
+    h += `</section>`;
+  });
+  if(doc.warnings.length) h += `<div class="sh-warn"><p>${esc(L.warnings)}</p><ul>` +
+    doc.warnings.map(w => `<li>${L.line} ${w.line}: ${esc(w.msg)}</li>`).join("") + `</ul></div>`;
+  sheet.classList.toggle("swap", change === "key");
+  sheet.innerHTML = h;
+}
+
+/* ---------- Controls ---------- */
+function renderControls(){
+  const L = T[ui.lang];
+  $("#spikes").innerHTML = ["everyone", ...ROLES].map(r =>
+    `<button type="button" class="spike" data-role="${r}" aria-pressed="${ui.role === r}">` +
+    spike(r === "everyone" ? "all" : r) + `<span>${esc(r === "everyone" ? L.everyone : L.roles[r])}</span>` +
+    `<svg class="ring" aria-hidden="true"><use href="#ring"/></svg></button>`).join("");
+  const ring = `<svg class="ring" aria-hidden="true"><use href="#ring"/></svg>`;
+  $("#keys").innerHTML = `<button type="button" class="key num" data-key="" aria-pressed="${!ui.key}">${L.numbers}${ring}</button>` +
+    KEYS.map(k => `<button type="button" class="key" data-key="${k}" aria-pressed="${ui.key === k}">${flat(k)}${ring}</button>`).join("");
+}
+$("#spikes").addEventListener("click", e => {
+  const b = e.target.closest("[data-role]"); if(!b) return;
+  ui.role = b.dataset.role; renderControls(); renderSheet("role");
+  $(`[data-role="${ui.role}"]`).focus();
+});
+$("#keys").addEventListener("click", e => {
+  const b = e.target.closest("[data-key]"); if(!b) return;
+  ui.key = b.dataset.key || null; renderControls(); renderSheet("key");
+  $(`[data-key="${ui.key || ""}"]`).focus();
+});
+$("#src").addEventListener("input", () => { ui.edited = true; renderSheet(); });
+
+/* ---------- Static sections ---------- */
+function renderStatic(){
+  const L = T[ui.lang];
+  $("#plot").innerHTML = [...ROLES, "md"].map(r => {
+    const [line, cue, said] = L.plot[r];
+    return `<div class="pos ${r}"><span class="mark">${spike(r === "md" ? "all" : r)}${esc(r === "md" ? L.md : L.roles[r])}</span>` +
+      `<span class="tape-wrap"><span class="tape"><code>${esc(line)}${cue ? "<br>" + esc(cue) : ""}</code>${esc(said)}</span></span></div>`;
+  }).join("") + `<span class="edge">${esc(L.front)}</span>`;
+  $("#labels").innerHTML = L.labels.map(([c, d]) => `<li><code>${esc(c)}</code><span>${esc(d)}</span></li>`).join("");
+  $("#facts").innerHTML = L.facts.map(([k, v, p]) =>
+    `<li><b><a href="${REPO.replace("blob/main/", p.endsWith("/") ? "tree/main/" : "blob/main/")}${p}">${esc(k)}</a></b><span>${esc(v)}</span></li>`).join("");
+}
+
+/* ---------- Language ---------- */
+function setLang(lang, init){
+  ui.lang = lang;
+  const L = T[lang];
+  document.documentElement.lang = lang === "es" ? "es-MX" : "en-US";
+  document.title = L.title;
+  document.querySelector('meta[name="description"]').content = L.desc;
+  document.querySelectorAll("[data-i18n]").forEach(el => { el.textContent = L[el.dataset.i18n]; });
+  document.querySelectorAll("[data-i18n-html]").forEach(el => { el.innerHTML = L[el.dataset.i18nHtml]; });
+  document.querySelectorAll("[data-i18n-attr]").forEach(el => {
+    const [attr, key] = el.dataset.i18nAttr.split(":"); el.setAttribute(attr, L[key]);
+  });
+  document.querySelectorAll("[data-guide]").forEach(a => { a.href = REPO + L.guide; });
+  document.querySelectorAll("[data-lang]").forEach(b => b.setAttribute("aria-pressed", b.dataset.lang === lang));
+  document.querySelector(".source-label code").textContent = L.file;
+  if(!ui.edited || init) $("#src").value = CHART[lang];
+  renderControls(); renderStatic(); renderSheet();
+  if(!init){
+    store.set("chartdown-lang", lang);
+    const u = new URL(location.href); u.searchParams.set("lang", lang); history.replaceState(null, "", u);
+  }
+}
+document.querySelector(".lang").addEventListener("click", e => {
+  const b = e.target.closest("[data-lang]"); if(b && b.dataset.lang !== ui.lang) setLang(b.dataset.lang);
+});
+
+const asked = new URLSearchParams(location.search).get("lang");
+const first = ["en","es"].includes(asked) ? asked
+  : store.get("chartdown-lang") || ((navigator.language || "").toLowerCase().startsWith("es") ? "es" : "en");
+setLang(first, true);
+loadParser().then(p => { pg = p; renderSheet(); })
+  .catch(() => { $("#sheet").innerHTML = `<p class="sh-empty">${esc(T[ui.lang].failed)}</p>`; });
+</script>
+</body>
+</html>
