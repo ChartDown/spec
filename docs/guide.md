@@ -7,7 +7,7 @@ For every rule, see the [specification](../SPEC.md).
 
 ```
 ---
-chartdown: 0.6
+chartdown: 0.7
 title: Open Road
 key: G
 tempo: 76
@@ -17,6 +17,10 @@ meter: 4/4
 
 `key` is the home key. In the Nashville Number System, `1` is that key, so in G,
 `1` = G, `4` = C, `5` = D and `6m` = Em. For a minor key write `key: Em`.
+
+In a minor key, `1m` is the tonic chord. If your band numbers minor songs from
+the relative major, so the tonic is `6m`, add `numbering: 6m` to the header.
+Both charts mean the same chords.
 
 ## 2. Add sections and bars
 
@@ -36,7 +40,8 @@ For an uneven split use beats: `1:3 4:1`.
 |---|---|
 | `1` `4` `5` | Major chords |
 | `6m` or `6-` | Minor |
-| `5sus` `4add9` `1maj7` | Other qualities |
+| `5sus` `4add9` `1maj7` `2m7b5` | Other qualities |
+| `1M7` `7ø` `5+` `5(b9)` | Common spellings work too: they read as `1maj7`, `7m7b5`, `5aug`, `5b9` |
 | `1/3` | Slash chord (1 over the 3rd in the bass) |
 | `b7` `#4` | Chords outside the key |
 | `G` `Em` `C/E` | Letters work too |

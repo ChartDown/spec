@@ -7,7 +7,7 @@ Las reglas completas están en la [especificación](../SPEC.md) (en inglés).
 
 ```
 ---
-chartdown: 0.6
+chartdown: 0.7
 title: Open Road
 key: G
 tempo: 76
@@ -17,6 +17,10 @@ meter: 4/4
 
 `key` es el tono base. En el sistema Nashville, `1` es ese tono: en G, `1` = G,
 `4` = C, `5` = D y `6m` = Em. Para un tono menor escribe `key: Em`.
+
+En un tono menor, `1m` es el acorde de tónica. Si tu banda numera las canciones
+menores desde la relativa mayor, con la tónica en `6m`, agrega `numbering: 6m`
+al encabezado. Los dos charts dicen los mismos acordes.
 
 ## 2. Agrega secciones y compases
 
@@ -36,7 +40,8 @@ Para repartir distinto usa tiempos: `1:3 4:1`.
 |---|---|
 | `1` `4` `5` | Acordes mayores |
 | `6m` o `6-` | Menor |
-| `5sus` `4add9` `1maj7` | Otras calidades |
+| `5sus` `4add9` `1maj7` `2m7b5` | Otras calidades |
+| `1M7` `7ø` `5+` `5(b9)` | También valen las formas comunes: se leen `1maj7`, `7m7b5`, `5aug`, `5b9` |
 | `1/3` | Acorde con bajo (1 con la tercera en el bajo) |
 | `b7` `#4` | Acordes fuera del tono |
 | `G` `Em` `C/E` | También puedes usar letras |

@@ -1,6 +1,6 @@
 # ChartDown Specification
 
-**Version 0.6 (draft)** · File extension: `.chartdown` · Encoding: UTF-8
+**Version 0.7 (draft)** · File extension: `.chartdown` · Encoding: UTF-8
 
 This specification is released under CC0 1.0 Universal. Anyone may implement,
 extend, or redistribute it, with no permission needed.
@@ -49,7 +49,7 @@ Each line is `name: value`. Names are case-insensitive.
 
 | Name | Meaning | Example |
 |---|---|---|
-| `chartdown` | Version of this spec the file was written for | `0.6` |
+| `chartdown` | Version of this spec the file was written for | `0.7` |
 | `instruments` | Extra instrument roles used in this file (see 4.1) | `cello, banjo` |
 | `title` | Song title | `Open Road` |
 | `artists` | Writers or artists | `A, B` |
@@ -57,6 +57,7 @@ Each line is `name: value`. Names are case-insensitive.
 | `tempo` | Beats per minute at the start (see 11.3 for changes) | `72` |
 | `meter` | Time signature at the start (see 11.2 for changes) | `4/4`, `3/4`, `6/8`, `12/8` |
 | `feel` | Groove or style, free text | `Slow shuffle` |
+| `numbering` | How numbers count in a minor key: `1m` (default) or `6m` | `6m` |
 
 Unknown names are kept and may be shown by a renderer. If `key` is missing,
 `C` is assumed. If `meter` is missing, `4/4` is assumed.
@@ -70,6 +71,14 @@ no `chartdown` line is read as the latest version the parser knows.
 
 **Minor keys.** In a minor key, `1` is the tonic. The tonic chord is `1m` and
 the relative major is `b3`. Example: in `key: Em`, `1m` is Em and `b3` is G.
+
+**`numbering: 6m`.** Some players number a minor-key song from its relative
+major, so the tonic chord is `6m`. A file that says `numbering: 6m` counts
+numbers that way in every minor key, including keys set with `@key`: in Em,
+`6m` is Em, `1` is G, `4` is C and `3` is B. Major keys are not affected.
+Letters mean the same in both, and so does the JSON form (Appendix A), which
+gives each chord's distance from the tonic. Any other value is a warning, and
+`1m` is used.
 
 ## 4. Sections and notes
 
@@ -210,18 +219,43 @@ A chord is `root` + optional `quality` + optional `/bass`.
 
 A file may mix numbers and letters. Numbers are relative to the current key.
 
-**Quality** (written directly after the root)
+**Quality** (written directly after the root, up to `/` or the end of the chord)
 
-| Text | Meaning |
+A quality is a base, an extension, alterations, `sus` and additions, in that
+order, each optional:
+
+| Part | Canonical text |
 |---|---|
-| (none) | major |
-| `m` or `-` | minor (`-` is normalized to `m`) |
-| `7`, `maj7`, `m7` | sevenths |
-| `sus`, `sus4`, `sus2` | suspended |
-| `add9`, `6`, `9`, `dim`, `aug` | other qualities |
+| Base | `m` (minor), `dim`, `aug` |
+| Extension | `6`, `7`, `9`, `11`, `13`, `69`, `maj7`, `maj9`, `maj11`, `maj13` |
+| Alterations | `b5`, `#5`, `b9`, `#9`, `b11`, `#11`, `b13`, `#13`, and `alt` |
+| Suspension | `sus` (a fourth), `sus2` |
+| Additions | `add2`, `add4`, `add9`, `add11`, `add13` |
 
-Qualities are passed through as written. A renderer should not reject
-qualities it does not recognize.
+`5` alone is a power chord. Examples: `m7`, `maj7`, `m7b5`, `dim7`, `7#9`,
+`9sus`, `madd9`, `mmaj7`, `13#11`.
+
+**Aliases.** Before a quality is read, these spellings take their canonical
+form:
+
+| Written | Canonical |
+|---|---|
+| `-`, `min`, `mi` at the start | `m` (`-7` is `m7`) |
+| `ø`, `ø7` | `m7b5` |
+| `°`, `o` / `°7`, `o7` | `dim` / `dim7` |
+| `+` at the start | `aug` |
+| `Δ` alone | `maj7` |
+| `Δ`, `M` or `ma` before a number | `maj` (`M7` is `maj7`, `Δ9` is `maj9`) |
+| `sus4` | `sus` |
+| `(` and `)` | dropped (`7(b9)` is `7b9`) |
+
+A parser SHOULD give a quality in its canonical form, in the JSON form too. A
+quality that does not fit this vocabulary passes through as written, with no
+warning, and a renderer shows it as written.
+
+**Reading roots.** A number root is one digit, so in `57` the root is `5` and
+the quality is `7`. After a letter, `b` or `#` belongs to the root, so `Bb9` is
+Bb with a `9`, not B with a `b9`.
 
 **Slash chords:** `1/3`, `G/B`. The bass note uses the same number or letter
 rules as the root.
@@ -427,7 +461,9 @@ row onward, and stays in effect across sections until the next `@tempo`. For gra
 
 A renderer SHOULD be able to show a chart in either style.
 
-1. Convert every chord to a scale degree relative to the current key.
+1. Convert every chord to a scale degree relative to the current key. With
+   `numbering: 6m`, numbers in a minor key count from its relative major (see
+   3), and letters shown as numbers use the same count.
 2. To show letters, apply the display key (the written key unless transposed).
    A transposed display moves key changes by the same interval.
 3. Riff notes (see 7.1) convert the same way as chord roots.
@@ -462,36 +498,97 @@ that limit. Users are responsible for respecting the rights of
 songwriters and publishers, and for checking their own license (for example
 CCLI) before copying lyrics into any tool.
 
-## 15. Grammar (informal)
+## 15. Grammar
+
+This grammar uses ABNF (RFC 5234). Literal strings in quotes are
+case-insensitive in ABNF; here they are **case-sensitive** unless a rule says
+otherwise. A parser reads a file line by line, and trims spaces and tabs at
+both ends of each line first.
+
+**Lines**
 
 ```
-file      = [ header ] { section }
-header    = "---" NL { key ":" value NL } "---" NL
-section   = "##" name NL { note | use | keychg | meterchg | tempochg | row | comment }
-note      = ">" [ "MD" [ passes ] [ roles ] ":" ] text NL
-passes    = N "x" { "," N "x" }
-roles     = role { ("," | "/" | "&" | " ") role }
-role      = standard role name | id declared in the instruments header
-use       = "@use" name NL
-keychg    = "@key" KEY NL
-meterchg  = "@meter" N "/" N NL
-tempochg  = "@tempo" N NL
-row       = [ "|:" | "|" ] bar { "|" bar } [ ":|" [ N "x" | "x" N ] | "|" ] NL
-bar       = [ pickup | meter ] { ending | cue | lyric | token }
-pickup    = "[p:" beats "]"
-meter     = "[m:" N "/" N "]"
-ending    = "[" N { ("," | "-") N } "]"
-cue       = "{" [ passes ] [ roles ] ":" text "}" | "{" text "}"
-            (dynamics, tempo marks and navigation marks are reserved words)
-lyric     = '"' text '"'
-token     = "%" | "=" | rest | riff | chord-tok
-rest      = "x" [ ":" beats ]
-riff      = "R[" riff-note { riff-note } "]" [ ":" beats ]
-riff-note = ( root | "x" ) [ ":" beats ]
-chord-tok = [ "''" | "'" ] [ "<" ] chord [ ">" ] [ ":" beats ] { "!" | "~" }
-chord     = root [ quality ] [ "/" root ]
-root      = [ "b" | "#" ] DIGIT(1-7)  |  LETTER(A-G) [ "b" | "#" ]
+file       = [ header ] *line
+header     = "---" NL *( field NL ) ( "---" NL / &section )
+field      = name *WSP ":" *WSP value / blank
+name       = ( ALPHA / "_" ) *( ALPHA / DIGIT / "_" / "-" )   ; any case
+line       = ( blank / comment / section / note / directive / row ) NL
+blank      = ""
+comment    = "//" *CHAR            ; only at the start of a line
+section    = "##" *"#" *WSP text
+note       = ">" [ " " ] ( md-note / text )
+md-note    = "MD" [ 1*WSP [ passes *WSP ] [ roles ] ] *WSP ":" *WSP text   ; MD in any case
+directive  = "@use" 1*WSP text                    ; directive names in any case
+           / "@key" 1*WSP letter-root [ "m" ]
+           / "@meter" 1*WSP 1*DIGIT *WSP "/" *WSP 1*DIGIT
+           / "@tempo" 1*WSP number
 ```
+
+Directive names are read in any case (`@Key`, `@TEMPO`). A line that starts
+with `@` and is not one of these directives, or a directive with a value it
+cannot read, is a warning (see 13). Any other line is a row, and a row before the first section is a
+warning.
+
+**Rows and bars**
+
+```
+row        = [ "|:" / "|" ] bar *( "|" bar ) [ ":|" *WSP [ count ] / "|" ]
+count      = 1*DIGIT *WSP "x" / "x" *WSP 1*DIGIT         ; x in any case
+bar        = [ pickup ] [ meter ] [ ending ] *( token / cue / lyric )
+pickup     = "[p:" number "]"
+meter      = "[m:" 1*DIGIT *WSP "/" *WSP 1*DIGIT "]"
+ending     = "[" 1*DIGIT *( ( "," / "-" ) 1*DIGIT ) "]"
+cue        = "{" *WSP cue-body *WSP "}"
+lyric      = DQUOTE *( %x20-21 / %x23-7E / UTF8-non-ascii ) DQUOTE
+```
+
+- A repeat count only follows `:|`. Elsewhere, `x3` is a token that cannot be
+  read (a warning).
+- Pickup, meter and ending open their bar, in that order. Later in the bar
+  they cannot be read.
+- Cues and lyric landmarks can sit anywhere in a bar. Tokens are separated by
+  spaces, and a riff `R[ ... ]` is one token.
+- An empty bar between two `|` is ignored.
+
+**Tokens and chords**
+
+```
+token      = "%" / "=" / rest / riff / chord-tok
+rest       = ( "x" / "X" ) [ ":" number ]
+riff       = "R[" *WSP riff-note *( 1*WSP riff-note ) *WSP "]" [ ":" number ]
+riff-note  = ( root / "x" ) [ ":" number ]
+chord-tok  = [ "''" / "'" ] ( chord / "<" chord ">" ) [ ":" number ] *( "!" / "~" )
+chord      = root quality [ "/" root ]
+root       = number-root / letter-root
+number-root = [ "b" / "#" ] %x31-37               ; one digit, 1 to 7
+letter-root = %x41-47 [ "b" / "#" ]               ; A to G, uppercase
+quality    = *( %x21-2E / %x30-7E / UTF8-non-ascii ) ; anything up to "/", read as in 6
+number     = 1*DIGIT [ "." 1*DIGIT ]
+```
+
+- After a letter, `b` or `#` belongs to the root (see 6).
+- A token that fits none of these rules is a warning, and the rest of the bar
+  is still read.
+
+**Cues**
+
+```
+cue-body   = reserved / [ passes *WSP ] [ roles *WSP ":" *WSP ] text
+passes     = 1*DIGIT "x" *( *WSP "," *WSP 1*DIGIT "x" )
+roles      = role *( ( "," / "/" / "&" / 1*WSP ) role )
+role       = standard role name (see 4.1) / id declared in the instruments header
+```
+
+A cue whose text, compared without case, dots or spaces, is one of these words
+is a reserved word, not a cue:
+
+| Kind | Words |
+|---|---|
+| Dynamics (9) | `pp`, `p`, `mp`, `mf`, `f`, `ff`, `cresc`, `decresc` |
+| Tempo marks (9) | `rit`, `accel`, `a tempo` |
+| Navigation (10.1) | `segno`, `coda`, `to coda`, `fine`, `D.S.`, `D.S. al Coda`, `D.S. al Fine`, `D.C.`, `D.C. al Coda`, `D.C. al Fine` |
+
+So `{D.S. AL CODA}`, `{ds al coda}` and `{D.S.al Coda}` are the same mark.
 
 ## 16. Roadmap
 
@@ -504,6 +601,10 @@ Ideas under consideration, not yet part of the format:
 
 ## 17. Changelog
 
+- **0.7** Chord quality vocabulary with canonical forms and aliases (6). The
+  `numbering: 6m` header for minor keys counted from the relative major (3).
+  A formal grammar (15). Directive names in any case. JSON form: `numbering`
+  and `rows[].minor`.
 - **0.6 clarifications** Conformance suite (Appendix B). Rules that were left
   open: a header with no closing line (3), unknown versions (3), unknown names
   in cues and role names in the JSON form (4.1), `@use` with its own rows
@@ -536,10 +637,11 @@ know.
 
 ```json
 {
-  "chartdown": "0.6",
+  "chartdown": "0.7",
   "meta": { "title": "Open Road", "key": "G", "tempo": "76" },
   "key": "G",
   "minor": false,
+  "numbering": "1m",
   "sections": [
     {
       "name": "Chorus",
@@ -549,7 +651,7 @@ know.
       ],
       "rows": [
         {
-          "key": "G", "meter": "4/4", "tempo": 76,
+          "key": "G", "minor": false, "meter": "4/4", "tempo": 76,
           "bars": [
             {
               "number": 1, "beats": 4, "pickup": false, "meter": null,
@@ -578,7 +680,8 @@ know.
 |---|---|
 | `meta` | Every header field, as written (strings) |
 | `key`, `minor` | Home key root and whether it is minor |
-| `rows[].key`, `meter`, `tempo` | Key, meter and tempo in effect for the row (after `@key`, `@meter`, `@tempo`) |
+| `numbering` | `1m` or `6m`, from the header (see 3) |
+| `rows[].key`, `minor`, `meter`, `tempo` | Key, minor or not, meter and tempo in effect for the row (after `@key`, `@meter`, `@tempo`) |
 | `bars[].number` | Bar number in its section: 0 for a pickup, then 1, 2, ... |
 | `bars[].beats` | Length of the bar in beats (see 5.1, 5.3, 11.2) |
 | `bars[].meter` | The one-bar meter from `[m:N/D]`, or `null` |
@@ -588,7 +691,8 @@ know.
 | `cues[].passes`, `notes[].passes` | Passes from 9.1, empty for every pass |
 | `items[].type` | `chord`, `rest` (`x`), `riff`, `repeat` (`%`) or `tie` (`=`) |
 | `root`, `bass` | As written (number or letter) |
-| `degree`, `bassDegree` | Semitones above the row's key, 0 to 11 (see 12) |
+| `quality` | In its canonical form (see 6), or as written when it is not in the vocabulary |
+| `degree`, `bassDegree` | Semitones above the row's tonic, 0 to 11 (see 12), whatever the numbering |
 | `beats` | Share of the bar, after the rules in 5.1 |
 | `push` | 0 none, 1 eighth (`'`), 2 sixteenth (`''`) |
 | riff `notes` | `{ "root", "degree", "beats" }`, or `{ "rest": true, "beats" }` |

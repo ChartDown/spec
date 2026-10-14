@@ -1,5 +1,5 @@
 ---
-chartdown: 0.6
+chartdown: 0.7
 title: Syntax Tour
 key: D
 tempo: 90
@@ -8,7 +8,7 @@ feel: Straight
 instruments: cello
 ---
 
-// Every feature of ChartDown 0.6, one section each.
+// Every feature of ChartDown 0.7, one section each.
 // Each section name starts with its section number in SPEC.md.
 // Lines that start with // are comments and are not shown.
 
@@ -40,8 +40,10 @@ D | G | A | D
 
 ## 6 · Chords
 > Major, minor, sevenths, suspended, other qualities, slash chords, outside the key.
+> Aliases take their canonical form: M7 is maj7, ø is m7b5, + is aug.
 1 | 6m 6- | 5sus 5 | 1maj7 4add9
 2m7 5/7 | 1/3 4 | b7 #4dim | Em C/E
+4M7 7ø | 37b9 6m | 5+ 4(add9) | 15 b75
 
 ## 7 · Rests and repeat signs
 > x is no chord. x:3 rests three beats. % repeats the bar. = ties the chord over.
