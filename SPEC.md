@@ -61,6 +61,13 @@ Each line is `name: value`. Names are case-insensitive.
 Unknown names are kept and may be shown by a renderer. If `key` is missing,
 `C` is assumed. If `meter` is missing, `4/4` is assumed.
 
+If the closing `---` line is missing, the header ends at the first section line
+(`##`), with a warning on line 1.
+
+**Versions.** A parser SHOULD warn, on the `chartdown` line, when the file
+declares a version it does not read, and then read the file anyway. A file with
+no `chartdown` line is read as the latest version the parser knows.
+
 **Minor keys.** In a minor key, `1` is the tonic. The tonic chord is `1m` and
 the relative major is `b3`. Example: in `key: Em`, `1m` is Em and `b3` is G.
 
@@ -105,7 +112,11 @@ and `-`). A declared id works everywhere a role does: `> MD cello: ...` and
 better label.
 
 An undeclared, unknown name is a warning, and the note is shown to everyone so
-nothing is lost.
+nothing is lost. The same goes for a cue (see 9): `{kazoo: in}` is a warning,
+and the whole text `kazoo: in` becomes a cue for everyone.
+
+In the JSON form (Appendix A), a role is written with its name in the Role
+column (`everyone`, `guitar`, `vocals`, ...), and a custom role with its id.
 
 ### 4.2 Views (what players read)
 
@@ -155,7 +166,12 @@ evenly. This also applies to rests (`x`) and riffs (see 7 and 7.1).
 
 `@use Name` as the only content line of a section copies the rows of the
 earlier section called `Name`. The new section keeps its own notes. If the key
-changed since the original, the copied rows use the current key.
+changed since the original, the copied rows use the current key. They keep the
+meter and tempo they had in the original.
+
+A section with `@use` and rows of its own keeps its rows, with a warning on the
+`@use` line. A `@use` of a name with no earlier section is a warning on that
+line.
 
 ```
 ## Chorus 2
@@ -387,7 +403,7 @@ Add `m` for a minor key: `@key Am`.
 ### 11.2 Meter
 
 `@meter N/D` on its own line changes the meter from the next row onward, like
-`@key`. For a single bar in another meter, start that bar with `[m:N/D]`. The
+`@key`, and stays in effect across sections until the next `@meter`. For a single bar in another meter, start that bar with `[m:N/D]`. The
 bar after it goes back to the meter in effect.
 
 ```
@@ -404,7 +420,7 @@ A pickup (see 5.3) counts in the meter in effect, and a bar MUST NOT have both
 ### 11.3 Tempo
 
 `@tempo N` on its own line changes the tempo (beats per minute) from the next
-row onward. For gradual changes use the tempo marks `{rit}`, `{accel}` and
+row onward, and stays in effect across sections until the next `@tempo`. For gradual changes use the tempo marks `{rit}`, `{accel}` and
 `{a tempo}` (see 9). Renderers SHOULD mark tempo changes.
 
 ## 12. Numbers and letters
@@ -415,8 +431,14 @@ A renderer SHOULD be able to show a chart in either style.
 2. To show letters, apply the display key (the written key unless transposed).
    A transposed display moves key changes by the same interval.
 3. Riff notes (see 7.1) convert the same way as chord roots.
-4. Number display uses `-` for minor (`6-`). Letter display uses `m` (`Em`).
+4. Number display uses `-` for minor (`6-`), in every minor quality (`6m7`
+   shows as `6-7`). Qualities that start with `maj` are not minor. Letter
+   display uses `m` (`Em`).
 5. Use flat spellings in keys of F, Bb, Eb, Ab, Db, Gb. Use sharps otherwise.
+   A minor key spells like its relative major: Dm like F (flats), Em like G
+   (sharps).
+6. A transposed key takes its common name. Major: C, Db, D, Eb, E, F, F#, G,
+   Ab, A, Bb, B. Minor: Cm, C#m, Dm, Ebm, Em, Fm, F#m, Gm, G#m, Am, Bbm, Bm.
 
 Degree to semitone (major scale): 1=0, 2=2, 3=4, 4=5, 5=7, 6=9, 7=11.
 `b` lowers by one semitone, `#` raises by one.
@@ -428,6 +450,9 @@ A parser MUST NOT stop on bad input. It SHOULD:
 - skip what it cannot read,
 - report a warning with the line number,
 - keep rendering everything else.
+
+A warning carries the line it comes from (0 only when no line applies). The
+order of warnings is not significant, and their wording is up to each parser.
 
 ## 14. Lyrics and rights
 
@@ -474,13 +499,17 @@ Ideas under consideration, not yet part of the format:
 
 - **Layers:** a separate file of MD notes that sits on top of a chart without
   changing it, anchored to section names and bar numbers.
-- **Conformance suite:** example files with the JSON form (Appendix A) that a
-  correct parser produces for each.
 - Rehearsal marks, a `capo` header, hairpins (crescendo and decrescendo
   wedges).
 
 ## 17. Changelog
 
+- **0.6 clarifications** Conformance suite (Appendix B). Rules that were left
+  open: a header with no closing line (3), unknown versions (3), unknown names
+  in cues and role names in the JSON form (4.1), `@use` with its own rows
+  (5.2), meter and tempo across sections (11.2, 11.3), minor qualities in
+  number display, minor-key spelling and transposed key names (12), warning
+  lines and order (13). Charts read the same as before.
 - **0.6** Meter and tempo changes (`@meter`, `[m:N/D]`, `@tempo`, 11.2 and
   11.3), tempo marks (`{rit}`, `{accel}`, `{a tempo}`), cues and MD notes for
   one pass (`2x`, 9.1), repeat counts written `:| 3x` (`x3` still works),
@@ -565,3 +594,15 @@ know.
 | riff `notes` | `{ "root", "degree", "beats" }`, or `{ "rest": true, "beats" }` |
 | `playOrder` | Bars in the order they are played, after repeats, endings and navigation (see 10 and 10.1). `section` is an index into `sections`, `bar` is a bar number |
 | `warnings` | Every warning, with its line number (0 when it has none) |
+
+## Appendix B. Conformance
+
+The `conformance/` folder holds the official test cases: one file per section
+of this spec, each case a short chart and what a correct parser makes of it.
+A case checks the JSON form (Appendix A) of the chart. Cases for section 12
+check the chords as shown in numbers or letters, and apply only to renderers.
+
+A parser conforms to this version when it passes every case.
+`conformance/README.md` describes the format and how to run the cases against
+any implementation.
+

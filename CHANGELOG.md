@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.6 clarifications
+- Conformance suite: 123 cases in `conformance/`, one file per spec section, checked by `node conformance/run.mjs` (spec Appendix B). Cases come from the ChartDown App parser and were checked against the playground.
+- Spec rules that were left open: a header with no closing line, unknown versions (3), unknown names in cues and role names in the JSON form (4.1), `@use` with its own rows (5.2), meter and tempo across sections (11.2, 11.3), minor qualities in number display, minor-key spelling and transposed key names (12), warning lines and order (13).
+- Playground: warnings for an unknown version, a header with no closing line, an unknown name in a cue and `@use` with its own rows; warnings carry their line; JSON roles use their spec names; minor keys spell like their relative major; transposed key changes take their common name; `6m7` shows as `6-7` in numbers.
+
 ## 0.6 (draft)
 - Meter and tempo changes: `@meter N/D`, `@tempo N`, and `[m:N/D]` for one bar (spec 11.2, 11.3).
 - Tempo marks `{rit}`, `{accel}`, `{a tempo}` as reserved words (spec 9).
