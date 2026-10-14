@@ -1,0 +1,569 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-14T14:52:33.311Z",
+  "title": "Design System: ChartDown",
+  "extensions": {
+    "colorMeta": {
+      "floor": {
+        "role": "neutral",
+        "displayName": "Stage Floor Charcoal",
+        "canonical": "#1b1c1e",
+        "oklch": "oklch(22.6% 0.004 264.5)",
+        "tonalRamp": [
+          "oklch(15% 0.004 264.5)",
+          "oklch(25% 0.004 264.5)",
+          "oklch(35% 0.004 264.5)",
+          "oklch(45% 0.004 264.5)",
+          "oklch(55% 0.004 264.5)",
+          "oklch(65% 0.004 264.5)",
+          "oklch(80% 0.004 264.5)",
+          "oklch(95% 0.004 264.5)"
+        ]
+      },
+      "floor-raised": {
+        "role": "neutral",
+        "displayName": "Raised Floor",
+        "canonical": "#242528",
+        "oklch": "oklch(26.5% 0.006 271.2)",
+        "tonalRamp": [
+          "oklch(15% 0.006 271.2)",
+          "oklch(25% 0.006 271.2)",
+          "oklch(35% 0.006 271.2)",
+          "oklch(45% 0.006 271.2)",
+          "oklch(55% 0.006 271.2)",
+          "oklch(65% 0.006 271.2)",
+          "oklch(80% 0.006 271.2)",
+          "oklch(95% 0.006 271.2)"
+        ]
+      },
+      "floor-line": {
+        "role": "neutral",
+        "displayName": "Floor Seam",
+        "canonical": "#34353a",
+        "oklch": "oklch(33.0% 0.009 276.9)",
+        "tonalRamp": [
+          "oklch(15% 0.009 276.9)",
+          "oklch(25% 0.009 276.9)",
+          "oklch(35% 0.009 276.9)",
+          "oklch(45% 0.009 276.9)",
+          "oklch(55% 0.009 276.9)",
+          "oklch(65% 0.009 276.9)",
+          "oklch(80% 0.009 276.9)",
+          "oklch(95% 0.009 276.9)"
+        ]
+      },
+      "chalk": {
+        "role": "neutral",
+        "displayName": "Chalk",
+        "canonical": "#eeeae0",
+        "oklch": "oklch(93.7% 0.014 88.7)",
+        "tonalRamp": [
+          "oklch(15% 0.014 88.7)",
+          "oklch(25% 0.014 88.7)",
+          "oklch(35% 0.014 88.7)",
+          "oklch(45% 0.014 88.7)",
+          "oklch(55% 0.014 88.7)",
+          "oklch(65% 0.014 88.7)",
+          "oklch(80% 0.014 88.7)",
+          "oklch(95% 0.014 88.7)"
+        ]
+      },
+      "chalk-dim": {
+        "role": "neutral",
+        "displayName": "Dim Chalk",
+        "canonical": "#aaa69c",
+        "oklch": "oklch(72.6% 0.015 88.7)",
+        "tonalRamp": [
+          "oklch(15% 0.015 88.7)",
+          "oklch(25% 0.015 88.7)",
+          "oklch(35% 0.015 88.7)",
+          "oklch(45% 0.015 88.7)",
+          "oklch(55% 0.015 88.7)",
+          "oklch(65% 0.015 88.7)",
+          "oklch(80% 0.015 88.7)",
+          "oklch(95% 0.015 88.7)"
+        ]
+      },
+      "tape": {
+        "role": "neutral",
+        "displayName": "Gaffer Tape White",
+        "canonical": "#efece4",
+        "oklch": "oklch(94.3% 0.011 89.7)",
+        "tonalRamp": [
+          "oklch(15% 0.011 89.7)",
+          "oklch(25% 0.011 89.7)",
+          "oklch(35% 0.011 89.7)",
+          "oklch(45% 0.011 89.7)",
+          "oklch(55% 0.011 89.7)",
+          "oklch(65% 0.011 89.7)",
+          "oklch(80% 0.011 89.7)",
+          "oklch(95% 0.011 89.7)"
+        ]
+      },
+      "tape-edge": {
+        "role": "neutral",
+        "displayName": "Tape Edge",
+        "canonical": "#d9d5ca",
+        "oklch": "oklch(87.3% 0.016 90.2)",
+        "tonalRamp": [
+          "oklch(15% 0.016 90.2)",
+          "oklch(25% 0.016 90.2)",
+          "oklch(35% 0.016 90.2)",
+          "oklch(45% 0.016 90.2)",
+          "oklch(55% 0.016 90.2)",
+          "oklch(65% 0.016 90.2)",
+          "oklch(80% 0.016 90.2)",
+          "oklch(95% 0.016 90.2)"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Set List Paper",
+        "canonical": "#f4f2ec",
+        "oklch": "oklch(96.1% 0.008 91.5)",
+        "tonalRamp": [
+          "oklch(15% 0.008 91.5)",
+          "oklch(25% 0.008 91.5)",
+          "oklch(35% 0.008 91.5)",
+          "oklch(45% 0.008 91.5)",
+          "oklch(55% 0.008 91.5)",
+          "oklch(65% 0.008 91.5)",
+          "oklch(80% 0.008 91.5)",
+          "oklch(95% 0.008 91.5)"
+        ]
+      },
+      "gaff": {
+        "role": "neutral",
+        "displayName": "Black Gaff",
+        "canonical": "#2b2c30",
+        "oklch": "oklch(29.4% 0.007 274.7)",
+        "tonalRamp": [
+          "oklch(15% 0.007 274.7)",
+          "oklch(25% 0.007 274.7)",
+          "oklch(35% 0.007 274.7)",
+          "oklch(45% 0.007 274.7)",
+          "oklch(55% 0.007 274.7)",
+          "oklch(65% 0.007 274.7)",
+          "oklch(80% 0.007 274.7)",
+          "oklch(95% 0.007 274.7)"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Sharpie Ink",
+        "canonical": "#16171a",
+        "oklch": "oklch(20.5% 0.006 271.1)",
+        "tonalRamp": [
+          "oklch(15% 0.006 271.1)",
+          "oklch(25% 0.006 271.1)",
+          "oklch(35% 0.006 271.1)",
+          "oklch(45% 0.006 271.1)",
+          "oklch(55% 0.006 271.1)",
+          "oklch(65% 0.006 271.1)",
+          "oklch(80% 0.006 271.1)",
+          "oklch(95% 0.006 271.1)"
+        ]
+      },
+      "ink-soft": {
+        "role": "neutral",
+        "displayName": "Faded Ink",
+        "canonical": "#4a4a4f",
+        "oklch": "oklch(41.1% 0.008 286.0)",
+        "tonalRamp": [
+          "oklch(15% 0.008 286.0)",
+          "oklch(25% 0.008 286.0)",
+          "oklch(35% 0.008 286.0)",
+          "oklch(45% 0.008 286.0)",
+          "oklch(55% 0.008 286.0)",
+          "oklch(65% 0.008 286.0)",
+          "oklch(80% 0.008 286.0)",
+          "oklch(95% 0.008 286.0)"
+        ]
+      },
+      "spike-drums": {
+        "role": "secondary",
+        "displayName": "Drums Spike Red",
+        "canonical": "#e5432d",
+        "oklch": "oklch(61.7% 0.202 31.0)",
+        "tonalRamp": [
+          "oklch(15% 0.067 31.0)",
+          "oklch(25% 0.100 31.0)",
+          "oklch(35% 0.133 31.0)",
+          "oklch(45% 0.167 31.0)",
+          "oklch(55% 0.200 31.0)",
+          "oklch(65% 0.167 31.0)",
+          "oklch(80% 0.117 31.0)",
+          "oklch(95% 0.067 31.0)"
+        ]
+      },
+      "spike-bass": {
+        "role": "primary",
+        "displayName": "Bass Spike Yellow",
+        "canonical": "#f3c316",
+        "oklch": "oklch(83.6% 0.168 90.3)",
+        "tonalRamp": [
+          "oklch(15% 0.067 90.3)",
+          "oklch(25% 0.100 90.3)",
+          "oklch(35% 0.133 90.3)",
+          "oklch(45% 0.167 90.3)",
+          "oklch(55% 0.168 90.3)",
+          "oklch(65% 0.167 90.3)",
+          "oklch(80% 0.117 90.3)",
+          "oklch(95% 0.067 90.3)"
+        ]
+      },
+      "spike-keys": {
+        "role": "secondary",
+        "displayName": "Keys Spike Blue",
+        "canonical": "#2f7de1",
+        "oklch": "oklch(59.5% 0.170 256.4)",
+        "tonalRamp": [
+          "oklch(15% 0.067 256.4)",
+          "oklch(25% 0.100 256.4)",
+          "oklch(35% 0.133 256.4)",
+          "oklch(45% 0.167 256.4)",
+          "oklch(55% 0.170 256.4)",
+          "oklch(65% 0.167 256.4)",
+          "oklch(80% 0.117 256.4)",
+          "oklch(95% 0.067 256.4)"
+        ]
+      },
+      "spike-gtr": {
+        "role": "secondary",
+        "displayName": "Guitar Spike Green",
+        "canonical": "#2ead5b",
+        "oklch": "oklch(66.1% 0.162 150.6)",
+        "tonalRamp": [
+          "oklch(15% 0.067 150.6)",
+          "oklch(25% 0.100 150.6)",
+          "oklch(35% 0.133 150.6)",
+          "oklch(45% 0.162 150.6)",
+          "oklch(55% 0.162 150.6)",
+          "oklch(65% 0.162 150.6)",
+          "oklch(80% 0.117 150.6)",
+          "oklch(95% 0.067 150.6)"
+        ]
+      },
+      "spike-vox": {
+        "role": "secondary",
+        "displayName": "Vocals Spike Pink",
+        "canonical": "#e85a9c",
+        "oklch": "oklch(67.0% 0.187 354.5)",
+        "tonalRamp": [
+          "oklch(15% 0.067 354.5)",
+          "oklch(25% 0.100 354.5)",
+          "oklch(35% 0.133 354.5)",
+          "oklch(45% 0.167 354.5)",
+          "oklch(55% 0.187 354.5)",
+          "oklch(65% 0.167 354.5)",
+          "oklch(80% 0.117 354.5)",
+          "oklch(95% 0.067 354.5)"
+        ]
+      },
+      "spike-all": {
+        "role": "secondary",
+        "displayName": "Whole-Band Chalk",
+        "canonical": "#eeeae0",
+        "oklch": "oklch(93.7% 0.014 88.7)",
+        "tonalRamp": [
+          "oklch(15% 0.014 88.7)",
+          "oklch(25% 0.014 88.7)",
+          "oklch(35% 0.014 88.7)",
+          "oklch(45% 0.014 88.7)",
+          "oklch(55% 0.014 88.7)",
+          "oklch(65% 0.014 88.7)",
+          "oklch(80% 0.014 88.7)",
+          "oklch(95% 0.014 88.7)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Stencil Display",
+        "purpose": "Section headlines, uppercase road-case stencil."
+      },
+      "wordmark": {
+        "displayName": "Wordmark",
+        "purpose": "The ChartDown name beside the red spike X."
+      },
+      "headline-marker": {
+        "displayName": "Marker Headline",
+        "purpose": "The tagline, written on a tape strip."
+      },
+      "title-marker": {
+        "displayName": "Marker Title",
+        "purpose": "Song title on the sheet; readout values."
+      },
+      "chord": {
+        "displayName": "Chord Numerals",
+        "purpose": "Chord numbers and letters on the sheet and transposition strips. Never Marker."
+      },
+      "note-marker": {
+        "displayName": "Marker Note",
+        "purpose": "MD notes, stage-plot notes, syntax glosses."
+      },
+      "lede": {
+        "displayName": "Lede",
+        "purpose": "Hero sentence on the floor, max 30ch."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Paragraph copy on the floor, max 62ch."
+      },
+      "action": {
+        "displayName": "Action",
+        "purpose": "Primary action tape label."
+      },
+      "label-caps": {
+        "displayName": "Caps Label",
+        "purpose": "Readout labels, section badges, who-tags, stage-plot names, fact keys."
+      },
+      "cue": {
+        "displayName": "Cue",
+        "purpose": "Text in cue chips, always including the player's name."
+      },
+      "source": {
+        "displayName": "Source Mono",
+        "purpose": "Machine text only: .chartdown source, commands, JSON, inline syntax."
+      }
+    },
+    "shadows": [
+      {
+        "name": "tape-on-floor",
+        "value": "drop-shadow(0 2px 1.5px rgba(0,0,0,.45)) drop-shadow(0 10px 12px rgba(0,0,0,.28))",
+        "purpose": "filter on every tape strip wrapper; follows the torn mask."
+      },
+      {
+        "name": "sheet-on-floor",
+        "value": "drop-shadow(0 3px 2px rgba(0,0,0,.4)) drop-shadow(0 24px 30px rgba(0,0,0,.45))",
+        "purpose": "filter on the hero set list sheet."
+      },
+      {
+        "name": "paper-on-floor",
+        "value": "drop-shadow(0 3px 2px rgba(0,0,0,.4)) drop-shadow(0 20px 26px rgba(0,0,0,.4))",
+        "purpose": "filter on the syntax road-case paper and JSON card (JSON uses 18px 22px)."
+      },
+      {
+        "name": "gaff-sheen",
+        "value": "inset 0 1px 0 rgba(255,255,255,.08)",
+        "purpose": "box-shadow on gaff corner strips."
+      },
+      {
+        "name": "cue-on-paper",
+        "value": "0 1px 2px rgba(0,0,0,.25)",
+        "purpose": "box-shadow on cue chips."
+      }
+    ],
+    "motion": [
+      {
+        "name": "ease",
+        "value": "cubic-bezier(.16,1,.3,1)",
+        "purpose": "The single easing curve for every transition and animation."
+      },
+      {
+        "name": "lay",
+        "value": "0.5s clip-path inset(0 100% 0 0) to inset(0) + translateX(-6px) to 0",
+        "purpose": "Tape laid down: the one authored entrance, on cues and notes revealed by a spike-mark change."
+      },
+      {
+        "name": "draw",
+        "value": "0.5s stroke-dashoffset 1 to 0",
+        "purpose": "Marker ring drawn around the pressed spike mark or key."
+      },
+      {
+        "name": "flip",
+        "value": "0.38s opacity .15 + blur(3px) to 1 + none",
+        "purpose": "Chord glyphs re-written in place on a key change."
+      },
+      {
+        "name": "spike-turn",
+        "value": "0.35s rotate(90deg) scale(1.12)",
+        "purpose": "Pressed spike X."
+      },
+      {
+        "name": "state",
+        "value": "0.2s background-color / 0.25s transform",
+        "purpose": "Hover and press state transitions on tabs, keys, actions."
+      },
+      {
+        "name": "reduced-motion",
+        "value": "animation:none; transition:none",
+        "purpose": "prefers-reduced-motion removes all motion and smooth scroll."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "stack",
+        "value": "1080px",
+        "purpose": "Hero and builders collapse to one column; stage plot becomes a grid."
+      },
+      {
+        "name": "phone",
+        "value": "640px",
+        "purpose": "Header stacks, sheet loses skew, lyrics hide, actions move above the sheet."
+      }
+    ],
+    "materials": [
+      {
+        "name": "torn-tape-mask",
+        "value": "SVG torn-edge masks on left and right ends (9px tape, 6px nav tabs, 7px gaff) plus a center fill",
+        "purpose": "Gives every tape piece torn ends."
+      },
+      {
+        "name": "noise",
+        "value": "feTurbulence fractalNoise, baseFrequency .9, alpha .16, 180px tile",
+        "purpose": "Multiplied into tape and paper, screened into dark tape and gaff."
+      },
+      {
+        "name": "scuff",
+        "value": "feTurbulence fractalNoise, baseFrequency .004 .03, opacity .07, fixed full-viewport",
+        "purpose": "Painted stage-floor wear on the page ground."
+      },
+      {
+        "name": "light-pool",
+        "value": "radial-gradient(120% 80% at 70% 0%, #26272b 0%, transparent 60%)",
+        "purpose": "Soft overhead light on the floor."
+      },
+      {
+        "name": "rotation",
+        "value": "tape -1.6deg to 1.3deg; sheet .7deg; road case -.4deg; gaff 32 to 38deg",
+        "purpose": "Everything is laid down by hand."
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Tape Strip",
+      "kind": "custom",
+      "refersTo": "tape-strip",
+      "description": "Torn gaffer tape carrying a short label or headline; the world's carrier for glanceable copy.",
+      "html": "<div class=\"ds-floor\"><span class=\"ds-tape-wrap\"><span class=\"ds-tape\">Markdown for band charts</span></span></div>",
+      "css": ".ds-floor{--floor:#1b1c1e;--floor-2:#242528;--floor-line:#34353a;--chalk:#eeeae0;--chalk-dim:#aaa69c;--tape:#efece4;--gaff:#2b2c30;--ink:#16171a;--ink-soft:#4a4a4f;--drums:#e5432d;--bass:#f3c316;--keys:#2f7de1;--gtr:#2ead5b;--vox:#e85a9c;--all:#eeeae0;--ease:cubic-bezier(.16,1,.3,1);background:var(--floor);color:var(--chalk);padding:28px;font-family:Archivo,system-ui,sans-serif} .ds-tape-wrap{display:inline-block;transform:rotate(-1.6deg);filter:drop-shadow(0 2px 1.5px rgba(0,0,0,.45)) drop-shadow(0 10px 12px rgba(0,0,0,.28))} .ds-tape{display:inline-block;background:var(--tape);color:var(--ink);font-family:Marker,\"Comic Sans MS\",cursive;font-size:2.2rem;line-height:1.08;padding:.18em .7em .22em;-webkit-mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 60' preserveAspectRatio='none'%3E%3Cpath d='M10 0H3L5 4 1 8l4 4-3 5 4 3-5 5 3 4-2 5 4 4-3 4 2 5-3 4 3 4-2 3h7z'/%3E%3C/svg%3E\") left/9px 100% no-repeat,url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 60' preserveAspectRatio='none'%3E%3Cpath d='M0 0h7L5 4l4 4-4 4 3 5-4 3 5 5-3 4 2 5-4 4 3 4-2 5 3 4-3 4 2 3H0z'/%3E%3C/svg%3E\") right/9px 100% no-repeat,linear-gradient(#000 0 0) center/calc(100% - 16px) 100% no-repeat;mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 60' preserveAspectRatio='none'%3E%3Cpath d='M10 0H3L5 4 1 8l4 4-3 5 4 3-5 5 3 4-2 5 4 4-3 4 2 5-3 4 3 4-2 3h7z'/%3E%3C/svg%3E\") left/9px 100% no-repeat,url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 60' preserveAspectRatio='none'%3E%3Cpath d='M0 0h7L5 4l4 4-4 4 3 5-4 3 5 5-3 4 2 5-4 4 3 4-2 5 3 4-3 4 2 3H0z'/%3E%3C/svg%3E\") right/9px 100% no-repeat,linear-gradient(#000 0 0) center/calc(100% - 16px) 100% no-repeat;}"
+    },
+    {
+      "name": "Primary Action (Go Tape)",
+      "kind": "button",
+      "refersTo": "button-go",
+      "description": "The one primary action: a bass-yellow tape strip that lifts and tilts on hover.",
+      "html": "<div class=\"ds-floor\"><a class=\"ds-go\" href=\"#\"><span class=\"ds-wrap\"><span class=\"ds-go-tape\">Open the playground <svg width=\"20\" height=\"20\" viewBox=\"0 0 20 20\" aria-hidden=\"true\"><path d=\"M3 10h13M11 4.5L16.5 10 11 15.5\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.4\" stroke-linecap=\"round\" stroke-linejoin=\"round\"/></svg></span></span></a> <a class=\"ds-link\" href=\"#\">Read the 5-minute guide</a></div>",
+      "css": ".ds-floor{--floor:#1b1c1e;--floor-2:#242528;--floor-line:#34353a;--chalk:#eeeae0;--chalk-dim:#aaa69c;--tape:#efece4;--gaff:#2b2c30;--ink:#16171a;--ink-soft:#4a4a4f;--drums:#e5432d;--bass:#f3c316;--keys:#2f7de1;--gtr:#2ead5b;--vox:#e85a9c;--all:#eeeae0;--ease:cubic-bezier(.16,1,.3,1);background:var(--floor);color:var(--chalk);padding:28px;font-family:Archivo,system-ui,sans-serif} .ds-go{display:inline-flex;text-decoration:none;color:var(--ink);font:600 1.12rem/1 Archivo,system-ui,sans-serif;transition:transform .25s var(--ease);margin-right:20px} .ds-go:hover{transform:translateY(-2px) rotate(-.6deg)} .ds-go:active{transform:none} .ds-go:focus-visible,.ds-link:focus-visible{outline:3px solid var(--bass);outline-offset:3px} .ds-wrap{filter:drop-shadow(0 2px 1.5px rgba(0,0,0,.45)) drop-shadow(0 10px 12px rgba(0,0,0,.28))} .ds-go-tape{display:inline-flex;align-items:center;gap:12px;background:var(--bass);padding:16px 30px 17px;-webkit-mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 60' preserveAspectRatio='none'%3E%3Cpath d='M10 0H3L5 4 1 8l4 4-3 5 4 3-5 5 3 4-2 5 4 4-3 4 2 5-3 4 3 4-2 3h7z'/%3E%3C/svg%3E\") left/9px 100% no-repeat,url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 60' preserveAspectRatio='none'%3E%3Cpath d='M0 0h7L5 4l4 4-4 4 3 5-4 3 5 5-3 4 2 5-4 4 3 4-2 5 3 4-3 4 2 3H0z'/%3E%3C/svg%3E\") right/9px 100% no-repeat,linear-gradient(#000 0 0) center/calc(100% - 16px) 100% no-repeat;mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 60' preserveAspectRatio='none'%3E%3Cpath d='M10 0H3L5 4 1 8l4 4-3 5 4 3-5 5 3 4-2 5 4 4-3 4 2 5-3 4 3 4-2 3h7z'/%3E%3C/svg%3E\") left/9px 100% no-repeat,url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 60' preserveAspectRatio='none'%3E%3Cpath d='M0 0h7L5 4l4 4-4 4 3 5-4 3 5 5-3 4 2 5-4 4 3 4-2 5 3 4-3 4 2 3H0z'/%3E%3C/svg%3E\") right/9px 100% no-repeat,linear-gradient(#000 0 0) center/calc(100% - 16px) 100% no-repeat;} .ds-link{color:var(--chalk);font-weight:600;text-underline-offset:.22em;text-decoration-thickness:2px;text-decoration-color:rgba(238,234,224,.4)} .ds-link:hover{text-decoration-color:var(--bass)}"
+    },
+    {
+      "name": "Nav Tape Tabs",
+      "kind": "nav",
+      "refersTo": "nav-tab",
+      "description": "Dark torn tape tabs, alternately skewed, with an EN/ES toggle whose pressed tab turns tape-white.",
+      "html": "<div class=\"ds-floor\"><nav class=\"ds-nav\"><a href=\"#\">Guide</a><a href=\"#\">Spec</a><a href=\"#\">Playground</a><span class=\"ds-lang\"><button aria-pressed=\"true\">EN</button><button aria-pressed=\"false\">ES</button></span></nav></div>",
+      "css": ".ds-floor{--floor:#1b1c1e;--floor-2:#242528;--floor-line:#34353a;--chalk:#eeeae0;--chalk-dim:#aaa69c;--tape:#efece4;--gaff:#2b2c30;--ink:#16171a;--ink-soft:#4a4a4f;--drums:#e5432d;--bass:#f3c316;--keys:#2f7de1;--gtr:#2ead5b;--vox:#e85a9c;--all:#eeeae0;--ease:cubic-bezier(.16,1,.3,1);background:var(--floor);color:var(--chalk);padding:28px;font-family:Archivo,system-ui,sans-serif} .ds-nav{display:flex;gap:6px;align-items:center} .ds-nav a,.ds-lang button{font:600 .92rem/1 Archivo,system-ui,sans-serif;color:var(--chalk);text-decoration:none;border:0;padding:10px 16px;background:#303136;cursor:pointer;transition:background-color .2s var(--ease),transform .25s var(--ease);-webkit-mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 60' preserveAspectRatio='none'%3E%3Cpath d='M10 0H3L5 4 1 8l4 4-3 5 4 3-5 5 3 4-2 5 4 4-3 4 2 5-3 4 3 4-2 3h7z'/%3E%3C/svg%3E\") left/6px 100% no-repeat,url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 60' preserveAspectRatio='none'%3E%3Cpath d='M0 0h7L5 4l4 4-4 4 3 5-4 3 5 5-3 4 2 5-4 4 3 4-2 5 3 4-3 4 2 3H0z'/%3E%3C/svg%3E\") right/6px 100% no-repeat,linear-gradient(#000 0 0) center/calc(100% - 10px) 100% no-repeat;mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 60' preserveAspectRatio='none'%3E%3Cpath d='M10 0H3L5 4 1 8l4 4-3 5 4 3-5 5 3 4-2 5 4 4-3 4 2 5-3 4 3 4-2 3h7z'/%3E%3C/svg%3E\") left/6px 100% no-repeat,url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 60' preserveAspectRatio='none'%3E%3Cpath d='M0 0h7L5 4l4 4-4 4 3 5-4 3 5 5-3 4 2 5-4 4 3 4-2 5 3 4-3 4 2 3H0z'/%3E%3C/svg%3E\") right/6px 100% no-repeat,linear-gradient(#000 0 0) center/calc(100% - 10px) 100% no-repeat;} .ds-nav a:nth-child(odd){transform:rotate(-1.2deg)} .ds-nav a:nth-child(even){transform:rotate(.9deg)} .ds-nav a:hover{background:#45464c;transform:translateY(-1px)} .ds-lang{display:flex;gap:2px;margin-left:8px} .ds-lang button{padding:9px 13px;letter-spacing:.04em} .ds-lang button[aria-pressed=\"true\"]{background:var(--tape);color:var(--ink)} .ds-nav a:focus-visible,.ds-lang button:focus-visible{outline:3px solid var(--bass);outline-offset:-5px}"
+    },
+    {
+      "name": "Spike Marks",
+      "kind": "chip",
+      "refersTo": "spike-mark",
+      "description": "Per-player toggles: spike X in the role color plus the name; pressed rotates the X and draws a marker ring.",
+      "html": "<div class=\"ds-floor\"><div class=\"ds-spikes\"><button class=\"ds-spike\" aria-pressed=\"false\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 32 32\" style=\"color:var(--all)\" aria-hidden=\"true\"><path d=\"M5 8.5l3.5-3.5 18.5 18.5-3.5 3.5z\" fill=\"currentColor\"/><path d=\"M23.5 5L27 8.5 8.5 27 5 23.5z\" fill=\"currentColor\" opacity=\".92\"/></svg><span>Everyone</span><svg class=\"ds-ring\" viewBox=\"0 0 120 50\" preserveAspectRatio=\"none\" aria-hidden=\"true\"><path pathLength=\"1\" stroke-dasharray=\"1\" d=\"M14 9C40 1 98 2 113 14c10 9 3 27-25 31-29 4-66 3-80-6C-3 32 2 15 22 8\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\"/></svg></button><button class=\"ds-spike\" aria-pressed=\"false\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 32 32\" style=\"color:var(--drums)\" aria-hidden=\"true\"><path d=\"M5 8.5l3.5-3.5 18.5 18.5-3.5 3.5z\" fill=\"currentColor\"/><path d=\"M23.5 5L27 8.5 8.5 27 5 23.5z\" fill=\"currentColor\" opacity=\".92\"/></svg><span>Drums</span><svg class=\"ds-ring\" viewBox=\"0 0 120 50\" preserveAspectRatio=\"none\" aria-hidden=\"true\"><path pathLength=\"1\" stroke-dasharray=\"1\" d=\"M14 9C40 1 98 2 113 14c10 9 3 27-25 31-29 4-66 3-80-6C-3 32 2 15 22 8\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\"/></svg></button><button class=\"ds-spike\" aria-pressed=\"true\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 32 32\" style=\"color:var(--bass)\" aria-hidden=\"true\"><path d=\"M5 8.5l3.5-3.5 18.5 18.5-3.5 3.5z\" fill=\"currentColor\"/><path d=\"M23.5 5L27 8.5 8.5 27 5 23.5z\" fill=\"currentColor\" opacity=\".92\"/></svg><span>Bass</span><svg class=\"ds-ring\" viewBox=\"0 0 120 50\" preserveAspectRatio=\"none\" aria-hidden=\"true\"><path pathLength=\"1\" stroke-dasharray=\"1\" d=\"M14 9C40 1 98 2 113 14c10 9 3 27-25 31-29 4-66 3-80-6C-3 32 2 15 22 8\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\"/></svg></button><button class=\"ds-spike\" aria-pressed=\"false\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 32 32\" style=\"color:var(--keys)\" aria-hidden=\"true\"><path d=\"M5 8.5l3.5-3.5 18.5 18.5-3.5 3.5z\" fill=\"currentColor\"/><path d=\"M23.5 5L27 8.5 8.5 27 5 23.5z\" fill=\"currentColor\" opacity=\".92\"/></svg><span>Keys</span><svg class=\"ds-ring\" viewBox=\"0 0 120 50\" preserveAspectRatio=\"none\" aria-hidden=\"true\"><path pathLength=\"1\" stroke-dasharray=\"1\" d=\"M14 9C40 1 98 2 113 14c10 9 3 27-25 31-29 4-66 3-80-6C-3 32 2 15 22 8\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\"/></svg></button><button class=\"ds-spike\" aria-pressed=\"false\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 32 32\" style=\"color:var(--gtr)\" aria-hidden=\"true\"><path d=\"M5 8.5l3.5-3.5 18.5 18.5-3.5 3.5z\" fill=\"currentColor\"/><path d=\"M23.5 5L27 8.5 8.5 27 5 23.5z\" fill=\"currentColor\" opacity=\".92\"/></svg><span>Guitar</span><svg class=\"ds-ring\" viewBox=\"0 0 120 50\" preserveAspectRatio=\"none\" aria-hidden=\"true\"><path pathLength=\"1\" stroke-dasharray=\"1\" d=\"M14 9C40 1 98 2 113 14c10 9 3 27-25 31-29 4-66 3-80-6C-3 32 2 15 22 8\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\"/></svg></button><button class=\"ds-spike\" aria-pressed=\"false\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 32 32\" style=\"color:var(--vox)\" aria-hidden=\"true\"><path d=\"M5 8.5l3.5-3.5 18.5 18.5-3.5 3.5z\" fill=\"currentColor\"/><path d=\"M23.5 5L27 8.5 8.5 27 5 23.5z\" fill=\"currentColor\" opacity=\".92\"/></svg><span>Vocals</span><svg class=\"ds-ring\" viewBox=\"0 0 120 50\" preserveAspectRatio=\"none\" aria-hidden=\"true\"><path pathLength=\"1\" stroke-dasharray=\"1\" d=\"M14 9C40 1 98 2 113 14c10 9 3 27-25 31-29 4-66 3-80-6C-3 32 2 15 22 8\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\"/></svg></button></div></div>",
+      "css": ".ds-floor{--floor:#1b1c1e;--floor-2:#242528;--floor-line:#34353a;--chalk:#eeeae0;--chalk-dim:#aaa69c;--tape:#efece4;--gaff:#2b2c30;--ink:#16171a;--ink-soft:#4a4a4f;--drums:#e5432d;--bass:#f3c316;--keys:#2f7de1;--gtr:#2ead5b;--vox:#e85a9c;--all:#eeeae0;--ease:cubic-bezier(.16,1,.3,1);background:var(--floor);color:var(--chalk);padding:28px;font-family:Archivo,system-ui,sans-serif} .ds-spikes{display:flex;flex-wrap:wrap;gap:6px} .ds-spike{position:relative;display:inline-flex;align-items:center;gap:8px;background:none;border:0;cursor:pointer;padding:8px 10px 8px 6px;border-radius:3px;color:var(--chalk);font:600 .95rem/1 Archivo,system-ui,sans-serif;transition:background-color .2s var(--ease)} .ds-spike:hover{background:var(--floor-2)} .ds-spike:focus-visible{outline:3px solid var(--bass);outline-offset:3px} .ds-spike>svg:first-child{transition:transform .35s var(--ease)} .ds-spike[aria-pressed=\"true\"]>svg:first-child{transform:rotate(90deg) scale(1.12)} .ds-ring{position:absolute;inset:-4px -6px;width:calc(100% + 12px);height:calc(100% + 8px);pointer-events:none;opacity:0;color:var(--chalk)} .ds-spike[aria-pressed=\"true\"] .ds-ring{opacity:1} .ds-spike[aria-pressed=\"true\"] .ds-ring path{animation:ds-draw .5s var(--ease) both} @keyframes ds-draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}"
+    },
+    {
+      "name": "Key Tape",
+      "kind": "custom",
+      "refersTo": "key-tape",
+      "description": "One tape strip of segmented key buttons; the pressed key gets an ink marker ring.",
+      "html": "<div class=\"ds-floor\"><div class=\"ds-keys\"><button class=\"ds-key num\" aria-pressed=\"false\">Numbers<svg class=\"ds-ring\" viewBox=\"0 0 120 50\" preserveAspectRatio=\"none\" aria-hidden=\"true\"><path pathLength=\"1\" stroke-dasharray=\"1\" d=\"M14 9C40 1 98 2 113 14c10 9 3 27-25 31-29 4-66 3-80-6C-3 32 2 15 22 8\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\"/></svg></button><button class=\"ds-key\" aria-pressed=\"false\">C<svg class=\"ds-ring\" viewBox=\"0 0 120 50\" preserveAspectRatio=\"none\" aria-hidden=\"true\"><path pathLength=\"1\" stroke-dasharray=\"1\" d=\"M14 9C40 1 98 2 113 14c10 9 3 27-25 31-29 4-66 3-80-6C-3 32 2 15 22 8\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\"/></svg></button><button class=\"ds-key\" aria-pressed=\"false\">D<svg class=\"ds-ring\" viewBox=\"0 0 120 50\" preserveAspectRatio=\"none\" aria-hidden=\"true\"><path pathLength=\"1\" stroke-dasharray=\"1\" d=\"M14 9C40 1 98 2 113 14c10 9 3 27-25 31-29 4-66 3-80-6C-3 32 2 15 22 8\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\"/></svg></button><button class=\"ds-key\" aria-pressed=\"false\">E<svg class=\"ds-ring\" viewBox=\"0 0 120 50\" preserveAspectRatio=\"none\" aria-hidden=\"true\"><path pathLength=\"1\" stroke-dasharray=\"1\" d=\"M14 9C40 1 98 2 113 14c10 9 3 27-25 31-29 4-66 3-80-6C-3 32 2 15 22 8\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\"/></svg></button><button class=\"ds-key\" aria-pressed=\"false\">F<svg class=\"ds-ring\" viewBox=\"0 0 120 50\" preserveAspectRatio=\"none\" aria-hidden=\"true\"><path pathLength=\"1\" stroke-dasharray=\"1\" d=\"M14 9C40 1 98 2 113 14c10 9 3 27-25 31-29 4-66 3-80-6C-3 32 2 15 22 8\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\"/></svg></button><button class=\"ds-key\" aria-pressed=\"true\">G<svg class=\"ds-ring\" viewBox=\"0 0 120 50\" preserveAspectRatio=\"none\" aria-hidden=\"true\"><path pathLength=\"1\" stroke-dasharray=\"1\" d=\"M14 9C40 1 98 2 113 14c10 9 3 27-25 31-29 4-66 3-80-6C-3 32 2 15 22 8\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\"/></svg></button><button class=\"ds-key\" aria-pressed=\"false\">A<svg class=\"ds-ring\" viewBox=\"0 0 120 50\" preserveAspectRatio=\"none\" aria-hidden=\"true\"><path pathLength=\"1\" stroke-dasharray=\"1\" d=\"M14 9C40 1 98 2 113 14c10 9 3 27-25 31-29 4-66 3-80-6C-3 32 2 15 22 8\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\"/></svg></button><button class=\"ds-key\" aria-pressed=\"false\">Bb<svg class=\"ds-ring\" viewBox=\"0 0 120 50\" preserveAspectRatio=\"none\" aria-hidden=\"true\"><path pathLength=\"1\" stroke-dasharray=\"1\" d=\"M14 9C40 1 98 2 113 14c10 9 3 27-25 31-29 4-66 3-80-6C-3 32 2 15 22 8\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2.6\" stroke-linecap=\"round\"/></svg></button></div></div>",
+      "css": ".ds-floor{--floor:#1b1c1e;--floor-2:#242528;--floor-line:#34353a;--chalk:#eeeae0;--chalk-dim:#aaa69c;--tape:#efece4;--gaff:#2b2c30;--ink:#16171a;--ink-soft:#4a4a4f;--drums:#e5432d;--bass:#f3c316;--keys:#2f7de1;--gtr:#2ead5b;--vox:#e85a9c;--all:#eeeae0;--ease:cubic-bezier(.16,1,.3,1);background:var(--floor);color:var(--chalk);padding:28px;font-family:Archivo,system-ui,sans-serif} .ds-keys{display:inline-flex;background:var(--tape);padding:5px 14px;transform:rotate(-.5deg);filter:drop-shadow(0 2px 1.5px rgba(0,0,0,.45));-webkit-mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 60' preserveAspectRatio='none'%3E%3Cpath d='M10 0H3L5 4 1 8l4 4-3 5 4 3-5 5 3 4-2 5 4 4-3 4 2 5-3 4 3 4-2 3h7z'/%3E%3C/svg%3E\") left/9px 100% no-repeat,url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 60' preserveAspectRatio='none'%3E%3Cpath d='M0 0h7L5 4l4 4-4 4 3 5-4 3 5 5-3 4 2 5-4 4 3 4-2 5 3 4-3 4 2 3H0z'/%3E%3C/svg%3E\") right/9px 100% no-repeat,linear-gradient(#000 0 0) center/calc(100% - 16px) 100% no-repeat;mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 60' preserveAspectRatio='none'%3E%3Cpath d='M10 0H3L5 4 1 8l4 4-3 5 4 3-5 5 3 4-2 5 4 4-3 4 2 5-3 4 3 4-2 3h7z'/%3E%3C/svg%3E\") left/9px 100% no-repeat,url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 60' preserveAspectRatio='none'%3E%3Cpath d='M0 0h7L5 4l4 4-4 4 3 5-4 3 5 5-3 4 2 5-4 4 3 4-2 5 3 4-3 4 2 3H0z'/%3E%3C/svg%3E\") right/9px 100% no-repeat,linear-gradient(#000 0 0) center/calc(100% - 16px) 100% no-repeat;} .ds-key{position:relative;cursor:pointer;background:none;border:0;border-left:2px solid var(--ink);color:var(--ink);font:800 1.12rem/1 Shoulders,system-ui,sans-serif;letter-spacing:.03em;min-width:42px;padding:9px 10px 8px;transition:background-color .2s var(--ease)} .ds-key:first-child{border-left:0} .ds-key.num{font:600 .9rem/1 Archivo,system-ui,sans-serif;padding:10px 12px} .ds-key:hover{background:rgba(0,0,0,.07)} .ds-key:focus-visible{outline:3px solid var(--drums);outline-offset:-4px} .ds-key .ds-ring{position:absolute;inset:3px 1px;width:calc(100% - 2px);height:calc(100% - 6px);pointer-events:none;color:var(--ink);opacity:0} .ds-key[aria-pressed=\"true\"] .ds-ring{opacity:1} .ds-key[aria-pressed=\"true\"] .ds-ring path{animation:ds-draw .5s var(--ease) both} @keyframes ds-draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}"
+    },
+    {
+      "name": "Taped Set List Sheet",
+      "kind": "card",
+      "refersTo": "taped-sheet",
+      "description": "The signature surface: skewed paper pinned by four gaff corners, holding a live chart.",
+      "html": "<div class=\"ds-floor\"><div class=\"ds-sheet-wrap\"><span class=\"ds-gaff tl\"></span><span class=\"ds-gaff tr\"></span><span class=\"ds-gaff bl\"></span><span class=\"ds-gaff br\"></span><div class=\"ds-sheet\"><div class=\"ds-head\"><p class=\"ds-title\">Open Road</p><span class=\"ds-ro\">Key<b>G</b></span></div><h3 class=\"ds-badge\">Verse</h3><p class=\"ds-note\"><span class=\"ds-who\"><i style=\"--c:var(--drums)\"></i>Drums</span>Rim clicks until the chorus.</p><div class=\"ds-row\"><div class=\"ds-bar\"><span class=\"ds-cue\" style=\"--c:var(--bass)\">Bass: walk up</span><span class=\"ds-ch\">1</span></div><div class=\"ds-bar\"><span class=\"ds-ch\">4</span></div><div class=\"ds-bar\"><span class=\"ds-ch\">6<sup>m</sup></span></div><div class=\"ds-bar\"><span class=\"ds-ch\">5</span></div></div></div></div></div>",
+      "css": ".ds-floor{--floor:#1b1c1e;--floor-2:#242528;--floor-line:#34353a;--chalk:#eeeae0;--chalk-dim:#aaa69c;--tape:#efece4;--gaff:#2b2c30;--ink:#16171a;--ink-soft:#4a4a4f;--drums:#e5432d;--bass:#f3c316;--keys:#2f7de1;--gtr:#2ead5b;--vox:#e85a9c;--all:#eeeae0;--ease:cubic-bezier(.16,1,.3,1);background:var(--floor);color:var(--chalk);padding:28px;font-family:Archivo,system-ui,sans-serif} .ds-floor{padding:40px} .ds-sheet-wrap{position:relative;transform:rotate(.7deg);filter:drop-shadow(0 3px 2px rgba(0,0,0,.4)) drop-shadow(0 24px 30px rgba(0,0,0,.45))} .ds-sheet{background:#f4f2ec;color:var(--ink);padding:28px 30px} .ds-gaff{position:absolute;width:92px;height:30px;background:var(--gaff);z-index:2;box-shadow:inset 0 1px 0 rgba(255,255,255,.08);-webkit-mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 60' preserveAspectRatio='none'%3E%3Cpath d='M10 0H3L5 4 1 8l4 4-3 5 4 3-5 5 3 4-2 5 4 4-3 4 2 5-3 4 3 4-2 3h7z'/%3E%3C/svg%3E\") left/7px 100% no-repeat,url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 60' preserveAspectRatio='none'%3E%3Cpath d='M0 0h7L5 4l4 4-4 4 3 5-4 3 5 5-3 4 2 5-4 4 3 4-2 5 3 4-3 4 2 3H0z'/%3E%3C/svg%3E\") right/7px 100% no-repeat,linear-gradient(#000 0 0) center/calc(100% - 12px) 100% no-repeat;mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 60' preserveAspectRatio='none'%3E%3Cpath d='M10 0H3L5 4 1 8l4 4-3 5 4 3-5 5 3 4-2 5 4 4-3 4 2 5-3 4 3 4-2 3h7z'/%3E%3C/svg%3E\") left/7px 100% no-repeat,url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 60' preserveAspectRatio='none'%3E%3Cpath d='M0 0h7L5 4l4 4-4 4 3 5-4 3 5 5-3 4 2 5-4 4 3 4-2 5 3 4-3 4 2 3H0z'/%3E%3C/svg%3E\") right/7px 100% no-repeat,linear-gradient(#000 0 0) center/calc(100% - 12px) 100% no-repeat;} .ds-gaff.tl{top:-12px;left:-30px;transform:rotate(-38deg)} .ds-gaff.tr{top:-12px;right:-30px;transform:rotate(36deg)} .ds-gaff.bl{bottom:-12px;left:-28px;transform:rotate(34deg)} .ds-gaff.br{bottom:-10px;right:-30px;transform:rotate(-32deg)} .ds-head{display:flex;justify-content:space-between;border-bottom:3px solid var(--ink);padding-bottom:10px;margin-bottom:14px} .ds-title{margin:0;font:400 2rem/1 Marker,cursive} .ds-ro{font:700 .82rem/1 Shoulders,sans-serif;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-soft);text-align:right} .ds-ro b{display:block;font:400 1.3rem/1.05 Marker,cursive;color:var(--ink);letter-spacing:0} .ds-badge{display:inline-block;margin:0 0 6px;font:900 1rem/1.2 Shoulders,sans-serif;text-transform:uppercase;letter-spacing:.05em;background:var(--ink);color:#f4f2ec;padding:3px 9px 2px;transform:rotate(-1deg)} .ds-note{display:flex;gap:9px;align-items:baseline;margin:2px 0;font:400 1.02rem/1.3 Marker,cursive} .ds-who{display:inline-flex;align-items:center;gap:5px;font:800 .76rem/1 Shoulders,sans-serif;text-transform:uppercase;letter-spacing:.05em;padding:4px 6px 3px;border:2px solid var(--ink);border-radius:2px} .ds-who i{width:9px;height:9px;background:var(--c)} .ds-row{display:grid;grid-template-columns:repeat(4,1fr);margin:8px 0 4px} .ds-bar{display:flex;flex-direction:column;justify-content:flex-end;align-items:flex-start;border-left:3px solid var(--ink);padding:0 8px 0 10px;min-height:48px} .ds-bar:last-child{border-right:3px solid var(--ink)} .ds-ch{font:900 2rem/1.1 Shoulders,sans-serif;letter-spacing:.01em} .ds-ch sup{font-size:.55em} .ds-cue{font:700 .78rem/1.15 Archivo,sans-serif;background:var(--c);color:var(--ink);padding:3px 6px;border-radius:2px;box-shadow:0 1px 2px rgba(0,0,0,.25);margin-bottom:3px}"
+    },
+    {
+      "name": "Source Field",
+      "kind": "input",
+      "refersTo": "source-field",
+      "description": "The editable .chartdown source: a dashed box on the floor, solid bass-yellow on focus. Deliberately not tape.",
+      "html": "<div class=\"ds-floor\"><label class=\"ds-label\" for=\"ds-src\"><span>This is the whole file. Change anything.</span><code>open-road.chartdown</code></label><textarea id=\"ds-src\" class=\"ds-src\" rows=\"6\" spellcheck=\"false\">---\ntitle: Open Road\nkey: G\n---\n## Verse\n| 1 | 4 | 6m | 5 {bass: walk up} |</textarea></div>",
+      "css": ".ds-floor{--floor:#1b1c1e;--floor-2:#242528;--floor-line:#34353a;--chalk:#eeeae0;--chalk-dim:#aaa69c;--tape:#efece4;--gaff:#2b2c30;--ink:#16171a;--ink-soft:#4a4a4f;--drums:#e5432d;--bass:#f3c316;--keys:#2f7de1;--gtr:#2ead5b;--vox:#e85a9c;--all:#eeeae0;--ease:cubic-bezier(.16,1,.3,1);background:var(--floor);color:var(--chalk);padding:28px;font-family:Archivo,system-ui,sans-serif} .ds-label{display:flex;justify-content:space-between;gap:12px;font-size:.9rem;color:var(--chalk-dim);margin-bottom:8px} .ds-label code{font:.85rem \"JetBrains Mono\",ui-monospace,monospace;color:var(--chalk)} .ds-src{width:100%;font:400 .84rem/1.6 \"JetBrains Mono\",ui-monospace,Menlo,monospace;color:var(--chalk);caret-color:var(--bass);background:rgba(0,0,0,.28);border:2px dashed var(--floor-line);border-radius:4px;padding:14px 16px;white-space:pre;resize:vertical;transition:border-color .2s var(--ease)} .ds-src:hover{border-color:#4a4b51} .ds-src:focus{outline:none;border-color:var(--bass);border-style:solid}"
+    },
+    {
+      "name": "Stage Plot Position",
+      "kind": "custom",
+      "refersTo": "stage-plot",
+      "description": "A player's spot on the stage plot: spike mark and caps name over a tape note with the real source line.",
+      "html": "<div class=\"ds-floor\"><div class=\"ds-plot\"><div class=\"ds-pos\"><span class=\"ds-mark\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 32 32\" style=\"color:var(--drums)\" aria-hidden=\"true\"><path d=\"M5 8.5l3.5-3.5 18.5 18.5-3.5 3.5z\" fill=\"currentColor\"/><path d=\"M23.5 5L27 8.5 8.5 27 5 23.5z\" fill=\"currentColor\" opacity=\".92\"/></svg>Drums</span><span class=\"ds-tape-wrap\"><span class=\"ds-tape\"><code>&gt; MD drums: rim clicks</code>Only the drummer reads this.</span></span></div></div></div>",
+      "css": ".ds-floor{--floor:#1b1c1e;--floor-2:#242528;--floor-line:#34353a;--chalk:#eeeae0;--chalk-dim:#aaa69c;--tape:#efece4;--gaff:#2b2c30;--ink:#16171a;--ink-soft:#4a4a4f;--drums:#e5432d;--bass:#f3c316;--keys:#2f7de1;--gtr:#2ead5b;--vox:#e85a9c;--all:#eeeae0;--ease:cubic-bezier(.16,1,.3,1);background:var(--floor);color:var(--chalk);padding:28px;font-family:Archivo,system-ui,sans-serif} .ds-plot{position:relative;padding:28px 24px 40px;border:3px solid #3b3c41;border-radius:6px;background:repeating-linear-gradient(90deg,transparent 0 139px,rgba(255,255,255,.035) 139px 141px),var(--floor-2)} .ds-plot::after{content:\"\";position:absolute;left:-3px;right:-3px;bottom:-3px;height:14px;background:repeating-linear-gradient(90deg,var(--chalk) 0 22px,transparent 22px 34px);opacity:.55;border-radius:0 0 6px 6px} .ds-pos{display:flex;flex-direction:column;align-items:flex-start;gap:8px;max-width:330px} .ds-mark{display:flex;align-items:center;gap:8px;font:800 1rem/1 Shoulders,sans-serif;text-transform:uppercase;letter-spacing:.08em} .ds-tape-wrap{transform:rotate(-1.2deg);filter:drop-shadow(0 2px 1.5px rgba(0,0,0,.45)) drop-shadow(0 10px 12px rgba(0,0,0,.28))} .ds-tape{display:inline-block;background:var(--tape);color:var(--ink);font:400 1.05rem/1.3 Marker,cursive;padding:.45em 1.1em .5em;-webkit-mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 60' preserveAspectRatio='none'%3E%3Cpath d='M10 0H3L5 4 1 8l4 4-3 5 4 3-5 5 3 4-2 5 4 4-3 4 2 5-3 4 3 4-2 3h7z'/%3E%3C/svg%3E\") left/9px 100% no-repeat,url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 60' preserveAspectRatio='none'%3E%3Cpath d='M0 0h7L5 4l4 4-4 4 3 5-4 3 5 5-3 4 2 5-4 4 3 4-2 5 3 4-3 4 2 3H0z'/%3E%3C/svg%3E\") right/9px 100% no-repeat,linear-gradient(#000 0 0) center/calc(100% - 16px) 100% no-repeat;mask:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 60' preserveAspectRatio='none'%3E%3Cpath d='M10 0H3L5 4 1 8l4 4-3 5 4 3-5 5 3 4-2 5 4 4-3 4 2 5-3 4 3 4-2 3h7z'/%3E%3C/svg%3E\") left/9px 100% no-repeat,url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 60' preserveAspectRatio='none'%3E%3Cpath d='M0 0h7L5 4l4 4-4 4 3 5-4 3 5 5-3 4 2 5-4 4 3 4-2 5 3 4-3 4 2 3H0z'/%3E%3C/svg%3E\") right/9px 100% no-repeat,linear-gradient(#000 0 0) center/calc(100% - 16px) 100% no-repeat;} .ds-tape code{display:block;font:500 .8rem/1.45 \"JetBrains Mono\",monospace;color:var(--ink-soft);margin-bottom:3px}"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Stage Floor at Soundcheck",
+    "overview": "The page is a scuffed, charcoal-painted stage at soundcheck. The chart is a set list taped down at the players' feet; every block of copy that needs to be found fast is written on a strip of torn off-white gaffer tape; chord numbers and MD notes are written in by hand; headlines are road-case stencil. Each player's position is marked with a colored spike-tape X, and those five colors are the only saturated hues in the world.\n\nIt is a dark, low-light, material world. Depth comes from physical things lying on a floor (tape, paper, gaff corners) with real drop shadows and slight skew, never from floating cards or glass. Long reading copy sits directly on the floor in chalk, for comfort; tape is reserved for labels, headlines, commands and the primary action. The chart sheet is the hero object and is live: real ChartDown text rendered by the reference parser, re-taped when the player or key changes.\n\nThe world rejects the open-source split hero (code left, render right, feature cards below). It also explicitly stands apart from `playground/index.html`, which is an older light-themed reference tool and is not governed by this file.",
+    "keyCharacteristics": [
+      "Charcoal floor ground with a fractal \"scuff\" texture and a soft top-right pool of light.",
+      "Torn-edge tape strips (CSS mask with jagged left/right ends) carrying headlines, labels and the primary action.",
+      "Paper sheets held down by four rotated black gaff corners.",
+      "Five spike-tape role colors, always paired with a label and the X mark, never color alone.",
+      "Four hand-feel faces with strict jobs: stencil caps, marker, condensed numerals, plain sans; mono only for machine text.",
+      "Small rotations (between -1.6deg and 1.3deg) on tape and paper; nothing is perfectly square except the controls' hit areas."
+    ],
+    "rules": [
+      {
+        "name": "The One Player, One Color Rule",
+        "body": "Each spike color means one player and nothing else. Never use drums red for \"danger\", keys blue for \"link\", or green for \"success\"; the only allowed borrowings are the yellow action role and the red wordmark X, both already in the build.",
+        "section": "colors"
+      },
+      {
+        "name": "The Mark And Label Rule",
+        "body": "A role color never appears alone. Every spike color is accompanied by the X mark and the player's name (spike buttons, stage-plot positions), or by the name written into the chip (\"Drums: in\").",
+        "section": "colors"
+      },
+      {
+        "name": "The Floor Is Not A Palette Rule",
+        "body": "No new background hues. Surfaces are floor, raised floor, tape, paper or gaff.",
+        "section": "colors"
+      },
+      {
+        "name": "The Numbers Are Not Handwriting Rule",
+        "body": "Chord numbers are always set in Shoulders 900, never in Marker: Marker's numeral 1 reads as a bracket at chart size, and the numbers are the most-read glyphs on the page.",
+        "section": "typography"
+      },
+      {
+        "name": "The Mono Is Machine Text Rule",
+        "body": "JetBrains Mono appears only for literal text a machine reads: `.chartdown` source, shell commands, JSON and inline syntax. Never for labels, headings or decoration.",
+        "section": "typography"
+      },
+      {
+        "name": "The Read It On The Floor Rule",
+        "body": "Paragraph copy (lede, subcopy, facts) sits on the floor in Archivo. Marker and tape are for short, glanceable writing.",
+        "section": "typography"
+      },
+      {
+        "name": "The Lying Flat Rule",
+        "body": "Every raised object is something that could physically lie on a stage. If it would not be taped down, it does not get a shadow.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** put every short, glanceable label, headline-on-tape and the primary action on a torn tape strip with the tape-on-floor shadow and a rotation under 2deg.",
+      "**Do** pair every spike color with the X mark and the player's name.",
+      "**Do** set chord numbers in Shoulders 900 and MD notes in Marker.",
+      "**Do** render real ChartDown text through the reference parser wherever a chart is shown.",
+      "**Do** keep long copy on the floor in Archivo at 62ch or narrower.",
+      "**Do** use the shared ease (`cubic-bezier(.16,1,.3,1)`) and let the tape-laying reveal (0.5s clip from the left) be the one authored entrance; everything else is a state transition under 0.4s.",
+      "**Do** honor `prefers-reduced-motion` by removing all animation and transition.",
+      "**Do** use the bass-yellow 3px focus ring with 3px offset on the floor; inset it on tape and tabs.",
+      "**Do** give English and Spanish identical layout and weight."
+    ],
+    "donts": [
+      "**Don't** use a role color for status, links or decoration unrelated to that player.",
+      "**Don't** set chord numbers in Marker.",
+      "**Don't** use mono for anything a machine does not read.",
+      "**Don't** put paragraphs on tape, or make the source field look like tape.",
+      "**Don't** add floating cards, glass, gradients-as-surfaces or new background hues; surfaces are floor, raised floor, tape, paper and gaff.",
+      "**Don't** square up the world: a page of perfectly aligned, unrotated tape reads as a template, not a stage.",
+      "**Don't** style the separate `playground/index.html` reference tool from this file."
+    ]
+  }
+}
