@@ -48,6 +48,13 @@ instrument, and eight bars of chords.
 | `CHANGELOG.md` | Version history |
 | `CONTRIBUTING.md` | How to propose changes |
 
+## Implementations
+
+- [ChartDown/parser](https://github.com/ChartDown/parser): a JavaScript parser for
+  ChartDown 0.7 that passes every case in `conformance/`.
+- Building your own? Run `node conformance/run.mjs ./your-adapter.mjs` against it
+  and open an issue to be listed here.
+
 ## Licenses
 
 - **Specification, guides, examples and conformance cases:** [CC0 1.0](LICENSE-SPEC). No rights reserved.
