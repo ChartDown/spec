@@ -51,7 +51,8 @@ instrument, and eight bars of chords.
 ## Implementations
 
 - [ChartDown/parser](https://github.com/ChartDown/parser): a JavaScript parser for
-  ChartDown 0.7 that passes every case in `conformance/`.
+  ChartDown 0.7 that passes every case in `conformance/`. Install it from npm as
+  [`chartdown`](https://www.npmjs.com/package/chartdown).
 - Building your own? Run `node conformance/run.mjs ./your-adapter.mjs` against it
   and open an issue to be listed here.
 
