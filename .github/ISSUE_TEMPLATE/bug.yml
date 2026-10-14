@@ -1,0 +1,31 @@
+name: A chart reads wrong
+description: The playground or the conformance runner shows something the spec says it shouldn't.
+labels: [bug]
+body:
+  - type: textarea
+    id: chart
+    attributes:
+      label: The chart
+      description: The shortest ChartDown text that shows the problem.
+      render: chartdown
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+      description: If you can, name the spec section (for example, "5.2").
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened
+      description: What the playground showed, or the warning and its line number.
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: Where
+      description: Browser and version, or "conformance runner" with your Node.js version.

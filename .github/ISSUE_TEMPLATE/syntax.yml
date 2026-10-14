@@ -1,0 +1,29 @@
+name: Syntax idea
+description: Something your band needs to write that ChartDown can't say yet.
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ChartDown changes the spec first and the code second (see CONTRIBUTING.md).
+        We agree on the syntax here before anyone writes a pull request.
+  - type: textarea
+    id: need
+    attributes:
+      label: What you need to say
+      description: The musical idea, in the words you'd use at rehearsal.
+    validations:
+      required: true
+  - type: textarea
+    id: today
+    attributes:
+      label: How you write it today
+      description: On paper, in another app, or as an MD note.
+  - type: textarea
+    id: proposal
+    attributes:
+      label: How you'd like to write it
+      description: A short example of the ChartDown text. Original songs only, please.
+      render: chartdown
+    validations:
+      required: true
