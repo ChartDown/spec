@@ -440,7 +440,9 @@ const NAV = {segno:'Segno', coda:'Coda', tocoda:'To Coda', fine:'Fine', ds:'D.S.
   dsalfine:'D.S. al Fine', dc:'D.C.', dcalcoda:'D.C. al Coda', dcalfine:'D.C. al Fine'};
 const JUMPS = ['ds','dsalcoda','dsalfine','dc','dcalcoda','dcalfine'];
 const normWord = t => t.toLowerCase().replace(/[.\s]/g, '');
+// Spec 12: the common name of each key, used when a display transposes it.
 const KEY_LIST = ['C','Db','D','Eb','E','F','F#','G','Ab','A','Bb','B'];
+const MINOR_KEYS = ['C','C#','D','Eb','E','F','F#','G','G#','A','Bb','B'];
 
 const isNum = s => /^[b#]?[1-7]$/.test(s);
 function keySemi(k){
@@ -448,7 +450,8 @@ function keySemi(k){
   if(!m) return 0;
   return (LET[m[1]] + (m[2]==='#'?1:m[2]==='b'?-1:0) + 12) % 12;
 }
-const useFlats = k => k === 'F' || /b/.test(k || '');
+// Spec 12: flats in F, Bb, Eb, Ab, Db, Gb. A minor key spells like its relative major (Dm like F).
+const useFlats = (k, minor) => minor ? [1, 3, 5, 6, 8, 10].includes((keySemi(k) + 3) % 12) : k === 'F' || /b/.test(k || '');
 function rel(str, srcKey){
   const n = /^([b#]?)([1-7])$/.exec(str);
   if(n){
@@ -460,10 +463,12 @@ function rel(str, srcKey){
   const a = LET[l[1]] + (l[2]==='#'?1:l[2]==='b'?-1:0);
   return (((a - keySemi(srcKey)) % 12) + 12) % 12;
 }
-function showRoot(str, mode, srcKey, dispKey){
+// Spec 12: number style shows every minor quality with - (6m7 reads 6-7); maj qualities are unchanged.
+const showQuality = (q, mode) => mode === 'numbers' && q.startsWith('m') && !q.startsWith('maj') ? '-' + q.slice(1) : q;
+function showRoot(str, mode, srcKey, dispKey, minor){
   if(mode === 'numbers') return isNum(str) ? str : NUMS[rel(str, srcKey)];
   if(!isNum(str) && dispKey === srcKey) return str;
-  const names = useFlats(dispKey) ? FLAT : SHARP;
+  const names = useFlats(dispKey, minor) ? FLAT : SHARP;
   return names[(keySemi(dispKey) + rel(str, srcKey)) % 12];
 }
 
@@ -474,6 +479,8 @@ const ROLE_ALIAS = {all:'all',band:'all',everyone:'all',drums:'drums',drum:'drum
   sax:'sax',saxophone:'sax',tpt:'tpt',trumpet:'tpt',tbn:'tbn',trombone:'tbn',vln:'vln',violin:'vln'};
 const ROLE_LABEL = {drums:'Drums',bass:'Bass',keys:'Keys',gtr:'Guitar',vox:'Vocals',sax:'Saxophone',tpt:'Trumpet',tbn:'Trombone',vln:'Violin'};
 let CUSTOM = {};
+// Spec 3: versions this parser reads. Any other is a warning, and the file is still read.
+const READABLE = ['0.3', '0.4', '0.5', '0.6'];
 const roleLabel = r => ROLE_LABEL[r] || CUSTOM[r] || (r.charAt(0).toUpperCase() + r.slice(1));
 function parseRoles(s){
   const parts = s.split(/[,\/&\s]+/).filter(Boolean).map(x => x.toLowerCase());
@@ -496,16 +503,17 @@ function parseNote(t, n, warn){
   }
   return {md:false, roles:['all'], passes:[], text:t, line:n};
 }
-function parseCue(t){
+function parseCue(t, n, warn){
+  const unknown = who => { warn(n, 'Unknown instrument \u201c' + who + '\u201d in a cue'); return {roles:['all'], passes:[], text:t}; };
   const pm = PASS_RE.exec(t);
   if(pm){
     const rest = pm[2];
     if(rest.startsWith(':')) return {roles:['all'], passes:parsePasses(pm[1]), text:rest.slice(1).trim()};
     const m = /^([A-Za-z][A-Za-z,\/& ]*?)\s*:\s*(.+)$/.exec(rest);
-    if(m){ const r = parseRoles(m[1]); if(r) return {roles:r, passes:parsePasses(pm[1]), text:m[2].trim()}; }
+    if(m){ const r = parseRoles(m[1]); if(r) return {roles:r, passes:parsePasses(pm[1]), text:m[2].trim()}; return unknown(m[1]); }
   }
   const m = /^([A-Za-z][A-Za-z,\/& ]*?)\s*:\s*(.+)$/.exec(t);
-  if(m){ const r = parseRoles(m[1]); if(r) return {roles:r, passes:[], text:m[2].trim()}; }
+  if(m){ const r = parseRoles(m[1]); if(r) return {roles:r, passes:[], text:m[2].trim()}; return unknown(m[1]); }
   return {roles:['all'], passes:[], text:t};
 }
 
@@ -567,7 +575,7 @@ function parseBar(seg, n, warn, bpb){
     if(DYN.has(w)) bar.dyn = w;
     else if(TEMPO_MARK[w]) bar.tempo = w;
     else if(NAV[w]) bar.nav.push(w);
-    else if(t) bar.cues.push(parseCue(t));
+    else if(t) bar.cues.push(parseCue(t, n, warn));
     return ' ';
   });
   seg = seg.replace(/^\s*\[p:(\d+(?:\.\d+)?)\]/, (_, p) => { bar.pickup = parseFloat(p); return ' '; });
@@ -621,19 +629,25 @@ function parse(src){
   const warn = (line, msg) => doc.warnings.push({line, msg});
   const lines = src.replace(/\r/g,'').split('\n');
   let i = 0;
+  const metaLine = {};
   if(lines[0] && lines[0].trim() === '---'){
     i = 1;
     while(i < lines.length && lines[i].trim() !== '---'){
+      // Spec 3: a header with no closing line ends at the first section.
+      if(lines[i].trim().startsWith('##')){ warn(1, 'The header needs a closing --- line'); i--; break; }
       const m = lines[i].match(/^\s*([A-Za-z_][\w-]*)\s*:\s*(.*)$/);
-      if(m) doc.meta[m[1].toLowerCase()] = m[2].trim();
+      if(m){ doc.meta[m[1].toLowerCase()] = m[2].trim(); metaLine[m[1].toLowerCase()] = i + 1; }
       else if(lines[i].trim()) warn(i+1, 'Header lines look like  name: value');
       i++;
     }
+    if(i === lines.length) warn(1, 'The header needs a closing --- line');
     i++;
   }
+  if(doc.meta.chartdown && !READABLE.includes(doc.meta.chartdown))
+    warn(metaLine.chartdown, 'This chart says ChartDown ' + doc.meta.chartdown + '; this parser reads ' + READABLE[0] + '\u2013' + READABLE.at(-1));
   CUSTOM = {};
   (doc.meta.instruments || '').split(',').map(x => x.trim().toLowerCase()).filter(Boolean).forEach(id => {
-    if(/^[a-z0-9-]+$/.test(id)) CUSTOM[id] = id.charAt(0).toUpperCase() + id.slice(1); else warn(0, 'Instrument ids use lowercase letters, digits and -: \u201c' + id + '\u201d');
+    if(/^[a-z0-9-]+$/.test(id)) CUSTOM[id] = id.charAt(0).toUpperCase() + id.slice(1); else warn(metaLine.instruments, 'Instrument ids use lowercase letters, digits and -: \u201c' + id + '\u201d');
   });
   const km = /^([A-G][b#]?)(m?)/.exec(doc.meta.key || 'C');
   doc.keyRoot = km ? km[1] : 'C';
@@ -642,21 +656,21 @@ function parse(src){
   doc.meter = mm ? mm[1] + '/' + mm[2] : '4/4';
   doc.tempo = parseFloat(doc.meta.tempo) || null;
 
-  let cur = null, docKey = null, pendingLabel = null;
+  let cur = null, docKey = null, docMinor = doc.minor, pendingLabel = null;
   let meter = doc.meter, tempo = doc.tempo, pendingMeter = null, pendingTempo = null;
   for(; i < lines.length; i++){
     const line = lines[i].trim(), n = i + 1;
     if(!line || line.startsWith('//')) continue;
     if(line.startsWith('##')){
-      cur = {name: line.replace(/^#+\s*/,'') || 'Section', notes:[], rows:[], use:null, startKey:docKey};
+      cur = {name: line.replace(/^#+\s*/,'') || 'Section', notes:[], rows:[], use:null, startKey:docKey, startMinor:docMinor};
       doc.sections.push(cur); continue;
     }
     if(!cur){ warn(n, 'Bars need a section first, like  ## Verse 1'); continue; }
     if(line.startsWith('>')){ cur.notes.push(parseNote(line.replace(/^>\s?/,''), n, warn)); continue; }
     const u = line.match(/^@use\s+(.+)$/i);
-    if(u){ cur.use = u[1].trim(); continue; }
+    if(u){ cur.use = u[1].trim(); cur.useLine = n; continue; }
     const kc = line.match(/^@key\s+([A-G][b#]?)(m?)\s*$/);
-    if(kc){ docKey = kc[1]; pendingLabel = kc[1] + kc[2]; continue; }
+    if(kc){ docKey = kc[1]; docMinor = !!kc[2]; pendingLabel = kc[1] + kc[2]; continue; }
     if(/^@meter\b/i.test(line)){
       const mc = line.match(/^@meter\s+(\d+)\s*\/\s*(\d+)\s*$/i);
       if(mc){ meter = mc[1] + '/' + mc[2]; pendingMeter = meter; } else warn(n, 'Write a meter change like  @meter 3/4');
@@ -673,7 +687,7 @@ function parse(src){
       row.bars.forEach((b, bi) => {
         if(b.pickup !== null && (cur.rows.length || bi)){ warn(n, 'A pickup must be the first bar of a section'); b.pickup = null; b.total = b.top; }
       });
-      row.key = docKey;
+      row.key = docKey; row.minor = docMinor;
       row.meter = meter; row.tempo = tempo;
       if(pendingLabel){ row.keyLabel = pendingLabel; pendingLabel = null; }
       if(pendingMeter){ row.meterLabel = pendingMeter; pendingMeter = null; }
@@ -682,12 +696,13 @@ function parse(src){
     }
   }
   doc.sections.forEach((s, idx) => {
+    if(s.use && s.rows.length) warn(s.useLine, '@use must be the only content line of a section; its own rows are kept');
     if(s.use && !s.rows.length){
       const src2 = doc.sections.slice(0, idx).find(x => x.name.toLowerCase() === s.use.toLowerCase() && x.rows.length);
       if(src2){
         s.rows = JSON.parse(JSON.stringify(src2.rows));
-        s.rows.forEach(r => { r.key = s.startKey; delete r.keyLabel; });
-      } else warn(0, 'Can\u2019t find an earlier section named \u201c' + s.use + '\u201d');
+        s.rows.forEach(r => { r.key = s.startKey; r.minor = s.startMinor; delete r.keyLabel; });
+      } else warn(s.useLine, 'Can\u2019t find an earlier section named \u201c' + s.use + '\u201d');
     }
   });
   analyze(doc, warn);
@@ -788,13 +803,16 @@ function toJSON(doc){
     return {type:'chord', root:it.root, degree:deg(it.root, key), quality:it.q, bass:it.bass, bassDegree:deg(it.bass, key),
       beats:it.beats, push:it.push, hold:it.hold, stab:it.stab, fermata:it.ferm};
   };
-  const cue = c => ({roles:c.roles, passes:c.passes, text:c.text});
+  // Spec 4.1: the JSON form names standard roles by their role name, custom ids as declared.
+  const ROLE_NAME = {all:'everyone', gtr:'guitar', vox:'vocals', sax:'saxophone', tpt:'trumpet', tbn:'trombone', vln:'violin'};
+  const roles = rs => rs.map(r => ROLE_NAME[r] || r);
+  const cue = c => ({roles:roles(c.roles), passes:c.passes, text:c.text});
   return {
     chartdown: doc.meta.chartdown || null,
     meta: doc.meta, key: doc.keyRoot, minor: doc.minor,
     sections: doc.sections.map(s => ({
       name: s.name, use: s.use,
-      notes: s.notes.map(t => ({md:t.md, roles:t.roles, passes:t.passes, text:t.text})),
+      notes: s.notes.map(t => ({md:t.md, roles:roles(t.roles), passes:t.passes, text:t.text})),
       rows: s.rows.map(r => {
         const key = r.key || doc.keyRoot;
         return {key, meter:r.meter, tempo:r.tempo, bars: r.bars.map(b => ({
@@ -824,15 +842,14 @@ function chordHTML(c, ctx){
   if(c.t === 'nc')  return '<span class="nc" aria-label="no chord"' + (c.explicit ? ' style="flex:' + c.beats + ' 1 0"' : '') + '>N.C.</span>';
   if(c.t === 'riff'){
     const notes = c.notes.map(nt => '<span class="rn' + (nt.rest ? ' rest' : '') + '" style="flex:' + nt.beats + ' 1 0">' +
-      (nt.rest ? 'x' : esc(showRoot(nt.root, ctx.mode, ctx.src, ctx.disp))) + '</span>').join('');
+      (nt.rest ? 'x' : esc(showRoot(nt.root, ctx.mode, ctx.src, ctx.disp, ctx.minor))) + '</span>').join('');
     return '<span class="riff" aria-label="unison riff" style="flex:' + c.beats + ' 1 0">' + notes + '</span>';
   }
   if(c.t === 'rep') return '<span class="rep" aria-label="repeat previous bar">%</span>';
   if(c.t === 'tie') return '<span class="tie" aria-label="tied">\u2040</span>';
-  const root = showRoot(c.root, ctx.mode, ctx.src, ctx.disp);
-  const bass = c.bass ? showRoot(c.bass, ctx.mode, ctx.src, ctx.disp) : '';
-  let q = c.q;
-  if(q === 'm' && ctx.mode === 'numbers') q = '-';
+  const root = showRoot(c.root, ctx.mode, ctx.src, ctx.disp, ctx.minor);
+  const bass = c.bass ? showRoot(c.bass, ctx.mode, ctx.src, ctx.disp, ctx.minor) : '';
+  const q = showQuality(c.q, ctx.mode);
   const marks = (c.stab ? '^' : '') + (c.ferm ? '\u2312' : '');
   return '<span class="ch' + (c.hold ? ' hold' : '') + '" style="flex:' + c.beats + ' 1 0">' +
     (marks ? '<span class="mk" aria-hidden="true">' + marks + '</span>' : '') +
@@ -877,10 +894,11 @@ function playOrderText(doc){
 }
 
 function rowCtx(row, srcRoot, disp){
-  if(!row.key) return {mode:state.mode, src:srcRoot, disp};
+  const minor = row.minor;
+  if(!row.key) return {mode:state.mode, src:srcRoot, disp, minor};
+  if(disp === srcRoot) return {mode:state.mode, src:row.key, disp:row.key, minor};
   const off = (keySemi(row.key) - keySemi(srcRoot) + 12) % 12;
-  const names = useFlats(disp) ? FLAT : SHARP;
-  return {mode:state.mode, src:row.key, disp:names[(keySemi(disp) + off) % 12]};
+  return {mode:state.mode, src:row.key, disp:(minor ? MINOR_KEYS : KEY_LIST)[(keySemi(disp) + off) % 12], minor};
 }
 
 const ed = document.getElementById('ed');
@@ -937,7 +955,7 @@ function render(){
     }
     s.rows.forEach(r => {
       const ctx = rowCtx(r, srcKey, disp);
-      if(r.keyLabel) html += '<div class="keychg">Key change: ' + esc((state.mode === 'letters' ? ctx.disp + minor : r.keyLabel)) + '</div>';
+      if(r.keyLabel) html += '<div class="keychg">Key change: ' + esc((state.mode === 'letters' ? ctx.disp + (r.minor ? 'm' : '') : r.keyLabel)) + '</div>';
       if(r.meterLabel || r.tempoLabel) html += '<div class="keychg">' + esc([r.meterLabel ? 'Meter: ' + r.meterLabel : '', r.tempoLabel ? 'Tempo: ' + r.tempoLabel + ' bpm' : ''].filter(Boolean).join(' \u00b7 ')) + '</div>';
       const cols = r.bars.map(b => 'minmax(0,' + (b.pickup ? Math.max(b.pickup / b.top, .3) : 1) + 'fr)').join(' ');
       html += '<div class="row" style="--n:' + r.bars.length + ';grid-template-columns:' + cols + '">' + r.bars.map(b => barHTML(b, ctx)).join('') + '</div>';

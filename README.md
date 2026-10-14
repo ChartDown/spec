@@ -44,13 +44,14 @@ instrument, and eight bars of chords.
 | `docs/guia.md` | Guía rápida en español |
 | `examples/` | Example charts (original songs written for this repo) |
 | `playground/index.html` | Reference parser and renderer in one HTML file, no dependencies |
+| `conformance/` | Official test cases for parsers, and a runner: `node conformance/run.mjs` |
 | `CHANGELOG.md` | Version history |
 | `CONTRIBUTING.md` | How to propose changes |
 
 ## Licenses
 
-- **Specification, guides and examples:** [CC0 1.0](LICENSE-SPEC). No rights reserved.
-- **Reference code** (`playground/`): [MIT](LICENSE).
+- **Specification, guides, examples and conformance cases:** [CC0 1.0](LICENSE-SPEC). No rights reserved.
+- **Reference code** (`playground/`, `conformance/run.mjs`): [MIT](LICENSE).
 
 ## Name and compatibility
 

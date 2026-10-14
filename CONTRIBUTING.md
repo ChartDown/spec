@@ -10,7 +10,8 @@ ChartDown follows spec-driven development: **the spec changes first, code second
    ChartDown text you want to write.
 2. **Discuss** the syntax in the issue before writing code.
 3. **Send a pull request** that updates `SPEC.md`, adds or updates an example in
-   `examples/`, and, if needed, updates the reference playground.
+   `examples/`, adds or updates the cases in `conformance/` for the rule, and, if
+   needed, updates the reference playground. `node conformance/run.mjs` must pass.
 4. Add a line to `CHANGELOG.md`.
 
 ## Guidelines
