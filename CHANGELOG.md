@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.7 (draft)
+- Chord quality vocabulary: canonical forms (`m7`, `maj7`, `m7b5`, `dim7`, `7#9`, `9sus`, ...) and aliases (`-7`, `M7`, `Δ`, `ø`, `°7`, `+`, `sus4`, parentheses). A quality outside the vocabulary passes through as written (spec 6).
+- `numbering: 6m` header: in a minor key, numbers count from the relative major, so the tonic is `6m`. `1m` stays the default (spec 3).
+- Formal grammar in ABNF (spec 15). Directive names in any case; a `@key` it cannot read is a warning.
+- JSON form: `numbering`, `rows[].minor`, and `quality` in its canonical form (Appendix A).
+- Conformance: 19 new cases (142 in all), and the existing cases updated for the new JSON fields.
+- Guides: `numbering: 6m` and common quality spellings. Syntax tour: quality aliases.
+- Playground: quality aliases, `numbering: 6m`, any-case directives.
+
 ## 0.6 clarifications
 - Conformance suite: 123 cases in `conformance/`, one file per spec section, checked by `node conformance/run.mjs` (spec Appendix B). Cases come from the ChartDown App parser and were checked against the playground.
 - Spec rules that were left open: a header with no closing line, unknown versions (3), unknown names in cues and role names in the JSON form (4.1), `@use` with its own rows (5.2), meter and tempo across sections (11.2, 11.3), minor qualities in number display, minor-key spelling and transposed key names (12), warning lines and order (13).
