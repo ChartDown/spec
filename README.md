@@ -2,6 +2,10 @@
 
 **An open, plain-text notation for Nashville Number System charts, with music director cues for every player.**
 
+[![A ChartDown chart taped to a stage floor: MD notes for the band, drums, guitar, bass, keys and vocals above the chord numbers](docs/images/landing.jpg)](https://chartdown.github.io/spec/)
+
+**[chartdown.github.io/spec](https://chartdown.github.io/spec/)** · [Playground](https://chartdown.github.io/spec/playground/) · [Guide](docs/guide.md) · [Guía en español](docs/guia.md)
+
 ChartDown is to band charts what Markdown is to documents: you write simple text,
 and any ChartDown-compatible tool turns it into a clean, readable chart.
 
@@ -28,6 +32,23 @@ instrument, and eight bars of chords.
 - **Open.** The spec is public domain (CC0). The reference code is MIT. Anyone can
   build a ChartDown app.
 
+## Try it in 30 seconds
+
+1. Open the [playground](https://chartdown.github.io/spec/playground/). It loads an example song.
+2. Replace the text with this and watch the chart redraw as you type:
+
+   ```
+   ---
+   key: G
+   ---
+   ## Verse
+   > MD drums: Sit out until the chorus.
+   1 | 4 1 | 6m 5 | 4 1
+   ```
+
+3. Set **View** to *Drums* to read the chart as the drummer, or switch to
+   **Letters** and pick another **Key** to transpose it.
+
 ## Get started
 
 1. Read the [quick guide](docs/guide.md) ([en español](docs/guia.md)).
@@ -47,6 +68,14 @@ instrument, and eight bars of chords.
 | `conformance/` | Official test cases for parsers, and a runner: `node conformance/run.mjs` |
 | `CHANGELOG.md` | Version history |
 | `CONTRIBUTING.md` | How to propose changes |
+
+## Implementations
+
+- [ChartDown/parser](https://github.com/ChartDown/parser): a JavaScript parser for
+  ChartDown 0.7 that passes every case in `conformance/`. Install it from npm as
+  [`chartdown`](https://www.npmjs.com/package/chartdown).
+- Building your own? Run `node conformance/run.mjs ./your-adapter.mjs` against it
+  and open an issue to be listed here.
 
 ## Licenses
 
