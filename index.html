@@ -569,7 +569,7 @@ en:{
   labels:[["6m","Minor"],["1/3","1 with the 3rd in the bass"],["'4","Push: play it an eighth early"],["1!","Stab: short and accented"],["<1>~","Hold it until I cue"],["|: 6m | 4 :| 2x","Repeat it twice"],["@use Chorus","Play the chorus again"],["{2x drums: in}","Drums in on the second pass"],["\"Every mile\"","Lyric landmark, 8 words max"]],
   openTitle:"Open, all the way down",
   openSub:"ChartDown is a specification, not an app's file format. Anyone can build a reader, an editor or a converter for it, and charts stay plain text you own.",
-  facts:[["The spec","Every rule in one file, released under CC0.","SPEC.md"],["The grammar","A formal ABNF grammar for the whole format.","SPEC.md#15-grammar"],["The JSON form","One shape every parser produces, so tools can share charts.","SPEC.md#appendix-a-json-form"],["The tests","142 conformance cases, one rule each.","conformance/"]],
+  facts:[["The spec","Every rule in one file, released under CC0.","SPEC.md"],["The grammar","A formal ABNF grammar for the whole format.","SPEC.md#15-grammar"],["The JSON form","One shape every parser produces, so tools can share charts.","SPEC.md#appendix-a-json-form"],["The tests","142 conformance cases, one rule each.","conformance/"],["A parser","A JavaScript parser that passes every case.","https://github.com/ChartDown/parser"]],
   jsonNote:"A first bar written <code>4 {drums: in}</code>, in the JSON form (shortened):",
   cmdNote:"Write a small adapter for your parser and run every case in the suite. Node.js 18, nothing to install.",
   closeTitle:"Bring a chart to the next rehearsal",
@@ -612,7 +612,7 @@ es:{
   labels:[["6m","Menor"],["1/3","1 con la tercera en el bajo"],["'4","Anticipa: una corchea antes"],["1!","Corte: corto y acentuado"],["<1>~","Sostenlo hasta mi señal"],["|: 6m | 4 :| 2x","Repítelo dos veces"],["@use Coro","Toca el coro otra vez"],["{2x drums: in}","Entra la batería en la segunda pasada"],["\"Cada kilómetro\"","Referencia de letra, máximo 8 palabras"]],
   openTitle:"Abierto de punta a punta",
   openSub:"ChartDown es una especificación, no el formato de una app. Cualquiera puede hacer un lector, un editor o un convertidor, y tus charts siguen siendo texto que es tuyo.",
-  facts:[["La spec","Todas las reglas en un archivo, con licencia CC0.","SPEC.md"],["La gramática","Una gramática formal en ABNF para todo el formato.","SPEC.md#15-grammar"],["El JSON","Una forma que produce todo parser, para que las herramientas compartan charts.","SPEC.md#appendix-a-json-form"],["Las pruebas","142 casos de conformidad, una regla cada uno.","conformance/"]],
+  facts:[["La spec","Todas las reglas en un archivo, con licencia CC0.","SPEC.md"],["La gramática","Una gramática formal en ABNF para todo el formato.","SPEC.md#15-grammar"],["El JSON","Una forma que produce todo parser, para que las herramientas compartan charts.","SPEC.md#appendix-a-json-form"],["Las pruebas","142 casos de conformidad, una regla cada uno.","conformance/"],["Un parser","Un parser en JavaScript que pasa todos los casos.","https://github.com/ChartDown/parser"]],
   jsonNote:"Un primer compás escrito <code>4 {drums: in}</code>, en la forma JSON (abreviado):",
   cmdNote:"Escribe un adaptador pequeño para tu parser y corre todos los casos. Node.js 18, sin instalar nada.",
   closeTitle:"Lleva un chart al próximo ensayo",
@@ -746,7 +746,7 @@ function renderStatic(){
   }).join("") + `<span class="edge">${esc(L.front)}</span>`;
   $("#labels").innerHTML = L.labels.map(([c, d]) => `<li><code>${esc(c)}</code><span>${esc(d)}</span></li>`).join("");
   $("#facts").innerHTML = L.facts.map(([k, v, p]) =>
-    `<li><b><a href="${REPO.replace("blob/main/", p.endsWith("/") ? "tree/main/" : "blob/main/")}${p}">${esc(k)}</a></b><span>${esc(v)}</span></li>`).join("");
+    `<li><b><a href="${p.startsWith("https:") ? p : REPO.replace("blob/main/", p.endsWith("/") ? "tree/main/" : "blob/main/") + p}">${esc(k)}</a></b><span>${esc(v)}</span></li>`).join("");
 }
 
 /* ---------- Language ---------- */
