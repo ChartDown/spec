@@ -2,7 +2,7 @@
 
 **An open, plain-text notation for Nashville Number System charts, with music director cues for every player.**
 
-[![A ChartDown chart taped to a stage floor: MD notes for the band, drums, guitar, bass, keys and vocals above the chord numbers](docs/images/landing.jpg)](https://chartdown.github.io/spec/)
+[![The ChartDown landing page: "Write it once. Share it many times." over a pencil drawing of a stage, with keys, drums, a bass amp and a music stand with a chart for every player](docs/images/landing.jpg)](https://chartdown.github.io/spec/)
 
 **[chartdown.github.io/spec](https://chartdown.github.io/spec/)** · [Playground](https://chartdown.github.io/spec/playground/) · [Guide](docs/guide.md) · [Guía en español](docs/guia.md)
 
