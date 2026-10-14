@@ -1,0 +1,24 @@
+name: The spec is unclear
+description: A rule in SPEC.md or the guides is confusing, missing, or says two things.
+labels: [documentation]
+body:
+  - type: input
+    id: section
+    attributes:
+      label: Spec section
+      placeholder: "9.1"
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What's unclear
+      description: Quote the sentence if you can, and say how you read it.
+    validations:
+      required: true
+  - type: textarea
+    id: chart
+    attributes:
+      label: An example
+      description: ChartDown text where two readings of the rule give different results.
+      render: chartdown
