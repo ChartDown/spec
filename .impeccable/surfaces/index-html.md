@@ -1,5 +1,5 @@
 ---
-version: 1
+version: 2
 slug: "index-html"
 primary_target: "index.html"
 related_targets: []
@@ -7,24 +7,16 @@ related_targets: []
 
 # Landing (chartdown.github.io/spec)
 
-Mode: Persuade. Audience: worship team MDs and players first, then other working bands, then tool builders. Action: try ChartDown on the page and open the playground; secondary: read the guide/spec, share a chart in Discussions, star on GitHub. Proof: real ChartDown text rendered live by the reference parser (playground/index.html), the spec, 142 conformance cases. Constraints: US English + Mexican Spanish as equals; never mention ChartDown App; no invented users, stars or quotes; original example songs only. Build path: code-led (no image generation available).
+Mode: Persuade. Audience: worship team MDs and players first, then other working bands, then tool builders. Action: open the playground and write a first chart; secondary: read the guide or spec, share a chart in Discussions, build a parser. Proof: real ChartDown text rendered live by the reference parser (playground/index.html), the spec, 142 conformance cases, the `chartdown` parser on npm. Constraints: US English + Mexican Spanish as equals; never mention ChartDown App; no invented users, stars or quotes; original example songs only.
 
-## Direction contract
+## Direction contract (replaces the 2026-10 gaffer-tape version, which the owner rejected as dated)
 
-THESIS: The page is the stage floor at soundcheck. The chart is the set list taped down at your feet, and every player's spot is marked with spike tape. It refuses the open-source split hero (code left, render right, feature cards below).
+THESIS: A stage lit scene by scene. One clear idea (write the chart once, every player reads their part) told as a scroll story, clean and minimal in each frame, bold in color between frames. Every scene ends by inviting the reader to take part.
 
-OWN-WORLD: Scuffed charcoal stage-floor paint as the ground; torn off-white gaffer tape strips carry every block of copy; Sharpie marker for chord numbers and MD notes; road-case stencil caps for headlines; one spike-tape color per player (drums red, bass yellow, keys blue, guitar green, vocals pink) used as marks with labels, never color alone. Mono only for real .chartdown source.
+REFERENCE: The owner pointed to 247artists.com for its motion: pinned scroll scenes, a full-bleed color field per scene, very large type, one line motif carried through the page, cards that fly in. Take the motion language, not the look.
 
-STORY: The visitor sees a real chart taped to the floor, steps onto their spike mark and sees only their cues, changes the key, sees it is just text they can type, then opens the playground or reads the guide.
+OWN-WORLD: The ChartDown – Spec design system (claude.ai artifact 7FuYpSAnB2AxP2XZJQ2VSi) and the owner's logo in assets/logos/. Scene fields are stage-light gels (red, amber, blue, pink) plus ink and paper; the chart itself is always paper, with the two pencils (md red, dynamic blue). The thread is the bar line: one line, then five strings for five players, then the bar lines of the chart.
 
-FIRST VIEWPORT: Stencil wordmark and the tagline written on tape top-left, nav as tape tabs with EN/ES. Dominant: a large taped set list sheet with the live chart (Open Road), slightly skewed. Beside it a tape strip holding the editable source. Along the bottom edge, the spike marks row (Band, Drums, Bass, Keys, Guitar, Vocals) and a key tape; primary action "Open the playground" as a bold tape strip in the first viewport.
+STORY: 1 hero, the pencil stage drawing draws itself. 2 red, every player hears the song differently (questions fly in), one chart answers all. 3 paper, the file types itself and the real parser renders it. 4 amber, the view cycles through the players. 5 blue, the row flips through keys. 6 ink, open all the way down (142, CC0, EN·ES, npm). 7 pink, three ways to join.
 
-FORM: Gaffer-tape set list and stage plot, IMPECCABLE'S PICK (my list position 1), seed 0d8fe95e. Signature interaction: choosing a spike mark re-tapes the chart for that player; typing in the source re-renders the sheet live.
-
-FINISH: unreviewed and undocumented is unfinished; this build ends with the finish review, the verdict, DESIGN.md, and every shipping raster carrying its provenance
-
-## Cited adaptations
-
-- Chord numbers are set in Big Shoulders Display 900, not marker: Permanent Marker's numeral 1 reads as a bracket at chart size, and the numbers are the most-read glyphs. Marker stays for MD notes, titles and readouts.
-- The editable source is a dashed field on the floor, not tape: a textarea needs its input affordance.
-- Long copy (lede, section text, facts) sits on the floor, not tape, for reading comfort.
+RULES: Without motion (prefers-reduced-motion) or on screens narrower than 760px or shorter than 600px, nothing pins and every scene shows its finished state. Text on gels: ink on red, amber and pink; paper on blue.
