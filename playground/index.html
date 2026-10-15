@@ -87,6 +87,9 @@ main{display:grid;grid-template-columns:minmax(300px,5fr) minmax(0,7fr);gap:28px
 .btn{border:1.5px solid var(--edge);background:var(--paper);color:var(--ink);border-radius:999px;padding:0 14px;min-height:40px;font-weight:600;font-size:14.5px;cursor:pointer;transition:transform .2s cubic-bezier(.22,1,.36,1)}
 .btn:hover{transform:translateY(-1px)}
 .btn.ghost{border-color:transparent;background:transparent;color:var(--faint)}
+.btn.primary{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.btn.primary svg{width:17px;height:17px;margin:-3px 6px -3px 0;vertical-align:middle}
+.status button{border:0;background:none;padding:0;margin-left:6px;color:var(--blue);font-weight:600;text-decoration:underline;cursor:pointer}
 
 /* The editor: the source, highlighted with the same two pencils as the chart */
 .ed-wrap{position:relative;height:64vh;min-height:380px;background:#16212C;border:1.5px solid #16212C;border-radius:12px;overflow:hidden}
@@ -103,7 +106,8 @@ main{display:grid;grid-template-columns:minmax(300px,5fr) minmax(0,7fr);gap:28px
 .hl-d{color:#86AAFF}.hl-l{color:#98A8B8;font-style:italic}.hl-p{color:#64748A}
 .warn{margin:12px 0 0;padding:0;list-style:none;font-size:15px;color:var(--red)}
 .warn li{padding:2px 0}
-.status{min-height:1.4em;margin:8px 0 0;font-size:15px;color:var(--faint)}
+.ed-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 12px;margin-top:6px}
+.status{flex:1 1 220px;min-height:1.4em;margin:0;font-size:15px;color:var(--faint)}
 details{margin-top:14px;border:1.5px solid var(--edge);border-radius:12px;background:var(--paper);padding:12px 16px}
 summary{cursor:pointer;font:700 20px/1.2 var(--num)}
 details dl{margin:12px 0 4px;display:grid;grid-template-columns:auto 1fr;gap:8px 18px;font-size:15px}
@@ -167,12 +171,26 @@ details dd{margin:0;color:var(--faint)}
 .lyr{position:absolute;left:8px;right:8px;bottom:4px;font-size:13px;font-style:italic;color:var(--faint);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .empty{color:var(--faint)}
 
+/* ChartDown App, under the chart (screen only) */
+.app{max-width:940px;margin-top:30px;display:flex;flex-wrap:wrap;align-items:center;gap:12px 24px;padding:18px 22px;border:1.5px dashed var(--rule);border-radius:12px}
+.app p{margin:0;flex:1 1 320px;color:var(--faint);font-size:15.5px}
+.app b{color:var(--ink);font-weight:600}
+.app a{font-weight:600;color:var(--blue);text-decoration:none;white-space:nowrap}
+.app a:hover{text-decoration:underline}
+.print-foot{display:none}
+
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+/* Print / PDF: only the chart, as the current view and key show it, always light */
 @media print{
-  :root{--bg:#fff;--paper:#fff}
-  .top,.edit,.chart-head{display:none}
-  main{display:block;padding:0}
-  .paper{border:0;padding:0;max-width:none;box-shadow:none}
+  @page{margin:14mm}
+  :root:not(#print){--bg:#fff;--paper:#fff;--ink:#000;--rule:#999;--faint:#444;--red:#B8322A;--blue:#1F4FA8;--edge:#000;color-scheme:light}
+  body{background:#fff}
+  .top,.edit,.chart-head,.app{display:none!important}
+  main{display:block;padding:0;max-width:none}
+  .paper{border:0;padding:0;max-width:none;box-shadow:none;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .row{break-inside:avoid}
+  .sec header,.note{break-after:avoid}
+  .print-foot{display:block;margin-top:28px;padding-top:8px;border-top:1px solid var(--rule);font-size:11px;color:var(--faint)}
 }
 </style>
 </head>
@@ -180,46 +198,58 @@ details dd{margin:0;color:var(--faint)}
 <header class="top">
   <a class="brand" href="../" aria-label="ChartDown Spec, home"><img src="../assets/logos/logo-lockup-dark.svg" alt="ChartDown Spec" width="172" height="28"><span>Playground</span></a>
   <div class="controls">
-    <div class="seg" role="group" aria-label="Chord style">
-      <button type="button" id="mNum" aria-pressed="true">Numbers</button>
-      <button type="button" id="mLet" aria-pressed="false">Letters</button>
+    <div class="seg" role="group" aria-label="Chord style" data-i18n-label="style">
+      <button type="button" id="mNum" aria-pressed="true" data-i18n="numbers">Numbers</button>
+      <button type="button" id="mLet" aria-pressed="false" data-i18n="letters">Letters</button>
     </div>
-    <label class="k">Key <select id="key" disabled aria-label="Display key"></select></label>
-    <label class="k">View <select id="view" aria-label="Show notes for">
+    <label class="k"><span data-i18n="key">Key</span> <select id="key" disabled aria-label="Display key" data-i18n-label="dispKey"></select></label>
+    <label class="k"><span data-i18n="view">View</span> <select id="view" aria-label="Show notes for" data-i18n-label="showFor">
       <option value="everyone">Everyone</option><option value="drums">Drums</option><option value="bass">Bass</option>
       <option value="keys">Keys</option><option value="gtr">Guitar</option><option value="vox">Vocals</option>
       <option value="sax">Saxophone</option><option value="tpt">Trumpet</option><option value="tbn">Trombone</option><option value="vln">Violin</option>
     </select></label>
-    <button type="button" class="btn" id="cuesOnly" aria-pressed="false">MD cues only</button>
+    <button type="button" class="btn" id="cuesOnly" aria-pressed="false" data-i18n="cuesOnly">MD cues only</button>
+    <div class="seg" role="group" aria-label="Language">
+      <button type="button" data-lang="en" aria-pressed="true" lang="en">EN</button>
+      <button type="button" data-lang="es" aria-pressed="false" lang="es">ES</button>
+    </div>
   </div>
 </header>
 
 <main>
   <section class="edit" aria-label="Editor">
     <div class="pane-head">
-      <p class="pill"><b>1</b>Write</p>
+      <p class="pill"><b>1</b><span data-i18n="write">Write</span></p>
       <div class="pick" style="margin:0">
-        <button type="button" class="btn ghost" id="copy">Copy text</button>
-        <button type="button" class="btn ghost" id="copyJson">Copy JSON</button>
+        <button type="button" class="btn ghost" id="newChart" data-i18n="newChart">New chart</button>
+        <button type="button" class="btn ghost" id="openFile" data-i18n="openFile">Open file</button>
+        <button type="button" class="btn ghost" id="download" data-i18n="download">Download .chartdown</button>
+        <input type="file" id="file" accept=".chartdown,.txt,.md,text/plain" hidden>
       </div>
     </div>
     <div class="pick">
       <button type="button" class="btn" data-sample="road">Open Road</button>
       <button type="button" class="btn" data-sample="lantern">Lantern Bay (Em, 6/8)</button>
       <button type="button" class="btn" data-sample="north">Northbound (D.S. al Coda)</button>
-      <button type="button" class="btn" data-sample="tour">Syntax tour (every feature)</button>
+      <button type="button" class="btn" data-sample="tour" data-i18n="tour">Syntax tour (every feature)</button>
     </div>
     <div class="ed-wrap">
       <div class="ed-bar" aria-hidden="true"><i></i><i></i><i></i><span>chart.chartdown</span></div>
       <div class="ed-body">
         <pre id="hl" aria-hidden="true"></pre>
-        <textarea id="ed" spellcheck="false" aria-label="ChartDown source"></textarea>
+        <textarea id="ed" spellcheck="false" aria-label="ChartDown source" data-i18n-label="source"></textarea>
       </div>
     </div>
-    <p class="status" id="status" aria-live="polite"></p>
+    <div class="ed-foot">
+      <p class="status" id="status" aria-live="polite"></p>
+      <div class="pick" style="margin:0">
+        <button type="button" class="btn ghost" id="copy" data-i18n="copy">Copy text</button>
+        <button type="button" class="btn ghost" id="copyJson" data-i18n="copyJson">Copy JSON</button>
+      </div>
+    </div>
     <ul class="warn" id="warn"></ul>
     <details>
-      <summary>Syntax cheat sheet</summary>
+      <summary data-i18n="cheat">Syntax cheat sheet</summary>
       <dl>
         <dt>## Name</dt><dd>Start a section</dd>
         <dt>&gt; MD: text</dt><dd>Music director note</dd>
@@ -247,9 +277,17 @@ details dd{margin:0;color:var(--faint)}
     </details>
   </section>
 
-  <section aria-label="Chart">
-    <div class="pane-head chart-head"><p class="pill"><b>2</b>Read</p></div>
-    <div id="paper" class="paper" aria-label="Rendered chart"></div>
+  <section aria-label="Chart" data-i18n-label="chart">
+    <div class="pane-head chart-head">
+      <p class="pill"><b>2</b><span data-i18n="read">Read</span></p>
+      <button type="button" class="btn primary" id="print"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 9V3h10v6M7 17H4v-7h16v7h-3M7 14h10v7H7z"/></svg><span data-i18n="print">Print or save PDF</span></button>
+    </div>
+    <div id="paper" class="paper" aria-label="Rendered chart" data-i18n-label="rendered"></div>
+    <p class="print-foot" data-i18n="printFoot">Written in ChartDown, an open notation for band charts · chartdown.github.io/spec</p>
+    <aside class="app" aria-label="ChartDown App">
+      <p data-i18n-html="app"><b>ChartDown App</b> keeps your band's songs and sets in one place, and each player opens only their part on an iPad, even offline. Free private beta.</p>
+      <a href="https://www.chartdown.app/#invite" target="_blank" rel="noopener" data-i18n="waitlist">Join the waitlist &rarr;</a>
+    </aside>
   </section>
 </main>
 
@@ -549,7 +587,7 @@ const ROLE_LABEL = {drums:'Drums',bass:'Bass',keys:'Keys',gtr:'Guitar',vox:'Voca
 let CUSTOM = {};
 // Spec 3: versions this parser reads. Any other is a warning, and the file is still read.
 const READABLE = ['0.3', '0.4', '0.5', '0.6', '0.7'];
-const roleLabel = r => ROLE_LABEL[r] || CUSTOM[r] || (r.charAt(0).toUpperCase() + r.slice(1));
+const roleLabel = r => L.roles[r] || ROLE_LABEL[r] || CUSTOM[r] || (r.charAt(0).toUpperCase() + r.slice(1));
 function parseRoles(s){
   const parts = s.split(/[,\/&\s]+/).filter(Boolean).map(x => x.toLowerCase());
   if(!parts.length) return null;
@@ -915,6 +953,87 @@ function toJSON(doc){
   };
 }
 
+/* ---------- Interface copy (US English, Mexican Spanish) ---------- */
+// The page's own words; the chart's words come from the chart. Parser warnings stay in English.
+const UI = {
+en: {
+  roles: {everyone:'Everyone', drums:'Drums', bass:'Bass', keys:'Keys', gtr:'Guitar', vox:'Vocals', sax:'Saxophone', tpt:'Trumpet', tbn:'Trombone', vln:'Violin'},
+  key:'Key', time:'Time', tempo:'Tempo', feel:'Feel', bpm:'bpm', playOrder:'Play order', bar:'Bar', bars:'bars', oneBar:'bar', pickup:'Pickup',
+  viewing: r => 'Showing notes for <b>' + r + '</b> and the whole band.',
+  empty:'Add a section like <b>## Verse 1</b> and some bars to see your chart.',
+  nothing:'Nothing for this part.', keyChange:'Key change', meter:'Meter', line:'Line',
+  copied:'Copied to clipboard.', copyFail:'Couldn\u2019t copy. Select the text and copy it manually.',
+  restored:'Your last chart is back. It\u2019s saved in this browser only.', replaced:'Your chart was replaced.', undo:'Bring it back',
+  saved: f => 'Downloaded ' + f + '.', opened: f => 'Opened ' + f + '.', openFail:'Couldn\u2019t read that file.', untitled:'chart',
+  template: String.raw`---
+chartdown: 0.7
+title: My song
+key: G
+tempo: 72
+meter: 4/4
+---
+
+## Intro
+> MD: Keys alone. I'll count us in.
+1 | 4 | 1 | 5
+
+## Verse 1
+> MD drums: Light, hi-hat only.
+{p} 1 | 4 | 6m | 5
+
+## Chorus
+> MD: Full band.
+{f} 4 | 1 | 5 | 6m
+`
+},
+es: {
+  roles: {everyone:'Todos', drums:'Batería', bass:'Bajo', keys:'Teclados', gtr:'Guitarra', vox:'Voces', sax:'Saxofón', tpt:'Trompeta', tbn:'Trombón', vln:'Violín'},
+  key:'Tono', time:'Compás', tempo:'Tempo', feel:'Estilo', bpm:'bpm', playOrder:'Orden', bar:'Compás', bars:'compases', oneBar:'compás', pickup:'Anacrusa',
+  viewing: r => 'Notas para <b>' + r + '</b> y toda la banda.',
+  empty:'Agrega una sección, como <b>## Verso 1</b>, y unos compases para ver tu chart.',
+  nothing:'Nada para esta parte.', keyChange:'Cambio de tono', meter:'Compás', line:'Línea',
+  copied:'Copiado al portapapeles.', copyFail:'No se pudo copiar. Selecciona el texto y cópialo a mano.',
+  restored:'Volvió tu último chart. Solo se guarda en este navegador.', replaced:'Se reemplazó tu chart.', undo:'Recuperarlo',
+  saved: f => 'Se descargó ' + f + '.', opened: f => 'Se abrió ' + f + '.', openFail:'No se pudo leer ese archivo.', untitled:'chart',
+  template: String.raw`---
+chartdown: 0.7
+title: Mi canción
+key: G
+tempo: 72
+meter: 4/4
+---
+
+## Intro
+> MD: Teclado solo. Yo cuento la entrada.
+1 | 4 | 1 | 5
+
+## Verso 1
+> MD drums: Ligero, solo hi-hat.
+{p} 1 | 4 | 6m | 5
+
+## Coro
+> MD: Toda la banda.
+{f} 4 | 1 | 5 | 6m
+`,
+  // Static text in the page, by its data-i18n key; English stays as written in the HTML.
+  page: {
+    style:'Estilo de acordes', numbers:'Números', letters:'Letras', key:'Tono', dispKey:'Tono para mostrar', view:'Ver', showFor:'Mostrar notas para',
+    cuesOnly:'Solo indicaciones', write:'Escribe', read:'Lee', newChart:'Chart nuevo', openFile:'Abrir archivo', download:'Descargar .chartdown',
+    copy:'Copiar texto', copyJson:'Copiar JSON', tour:'Recorrido de sintaxis (todo)', source:'Texto ChartDown', cheat:'Guía rápida de sintaxis',
+    chart:'Chart', rendered:'Chart dibujado', print:'Imprimir o guardar PDF',
+    printFoot:'Escrito en ChartDown, una notación abierta para charts de banda · chartdown.github.io/spec',
+    app:'<b>ChartDown App</b> guarda las canciones y los sets de tu banda en un solo lugar, y cada músico abre solo su parte en el iPad, incluso sin conexión. Beta privada y gratis.',
+    waitlist:'Únete a la lista de espera \u2192'
+  },
+  cheat: ['Empieza una sección', 'Nota del director musical', 'Compases, separados por |', 'Los acordes se reparten el compás', 'Reparto desigual, en tiempos',
+    'Acordes con bajo y suspendidos', 'Sostener un compás; continuarlo', 'Anticipación, anticipación corta, golpe, calderón',
+    'Sin acorde; silencio parcial; repetir el compás anterior', 'Anacrusa, luego compases completos', 'Riff al unísono en notas sueltas',
+    'Dinámica o indicación', 'Referencia de letra', 'Repetición; [1] y [2] para los finales', 'Indicación para una vuelta de la repetición',
+    'Navegación: también {coda}, {to coda}, {fine}, D.C.', 'Cambio de compás; un compás en otra métrica', 'Cambio de tempo; rit., accel., a tempo',
+    'Reusar una sección anterior', 'Nota del director para un instrumento', 'Indicación para un instrumento, en un compás', 'Cambio de tono desde aquí']
+}};
+let L = UI.en;
+
 /* ---------- Render ---------- */
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const state = {mode:'numbers', dispKey:null, role:'everyone', cuesOnly:false};
@@ -975,7 +1094,7 @@ function playOrderText(doc){
     const all = s.rows.flatMap(x => x.bars.map(b => b.number));
     const lo = Math.min(...r.bars), hi = Math.max(...r.bars);
     const full = lo === Math.min(...all) && hi === Math.max(...all);
-    return s.name + (full ? '' : ' (bars ' + lo + '\u2013' + hi + ')');
+    return s.name + (full ? '' : ' (' + L.bars + ' ' + lo + '\u2013' + hi + ')');
   }).join(' \u2192 ');
 }
 
@@ -1008,20 +1127,20 @@ function render(){
   if(doc.meta.title) html += '<h1>' + esc(doc.meta.title) + '</h1>';
   if(doc.meta.artists) html += '<p class="artists">' + esc(doc.meta.artists) + '</p>';
   const meta = [];
-  meta.push('<span>Key<b>' + esc(state.mode === 'letters' ? disp + minor : srcKey + minor + ' (1)') + '</b></span>');
-  meta.push('<span>Time<b>' + esc(doc.meta.meter || '4/4') + '</b></span>');
-  if(doc.meta.tempo) meta.push('<span>Tempo<b>' + esc(doc.meta.tempo) + ' bpm</b></span>');
-  if(doc.meta.feel) meta.push('<span>Feel<b>' + esc(doc.meta.feel) + '</b></span>');
+  meta.push('<span>' + L.key + '<b>' + esc(state.mode === 'letters' ? disp + minor : srcKey + minor + ' (1)') + '</b></span>');
+  meta.push('<span>' + L.time + '<b>' + esc(doc.meta.meter || '4/4') + '</b></span>');
+  if(doc.meta.tempo) meta.push('<span>' + L.tempo + '<b>' + esc(doc.meta.tempo) + ' ' + L.bpm + '</b></span>');
+  if(doc.meta.feel) meta.push('<span>' + L.feel + '<b>' + esc(doc.meta.feel) + '</b></span>');
   html += '<div class="meta">' + meta.join('') + '</div>';
   if(doc.sections.length) html += '<div class="form" aria-label="Song form">' + doc.sections.map(s => '<span>' + esc(s.name) + '</span>').join('') + '</div>';
-  if(doc.hasJump) html += '<p class="order"><b>Play order</b>' + esc(playOrderText(doc)) + '</p>';
-  if(state.role !== 'everyone') html += '<p class="viewing">Showing notes for <b>' + esc(roleLabel(state.role)) + '</b> and the whole band.</p>';
-  if(!doc.sections.length) html += '<p class="empty">Add a section like <b>## Verse 1</b> and some bars to see your chart.</p>';
+  if(doc.hasJump) html += '<p class="order"><b>' + L.playOrder + '</b>' + esc(playOrderText(doc)) + '</p>';
+  if(state.role !== 'everyone') html += '<p class="viewing">' + L.viewing(esc(roleLabel(state.role))) + '</p>';
+  if(!doc.sections.length) html += '<p class="empty">' + L.empty + '</p>';
 
   doc.sections.forEach(s => {
     const allBars = s.rows.flatMap(r => r.bars);
     const count = allBars.filter(b => !b.pickup).length;
-    html += '<section class="sec"><header><h2>' + esc(s.name) + '</h2><span class="count">' + (allBars.some(b => b.pickup) ? 'pickup + ' : '') + count + (count === 1 ? ' bar' : ' bars') + '</span></header>';
+    html += '<section class="sec"><header><h2>' + esc(s.name) + '</h2><span class="count">' + (allBars.some(b => b.pickup) ? L.pickup.toLowerCase() + ' + ' : '') + count + ' ' + (count === 1 ? L.oneBar : L.bars) + '</span></header>';
     const notes = s.notes.filter(t => visible(t.roles));
     notes.forEach(t => {
       html += '<p class="note' + (t.md ? ' md' : '') + '">' + (t.md ? '<b>MD</b>' : '') +
@@ -1035,14 +1154,14 @@ function render(){
         if(b.tempo) parts.push(TEMPO_MARK[b.tempo]);
         b.nav.forEach(w => parts.push(NAV[w]));
         b.cues.filter(c => visible(c.roles)).forEach(c => { const rt = cueWho(c); parts.push((rt ? rt + ': ' : '') + c.text); });
-        if(parts.length){ any = true; html += '<p class="line"><b>' + (b.pickup ? 'Pickup' : 'Bar ' + b.number) + '</b>' + esc(parts.join(', ')) + '</p>'; }
+        if(parts.length){ any = true; html += '<p class="line"><b>' + (b.pickup ? L.pickup : L.bar + ' ' + b.number) + '</b>' + esc(parts.join(', ')) + '</p>'; }
       }));
-      if(!any) html += '<p class="none">Nothing for this part.</p>';
+      if(!any) html += '<p class="none">' + L.nothing + '</p>';
     }
     s.rows.forEach(r => {
       const ctx = rowCtx(r, srcKey, disp);
-      if(r.keyLabel) html += '<div class="keychg">Key change: ' + esc((state.mode === 'letters' ? ctx.disp + (r.minor ? 'm' : '') : r.keyLabel)) + '</div>';
-      if(r.meterLabel || r.tempoLabel) html += '<div class="keychg">' + esc([r.meterLabel ? 'Meter: ' + r.meterLabel : '', r.tempoLabel ? 'Tempo: ' + r.tempoLabel + ' bpm' : ''].filter(Boolean).join(' \u00b7 ')) + '</div>';
+      if(r.keyLabel) html += '<div class="keychg">' + L.keyChange + ': ' + esc((state.mode === 'letters' ? ctx.disp + (r.minor ? 'm' : '') : r.keyLabel)) + '</div>';
+      if(r.meterLabel || r.tempoLabel) html += '<div class="keychg">' + esc([r.meterLabel ? L.meter + ': ' + r.meterLabel : '', r.tempoLabel ? L.tempo + ': ' + r.tempoLabel + ' ' + L.bpm : ''].filter(Boolean).join(' \u00b7 ')) + '</div>';
       const cols = r.bars.map(b => 'minmax(0,' + (b.pickup ? Math.max(b.pickup / b.top, .3) : 1) + 'fr)').join(' ');
       html += '<div class="row" style="--n:' + r.bars.length + ';grid-template-columns:' + cols + '">' + r.bars.map(b => barHTML(b, ctx)).join('') + '</div>';
     });
@@ -1051,7 +1170,7 @@ function render(){
   paper.className = 'paper' + (state.cuesOnly ? ' cues-only' : '');
   paper.innerHTML = html;
 
-  warnEl.innerHTML = doc.warnings.map(w => '<li>' + (w.line ? 'Line ' + w.line + ': ' : '') + esc(w.msg) + '</li>').join('');
+  warnEl.innerHTML = doc.warnings.map(w => '<li>' + (w.line ? L.line + ' ' + w.line + ': ' : '') + esc(w.msg) + '</li>').join('');
 }
 
 /* ---------- Wiring ---------- */
@@ -1073,19 +1192,77 @@ cuesBtn.addEventListener('click', () => {
 });
 ed.addEventListener('input', render);
 
-document.querySelectorAll('[data-sample]').forEach(b => b.addEventListener('click', () => {
-  ed.value = SAMPLES[b.dataset.sample];
+// The draft lives only in this browser: nothing is sent anywhere.
+const store = {
+  get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
+  set(k, v){ try { localStorage.setItem(k, v); } catch(e){} }
+};
+const DRAFT = 'chartdown-playground-draft';
+ed.addEventListener('input', () => store.set(DRAFT, ed.value));
+
+let statusTimer = 0;
+function say(msg, undo){
+  clearTimeout(statusTimer);
+  statusEl.textContent = msg;
+  if(undo){
+    const b = document.createElement('button');
+    b.type = 'button'; b.textContent = L.undo;
+    b.addEventListener('click', () => load(undo, ''));
+    statusEl.append(b);
+  }
+  if(msg) statusTimer = setTimeout(() => { statusEl.textContent = ''; }, undo ? 12000 : 3000);
+}
+// Text the person wrote, not one of the built-in samples or the starter chart.
+const isOwn = t => t.trim() !== '' && !Object.values(SAMPLES).includes(t) && t !== UI.en.template && t !== UI.es.template;
+function load(text, msg){
+  const before = ed.value;
+  ed.value = text;
+  ed.scrollTop = 0;
   state.dispKey = null;
-  statusEl.textContent = '';
-  render();
-}));
+  store.set(DRAFT, text);
+  render(); paint();
+  say(isOwn(before) && before !== text ? (msg ? msg + ' ' : '') + L.replaced : msg, isOwn(before) && before !== text ? before : null);
+}
+
+document.querySelectorAll('[data-sample]').forEach(b => b.addEventListener('click', () => load(SAMPLES[b.dataset.sample], '')));
+document.getElementById('newChart').addEventListener('click', () => { load(L.template, ''); ed.focus(); });
+
+const fileIn = document.getElementById('file');
+document.getElementById('openFile').addEventListener('click', () => fileIn.click());
+fileIn.addEventListener('change', async () => {
+  const f = fileIn.files[0];
+  if(!f) return;
+  try { load(await f.text(), L.opened(f.name)); } catch(e) { say(L.openFail); }
+  fileIn.value = '';
+});
+
+const fileName = () => (parse(ed.value).meta.title || L.untitled).normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+  .toLowerCase().replace(/\(example song\)/, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || L.untitled;
+document.getElementById('download').addEventListener('click', () => {
+  const name = fileName() + '.chartdown';
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([ed.value], {type:'text/plain;charset=utf-8'}));
+  a.download = name;
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  say(L.saved(name));
+});
+
+// Print what the chart pane shows: this view, this key. The title names the PDF.
+const pageTitle = document.title;
+window.addEventListener('beforeprint', () => {
+  const t = parse(ed.value).meta.title;
+  if(!t) return;
+  document.title = [t, state.role !== 'everyone' ? roleLabel(state.role) : '', state.mode === 'letters' ? keySel.value : ''].filter(Boolean).join(' \u2013 ');
+});
+window.addEventListener('afterprint', () => { document.title = pageTitle; });
+document.getElementById('print').addEventListener('click', () => window.print());
 
 async function copyOut(text, fallback){
   let ok = false;
   try { await navigator.clipboard.writeText(text); ok = true; } catch(e) {}
   if(!ok && fallback){ ed.select(); try { ok = document.execCommand('copy'); } catch(e) {} }
-  statusEl.textContent = ok ? 'Copied to clipboard.' : 'Couldn\u2019t copy. Select the text and copy it manually.';
-  setTimeout(() => { statusEl.textContent = ''; }, 2500);
+  say(ok ? L.copied : L.copyFail);
 }
 document.getElementById('copy').addEventListener('click', () => copyOut(ed.value, true));
 document.getElementById('copyJson').addEventListener('click', () => copyOut(JSON.stringify(toJSON(parse(ed.value)), null, 2), false));
@@ -1115,11 +1292,32 @@ function highlight(src){
 function paint(){ hlEl.innerHTML = highlight(ed.value); hlEl.scrollTop = ed.scrollTop; hlEl.scrollLeft = ed.scrollLeft; }
 ed.addEventListener('input', paint);
 ed.addEventListener('scroll', () => { hlEl.scrollTop = ed.scrollTop; hlEl.scrollLeft = ed.scrollLeft; });
-document.querySelectorAll('[data-sample]').forEach(b => b.addEventListener('click', paint));
 
-ed.value = SAMPLES.road;
-render();
+/* ---------- Language: same choice as the landing page ---------- */
+document.querySelectorAll('details dd').forEach((dd, i) => { dd.dataset.i18n = 'cheat' + i; });
+const swap = [['[data-i18n]', 'i18n', 'textContent'], ['[data-i18n-html]', 'i18nHtml', 'innerHTML']];
+swap.forEach(([sel, key, prop]) => document.querySelectorAll(sel).forEach(el => { el.dataset.en = el[prop]; }));
+document.querySelectorAll('[data-i18n-label]').forEach(el => { el.dataset.enLabel = el.getAttribute('aria-label'); });
+function setLang(lang){
+  L = UI[lang];
+  document.documentElement.lang = lang;
+  const es = lang === 'es';
+  const word = k => /^cheat\d+$/.test(k) ? UI.es.cheat[+k.slice(5)] : UI.es.page[k];
+  swap.forEach(([sel, key, prop]) => document.querySelectorAll(sel).forEach(el => { el[prop] = es ? word(el.dataset[key]) : el.dataset.en; }));
+  document.querySelectorAll('[data-i18n-label]').forEach(el => el.setAttribute('aria-label', es ? UI.es.page[el.dataset.i18nLabel] : el.dataset.enLabel));
+  document.querySelectorAll('#view option').forEach(o => { o.textContent = L.roles[o.value]; });
+  document.querySelectorAll('[data-lang]').forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === lang));
+  store.set('chartdown-lang', lang);
+  render();
+}
+document.querySelectorAll('[data-lang]').forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
+
+const asked = new URLSearchParams(location.search).get('lang');
+const draft = store.get(DRAFT);
+ed.value = draft || SAMPLES.road;
+setLang(asked === 'es' || asked === 'en' ? asked : store.get('chartdown-lang') || ((navigator.language || '').toLowerCase().startsWith('es') ? 'es' : 'en'));
 paint();
+if(draft && isOwn(draft)) say(L.restored);
 </script>
 </body>
 </html>
