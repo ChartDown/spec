@@ -22,6 +22,10 @@ En un tono menor, `1m` es el acorde de tónica. Si tu banda numera las canciones
 menores desde la relativa mayor, con la tónica en `6m`, agrega `numbering: 6m`
 al encabezado. Los dos charts dicen los mismos acordes.
 
+**¿No usas números?** Escribe los acordes con letra. Con `key: G`, la fila
+`G | C D | Em | D/F#` es un chart válido: ChartDown saca los números a partir del
+tono, y el playground muestra el chart en números o en letras, en cualquier tono.
+
 ## 2. Agrega secciones y compases
 
 Una sección empieza con `##`. Cada línea debajo es una fila de compases, separados con `|`.

@@ -22,6 +22,10 @@ In a minor key, `1m` is the tonic chord. If your band numbers minor songs from
 the relative major, so the tonic is `6m`, add `numbering: 6m` to the header.
 Both charts mean the same chords.
 
+**Not used to numbers?** Write chord letters instead. With `key: G`, the row
+`G | C D | Em | D/F#` is a valid chart: ChartDown works out the numbers from the
+key, and the playground shows the chart in numbers or letters, in any key.
+
 ## 2. Add sections and bars
 
 A section starts with `##`. Each line below it is one row of bars, separated by `|`.
