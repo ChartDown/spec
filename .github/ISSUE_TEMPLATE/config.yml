@@ -1,7 +1,7 @@
 blank_issues_enabled: false
 contact_links:
   - name: Share your chart
-    url: https://github.com/ChartDown/spec/discussions/categories/show-and-tell
+    url: https://github.com/ChartDown/spec/discussions/categories/share-your-chart
     about: Post a chart you wrote in ChartDown.
   - name: Ask a question
     url: https://github.com/ChartDown/spec/discussions/categories/q-a
