@@ -80,7 +80,7 @@ label.k{display:inline-flex;align-items:center;gap:8px;color:var(--stage-2);font
 /* ---------- Workspace ---------- */
 main{display:grid;grid-template-columns:minmax(300px,5fr) minmax(0,7fr);gap:28px;padding:28px 24px 48px;align-items:start;max-width:1600px;margin:0 auto}
 @media (max-width:880px){main{grid-template-columns:1fr;padding:16px}.top{padding:12px 16px}.brand span{display:none}}
-.pane-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.pane-head{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;min-height:44px;margin-bottom:12px}
 .pill{display:inline-flex;align-items:center;gap:8px;margin:0;padding:5px 14px 6px;border:1.5px solid var(--ink);border-radius:999px;font:600 14px/1 var(--ui)}
 .pill b{font:700 16px/1 var(--num)}
 .pick{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
@@ -93,10 +93,18 @@ main{display:grid;grid-template-columns:minmax(300px,5fr) minmax(0,7fr);gap:28px
 
 /* The editor: the source, highlighted with the same two pencils as the chart */
 .ed-wrap{position:relative;height:64vh;min-height:380px;background:#16212C;border:1.5px solid #16212C;border-radius:12px;overflow:hidden}
-.ed-bar{display:flex;align-items:center;gap:6px;height:36px;padding:0 14px;border-bottom:1px solid #263241;font:400 12.5px/1 var(--mono);color:#98A8B8}
+.ed-bar{display:flex;align-items:center;gap:6px;height:40px;padding:0 6px 0 14px;border-bottom:1px solid #263241;font:400 12.5px/1 var(--mono);color:#98A8B8}
+.ed-bar .dots{display:flex;gap:6px;margin-right:8px}
 .ed-bar i{width:10px;height:10px;border-radius:50%;background:#3A4857}
-.ed-bar span{margin-left:auto}
-.ed-body{position:absolute;inset:36px 0 0 0}
+.ed-name{margin-left:auto;padding:0 8px;white-space:nowrap}
+.ed-menu{display:flex;min-width:0;overflow-x:auto;scrollbar-width:none}
+.ed-menu button{flex:none;height:40px;padding:0 10px;border:0;border-radius:6px;background:none;color:#B9C5D1;font:600 13.5px/1 var(--ui);cursor:pointer}
+.ed-menu button:hover{color:#fff;background:#263241}
+.ed-bottom{position:absolute;left:0;right:0;bottom:0;justify-content:flex-end;gap:2px;padding:0 6px;border-top:1px solid #263241;background:#16212C}
+.ed-body{position:absolute;inset:40px 0 41px 0}
+.examples{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:14px}
+.examples p{margin:0 4px 0 0;font:700 15px/1 var(--ui);color:var(--faint)}
+@media (max-width:560px){.ed-name,.ed-bar .dots{display:none}.ed-bar{padding-left:4px}.ed-menu button{padding:0 7px;font-size:13px}}
 .ed-body pre,.ed-body textarea{position:absolute;inset:0;margin:0;padding:16px 18px 40px;border:0;font:14px/1.7 var(--mono);white-space:pre;tab-size:2;overflow:auto;letter-spacing:0}
 .ed-body pre{color:#E6EDF3;pointer-events:none;overflow:hidden}
 .ed-body textarea{background:transparent;color:transparent;-webkit-text-fill-color:transparent;caret-color:#FF8478;resize:none;outline:none}
@@ -106,8 +114,7 @@ main{display:grid;grid-template-columns:minmax(300px,5fr) minmax(0,7fr);gap:28px
 .hl-d{color:#86AAFF}.hl-l{color:#98A8B8;font-style:italic}.hl-p{color:#64748A}
 .warn{margin:12px 0 0;padding:0;list-style:none;font-size:15px;color:var(--red)}
 .warn li{padding:2px 0}
-.ed-foot{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 12px;margin-top:6px}
-.status{flex:1 1 220px;min-height:1.4em;margin:0;font-size:15px;color:var(--faint)}
+.status{min-height:1.4em;margin:6px 0 0;font-size:15px;color:var(--faint)}
 details{margin-top:14px;border:1.5px solid var(--edge);border-radius:12px;background:var(--paper);padding:12px 16px}
 summary{cursor:pointer;font:700 20px/1.2 var(--num)}
 details dl{margin:12px 0 4px;display:grid;grid-template-columns:auto 1fr;gap:8px 18px;font-size:15px}
@@ -220,34 +227,36 @@ details dd{margin:0;color:var(--faint)}
   <section class="edit" aria-label="Editor">
     <div class="pane-head">
       <p class="pill"><b>1</b><span data-i18n="write">Write</span></p>
-      <div class="pick" style="margin:0">
-        <button type="button" class="btn ghost" id="newChart" data-i18n="newChart">New chart</button>
-        <button type="button" class="btn ghost" id="openFile" data-i18n="openFile">Open file</button>
-        <button type="button" class="btn ghost" id="download" data-i18n="download">Download .chartdown</button>
+    </div>
+    <div class="ed-wrap">
+      <div class="ed-bar">
+        <span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>
+        <div class="ed-menu" role="toolbar" aria-label="File">
+          <button type="button" id="newChart" data-i18n="newChart">New chart</button>
+          <button type="button" id="openFile" data-i18n="openFile">Open file</button>
+          <button type="button" id="download" data-i18n="download">Download .chartdown</button>
+        </div>
         <input type="file" id="file" accept=".chartdown,.txt,.md,text/plain" hidden>
+        <span class="ed-name" aria-hidden="true">chart.chartdown</span>
+      </div>
+      <div class="ed-body">
+        <pre id="hl" aria-hidden="true"></pre>
+        <textarea id="ed" spellcheck="false" aria-label="ChartDown source" data-i18n-label="source"></textarea>
+      </div>
+      <div class="ed-menu ed-bottom" role="toolbar" aria-label="Copy">
+        <button type="button" id="copy" data-i18n="copy">Copy text</button>
+        <button type="button" id="copyJson" data-i18n="copyJson">Copy JSON</button>
       </div>
     </div>
-    <div class="pick">
+    <p class="status" id="status" aria-live="polite"></p>
+    <ul class="warn" id="warn"></ul>
+    <div class="examples">
+      <p data-i18n="examples">Examples:</p>
       <button type="button" class="btn" data-sample="road">Open Road</button>
       <button type="button" class="btn" data-sample="lantern">Lantern Bay (Em, 6/8)</button>
       <button type="button" class="btn" data-sample="north">Northbound (D.S. al Coda)</button>
       <button type="button" class="btn" data-sample="tour" data-i18n="tour">Syntax tour (every feature)</button>
     </div>
-    <div class="ed-wrap">
-      <div class="ed-bar" aria-hidden="true"><i></i><i></i><i></i><span>chart.chartdown</span></div>
-      <div class="ed-body">
-        <pre id="hl" aria-hidden="true"></pre>
-        <textarea id="ed" spellcheck="false" aria-label="ChartDown source" data-i18n-label="source"></textarea>
-      </div>
-    </div>
-    <div class="ed-foot">
-      <p class="status" id="status" aria-live="polite"></p>
-      <div class="pick" style="margin:0">
-        <button type="button" class="btn ghost" id="copy" data-i18n="copy">Copy text</button>
-        <button type="button" class="btn ghost" id="copyJson" data-i18n="copyJson">Copy JSON</button>
-      </div>
-    </div>
-    <ul class="warn" id="warn"></ul>
     <details>
       <summary data-i18n="cheat">Syntax cheat sheet</summary>
       <dl>
@@ -285,7 +294,7 @@ details dd{margin:0;color:var(--faint)}
     <div id="paper" class="paper" aria-label="Rendered chart" data-i18n-label="rendered"></div>
     <p class="print-foot" data-i18n="printFoot">Written in ChartDown, an open notation for band charts · chartdown.github.io/spec</p>
     <aside class="app" aria-label="ChartDown App">
-      <p data-i18n-html="app"><b>ChartDown App</b> keeps your band's songs and sets in one place, and each player opens only their part on an iPad, even offline. Free private beta.</p>
+      <p data-i18n-html="app"><b>ChartDown App</b> keeps your band's songs and sets in one place, and each player opens only their part on an iPad or phone, even offline. Private beta, free during the beta.</p>
       <a href="https://www.chartdown.app/#invite" target="_blank" rel="noopener" data-i18n="waitlist">Join the waitlist &rarr;</a>
     </aside>
   </section>
@@ -1018,11 +1027,11 @@ meter: 4/4
   // Static text in the page, by its data-i18n key; English stays as written in the HTML.
   page: {
     style:'Estilo de acordes', numbers:'Números', letters:'Letras', key:'Tono', dispKey:'Tono para mostrar', view:'Ver', showFor:'Mostrar notas para',
-    cuesOnly:'Solo indicaciones', write:'Escribe', read:'Lee', newChart:'Chart nuevo', openFile:'Abrir archivo', download:'Descargar .chartdown',
+    cuesOnly:'Solo indicaciones', examples:'Ejemplos:', write:'Escribe', read:'Lee', newChart:'Chart nuevo', openFile:'Abrir archivo', download:'Descargar .chartdown',
     copy:'Copiar texto', copyJson:'Copiar JSON', tour:'Recorrido de sintaxis (todo)', source:'Texto ChartDown', cheat:'Guía rápida de sintaxis',
     chart:'Chart', rendered:'Chart dibujado', print:'Imprimir o guardar PDF',
     printFoot:'Escrito en ChartDown, una notación abierta para charts de banda · chartdown.github.io/spec',
-    app:'<b>ChartDown App</b> guarda las canciones y los sets de tu banda en un solo lugar, y cada músico abre solo su parte en el iPad, incluso sin conexión. Beta privada y gratis.',
+    app:'<b>ChartDown App</b> guarda las canciones y los sets de tu banda en un solo lugar, y cada músico abre solo su parte en el iPad o el teléfono, incluso sin conexión. Beta privada, gratis durante la beta.',
     waitlist:'Únete a la lista de espera \u2192'
   },
   cheat: ['Empieza una sección', 'Nota del director musical', 'Compases, separados por |', 'Los acordes se reparten el compás', 'Reparto desigual, en tiempos',
