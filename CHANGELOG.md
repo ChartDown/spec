@@ -9,6 +9,7 @@
 - Guides: `numbering: 6m` and common quality spellings. Syntax tour: quality aliases.
 - Playground: quality aliases, `numbering: 6m`, any-case directives.
 - Playground: print or save a PDF of the chart as the current view and key show it; new chart, open and download a `.chartdown` file; the draft stays in the browser; interface in English and Spanish.
+- Guides and the new-chart template: chord letters (`G | C D | Em`) are a fine way to start; the chart still shows in numbers.
 - Playground: New, Open and Download sit in the editor's menu bar, Copy text and Copy JSON at its foot, and the examples below it.
 
 ## 0.6 clarifications
