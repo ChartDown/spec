@@ -15,7 +15,7 @@ THESIS: A stage lit scene by scene. One clear idea (write the chart once, every 
 
 REFERENCE: The owner pointed to 247artists.com for its motion: pinned scroll scenes, a full-bleed color field per scene, very large type, one line motif carried through the page, cards that fly in. Take the motion language, not the look.
 
-OWN-WORLD: The ChartDown – Spec design system (claude.ai artifact 7FuYpSAnB2AxP2XZJQ2VSi) and the owner's logo in assets/logos/. Scene fields are stage-light gels (red, amber, blue, pink) plus ink and paper; the chart itself is always paper, with the two pencils (md red, dynamic blue). The thread is the bar line: one line, then five strings for five players, then the bar lines of the chart.
+OWN-WORLD: The ChartDown – Spec design system (claude.ai artifact 7FuYpSAnB2AxP2XZJQ2VSi) and the official ChartDown logo in assets/logos/ (shared with ChartDown App; the lockup says only "ChartDown"). Scene fields are stage-light gels (red, amber, blue, pink) plus ink and paper; the chart itself is always paper, with the two pencils (md red, dynamic blue). The thread is the bar line: one line, then five strings for five players, then the bar lines of the chart.
 
 STORY: 1 hero, the pencil stage drawing draws itself. 2 red, every player hears the song differently (questions fly in), one chart answers all. 3 paper, the file types itself and the real parser renders it. 4 amber, the view cycles through the players. 5 blue, the row flips through keys. 6 ink, open all the way down (142, CC0, EN·ES, npm). 7 pink, three ways to join.
 
