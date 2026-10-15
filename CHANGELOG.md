@@ -8,6 +8,7 @@
 - Conformance: 19 new cases (142 in all), and the existing cases updated for the new JSON fields.
 - Guides: `numbering: 6m` and common quality spellings. Syntax tour: quality aliases.
 - Playground: quality aliases, `numbering: 6m`, any-case directives.
+- Playground: print or save a PDF of the chart as the current view and key show it; new chart, open and download a `.chartdown` file; the draft stays in the browser; interface in English and Spanish.
 
 ## 0.6 clarifications
 - Conformance suite: 123 cases in `conformance/`, one file per spec section, checked by `node conformance/run.mjs` (spec Appendix B). Cases come from the ChartDown App parser and were checked against the playground.
