@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.8 (draft)
+- A count on `@use` plays the copied section several times: `@use Bridge 2 3x` (or `x3`). Each time through plays it as written, so its own repeats, endings and cues for one pass start over; after a D.S. or D.C. jump it plays once (spec 5.2). MD notes for one pass in that section need no repeat of their own (spec 9.1).
+- JSON form: `sections[].times` (Appendix A).
+- Conformance: 6 new cases for `@use` counts (148 in all).
+- Guides and the syntax tour: `@use ... 2x`. Playground: reads the count, shows it as `×N` on the section and in the song form, and accepts `chartdown: 0.8`.
+- Version 0.8 in the spec, examples, guides, landing and playground.
+
 ## 0.7 (draft)
 - Chord quality vocabulary: canonical forms (`m7`, `maj7`, `m7b5`, `dim7`, `7#9`, `9sus`, ...) and aliases (`-7`, `M7`, `Δ`, `ø`, `°7`, `+`, `sus4`, parentheses). A quality outside the vocabulary passes through as written (spec 6).
 - `numbering: 6m` header: in a minor key, numbers count from the relative major, so the tonic is `6m`. `1m` stays the default (spec 3).
