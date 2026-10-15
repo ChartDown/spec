@@ -7,7 +7,7 @@ Las reglas completas están en la [especificación](../SPEC.md) (en inglés).
 
 ```
 ---
-chartdown: 0.7
+chartdown: 0.8
 title: Open Road
 key: G
 tempo: 76
@@ -102,6 +102,10 @@ Para tocar una sección otra vez sin reescribirla:
 > MD: Un poco más grande.
 @use Chorus
 ```
+
+Agrega un número para tocarla más de una vez: `@use Chorus 2x`. Cada vuelta
+toca la sección tal como está escrita, así que una sección que se repite 2x,
+copiada con `@use ... 2x`, toca sus compases repetidos cuatro veces.
 
 Para cambiar de tono desde ese punto: `@key A`. El compás y el tempo funcionan
 igual: `@meter 6/8` y `@tempo 72`. Para un solo compás con otra métrica,

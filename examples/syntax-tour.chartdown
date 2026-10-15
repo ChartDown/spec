@@ -1,5 +1,5 @@
 ---
-chartdown: 0.7
+chartdown: 0.8
 title: Syntax Tour
 key: D
 tempo: 90
@@ -8,7 +8,7 @@ feel: Straight
 instruments: cello
 ---
 
-// Every feature of ChartDown 0.7, one section each.
+// Every feature of ChartDown 0.8, one section each.
 // Each section name starts with its section number in SPEC.md.
 // Lines that start with // are comments and are not shown.
 
@@ -31,8 +31,8 @@ D | G | A | D
 1 4 | 6m 5 | 1:3 4:1 | 5:2 4 5
 
 ## 5.2 · Reusing a section
-> MD: This section copies the rows of "5 · Bars and rows" with @use.
-@use 5 · Bars and rows
+> MD: This section copies the rows of "5 · Bars and rows" with @use, and plays them twice.
+@use 5 · Bars and rows 2x
 
 ## 5.3 · Pickup bar
 > MD gtr: Pickup on beat 3. A pickup is bar 0 and is drawn narrower.

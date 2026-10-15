@@ -278,7 +278,7 @@ details dd{margin:0;color:var(--faint)}
         <dt>{segno}  {D.S. al coda}</dt><dd>Navigation: also {coda}, {to coda}, {fine}, D.C.</dd>
         <dt>@meter 6/8  [m:2/4]</dt><dd>Meter change; one bar in another meter</dd>
         <dt>@tempo 72  {rit}</dt><dd>Tempo change; rit., accel., a tempo</dd>
-        <dt>@use Chorus</dt><dd>Reuse an earlier section</dd>
+        <dt>@use Chorus  @use Bridge 2x</dt><dd>Reuse an earlier section; 2x plays it twice</dd>
         <dt>&gt; MD drums: text</dt><dd>MD note for one instrument</dd>
         <dt>{drums: in}</dt><dd>Cue for one instrument, on a bar</dd>
         <dt>@key E</dt><dd>Key change from here on</dd>
@@ -306,7 +306,7 @@ details dd{margin:0;color:var(--faint)}
 /* ---------- Samples ---------- */
 const SAMPLES = {
 road: String.raw`---
-chartdown: 0.7
+chartdown: 0.8
 title: Open Road (example song)
 artists: ChartDown examples
 key: G
@@ -357,7 +357,7 @@ feel: Straight, building
 4 | 1 | 5sus 5 | <1>~
 `,
 lantern: String.raw`---
-chartdown: 0.7
+chartdown: 0.8
 title: Lantern Bay (example song)
 artists: ChartDown examples
 key: Em
@@ -388,7 +388,7 @@ b3 | b7 | 4m:3 5:3 | 1m
 {p} b6 | b7 | <1m>~
 `,
 tour: String.raw`---
-chartdown: 0.7
+chartdown: 0.8
 title: Syntax Tour
 key: D
 tempo: 90
@@ -397,7 +397,7 @@ feel: Straight
 instruments: cello
 ---
 
-// Every feature of ChartDown 0.7, one section each.
+// Every feature of ChartDown 0.8, one section each.
 // Each section name starts with its section number in SPEC.md.
 // Lines that start with // are comments and are not shown.
 
@@ -420,8 +420,8 @@ D | G | A | D
 1 4 | 6m 5 | 1:3 4:1 | 5:2 4 5
 
 ## 5.2 · Reusing a section
-> MD: This section copies the rows of "5 · Bars and rows" with @use.
-@use 5 · Bars and rows
+> MD: This section copies the rows of "5 · Bars and rows" with @use, and plays them twice.
+@use 5 · Bars and rows 2x
 
 ## 5.3 · Pickup bar
 > MD gtr: Pickup on beat 3. A pickup is bar 0 and is drawn narrower.
@@ -497,7 +497,7 @@ x | 1! x:3 | 4 | % | <1> | =
 {coda} {f} 4 | 5 | <1>~
 `,
 north: String.raw`---
-chartdown: 0.7
+chartdown: 0.8
 title: Northbound (example song)
 artists: ChartDown examples
 key: A
@@ -595,7 +595,7 @@ const ROLE_ALIAS = {all:'all',band:'all',everyone:'all',drums:'drums',drum:'drum
 const ROLE_LABEL = {drums:'Drums',bass:'Bass',keys:'Keys',gtr:'Guitar',vox:'Vocals',sax:'Saxophone',tpt:'Trumpet',tbn:'Trombone',vln:'Violin'};
 let CUSTOM = {};
 // Spec 3: versions this parser reads. Any other is a warning, and the file is still read.
-const READABLE = ['0.3', '0.4', '0.5', '0.6', '0.7'];
+const READABLE = ['0.3', '0.4', '0.5', '0.6', '0.7', '0.8'];
 const roleLabel = r => L.roles[r] || ROLE_LABEL[r] || CUSTOM[r] || (r.charAt(0).toUpperCase() + r.slice(1));
 function parseRoles(s){
   const parts = s.split(/[,\/&\s]+/).filter(Boolean).map(x => x.toLowerCase());
@@ -798,7 +798,13 @@ function parse(src){
     if(!cur){ warn(n, 'Bars need a section first, like  ## Verse 1'); continue; }
     if(line.startsWith('>')){ cur.notes.push(parseNote(line.replace(/^>\s?/,''), n, warn)); continue; }
     const u = line.match(/^@use\s+(.+)$/i);
-    if(u){ cur.use = u[1].trim(); cur.useLine = n; continue; }
+    if(u){
+      // Spec 5.2: a count at the end (3x, or x3 as in 0.5) plays the copied rows that many times.
+      const c = u[1].trim().match(/^(.*?)\s+(?:(\d+)x|x(\d+))$/i);
+      cur.use = c ? c[1] : u[1].trim(); cur.useTimes = c ? +(c[2] || c[3]) : null; cur.useLine = n;
+      if(cur.useTimes === 0){ warn(n, 'A section plays at least once; 0x is read as 1x'); cur.useTimes = 1; }
+      continue;
+    }
     if(/^@key\b/i.test(line)){
       const kc = line.replace(/^@key\s*/i, '').match(/^([A-G][b#]?)(m?)\s*$/);
       if(kc){ docKey = kc[1]; docMinor = !!kc[2]; pendingLabel = kc[1] + kc[2]; } else warn(n, 'Write a key change like  @key A  or  @key F#m');
@@ -879,7 +885,7 @@ function analyze(doc, warn){
     if(f.b.cues.some(c => c.passes.length) && !inRep.has(i)) warn(f.b.line, 'A cue for one pass (like 2x) needs a repeat');
   });
   doc.sections.forEach(s => {
-    if(!s.rows.some(r => r.bars.some(b => b.re)))
+    if(!s.rows.some(r => r.bars.some(b => b.re)) && !(s.useTimes > 1))
       s.notes.filter(t => t.passes.length).forEach(t => warn(t.line, 'An MD note for one pass (like 2x) needs a repeat in its section'));
   });
   // Navigation marks.
@@ -902,6 +908,17 @@ function analyze(doc, warn){
   // Expand into the play order.
   const order = [];
   let i = 0, pass = 1, curRe = -1, inSpan = false, jumped = false, back = false, steps = 0, after = false;
+  // Spec 5.2: a section from @use Nx plays N times, each time as written (its own repeats, endings and passes start over).
+  const outer = new Map();
+  const again = k => {
+    const si = F[k].si, s = doc.sections[si];
+    if(jumped || !(s.useTimes > 1) || (F[k+1] && F[k+1].si === si)) return false;
+    const done = outer.get(si) || 1;
+    if(done >= s.useTimes) return false;
+    outer.set(si, done + 1);
+    i = F.findIndex(x => x.si === si); pass = 1; curRe = -1; inSpan = false; back = false;
+    return true;
+  };
   while(i < F.length && steps++ < 20000){
     const f = F[i];
     if(startToRe.has(i) && !back){
@@ -909,7 +926,7 @@ function analyze(doc, warn){
       pass = jumped ? (F[curRe].b.times || 2) : 1;
     }
     back = false;
-    if(f.b.endSet && !f.b.endSet.includes(pass)){ if(i === curRe) inSpan = false; i++; continue; }
+    if(f.b.endSet && !f.b.endSet.includes(pass)){ if(i === curRe) inSpan = false; if(!again(i)) i++; continue; }
     if(!f.b.endSet && !inSpan) pass = 1;
     order.push({section: f.si, bar: f.b.number, pass, jump: after});
     after = false;
@@ -920,7 +937,7 @@ function analyze(doc, warn){
       if(!jumped && pass < (f.b.times || 2)){ pass++; i = reStart.get(i); inSpan = true; back = true; continue; }
     }
     if(jump && !jumped && i === jump.i){ jumped = true; i = jump.w.startsWith('ds') ? segno : 0; pass = 1; inSpan = false; after = true; continue; }
-    i++;
+    if(!again(i)) i++;
   }
   doc.playOrder = order;
 }
@@ -944,7 +961,7 @@ function toJSON(doc){
     chartdown: doc.meta.chartdown || null,
     meta: doc.meta, key: doc.keyRoot, minor: doc.minor, numbering: SIX ? '6m' : '1m',
     sections: doc.sections.map(s => ({
-      name: s.name, use: s.use,
+      name: s.name, use: s.use, times: s.use ? s.useTimes || null : null,
       notes: s.notes.map(t => ({md:t.md, roles:roles(t.roles), passes:t.passes, text:t.text})),
       rows: s.rows.map(r => {
         const key = r.key || doc.keyRoot;
@@ -975,7 +992,7 @@ en: {
   restored:'Your last chart is back. It\u2019s saved in this browser only.', replaced:'Your chart was replaced.', undo:'Bring it back',
   saved: f => 'Downloaded ' + f + '.', opened: f => 'Opened ' + f + '.', openFail:'Couldn\u2019t read that file.', untitled:'chart',
   template: String.raw`---
-chartdown: 0.7
+chartdown: 0.8
 title: My song
 key: G
 tempo: 72
@@ -1008,7 +1025,7 @@ es: {
   restored:'Volvió tu último chart. Solo se guarda en este navegador.', replaced:'Se reemplazó tu chart.', undo:'Recuperarlo',
   saved: f => 'Se descargó ' + f + '.', opened: f => 'Se abrió ' + f + '.', openFail:'No se pudo leer ese archivo.', untitled:'chart',
   template: String.raw`---
-chartdown: 0.7
+chartdown: 0.8
 title: Mi canción
 key: G
 tempo: 72
@@ -1045,7 +1062,7 @@ meter: 4/4
     'Sin acorde; silencio parcial; repetir el compás anterior', 'Anacrusa, luego compases completos', 'Riff al unísono en notas sueltas',
     'Dinámica o indicación', 'Referencia de letra', 'Repetición; [1] y [2] para los finales', 'Indicación para una vuelta de la repetición',
     'Navegación: también {coda}, {to coda}, {fine}, D.C.', 'Cambio de compás; un compás en otra métrica', 'Cambio de tempo; rit., accel., a tempo',
-    'Reusar una sección anterior', 'Nota del director para un instrumento', 'Indicación para un instrumento, en un compás', 'Cambio de tono desde aquí']
+    'Reusar una sección anterior; 2x la toca dos veces', 'Nota del director para un instrumento', 'Indicación para un instrumento, en un compás', 'Cambio de tono desde aquí']
 }};
 let L = UI.en;
 
@@ -1147,7 +1164,7 @@ function render(){
   if(doc.meta.tempo) meta.push('<span>' + L.tempo + '<b>' + esc(doc.meta.tempo) + ' ' + L.bpm + '</b></span>');
   if(doc.meta.feel) meta.push('<span>' + L.feel + '<b>' + esc(doc.meta.feel) + '</b></span>');
   html += '<div class="meta">' + meta.join('') + '</div>';
-  if(doc.sections.length) html += '<div class="form" aria-label="Song form">' + doc.sections.map(s => '<span>' + esc(s.name) + '</span>').join('') + '</div>';
+  if(doc.sections.length) html += '<div class="form" aria-label="Song form">' + doc.sections.map(s => '<span>' + esc(s.name) + (s.useTimes > 1 ? ' \u00d7' + s.useTimes : '') + '</span>').join('') + '</div>';
   if(doc.hasJump) html += '<p class="order"><b>' + L.playOrder + '</b>' + esc(playOrderText(doc)) + '</p>';
   if(state.role !== 'everyone') html += '<p class="viewing">' + L.viewing(esc(roleLabel(state.role))) + '</p>';
   if(!doc.sections.length) html += '<p class="empty">' + L.empty + '</p>';
@@ -1155,7 +1172,7 @@ function render(){
   doc.sections.forEach(s => {
     const allBars = s.rows.flatMap(r => r.bars);
     const count = allBars.filter(b => !b.pickup).length;
-    html += '<section class="sec"><header><h2>' + esc(s.name) + '</h2><span class="count">' + (allBars.some(b => b.pickup) ? L.pickup.toLowerCase() + ' + ' : '') + count + ' ' + (count === 1 ? L.oneBar : L.bars) + '</span></header>';
+    html += '<section class="sec"><header><h2>' + esc(s.name) + '</h2><span class="count">' + (allBars.some(b => b.pickup) ? L.pickup.toLowerCase() + ' + ' : '') + count + ' ' + (count === 1 ? L.oneBar : L.bars) + (s.useTimes > 1 ? ' \u00d7' + s.useTimes : '') + '</span></header>';
     const notes = s.notes.filter(t => visible(t.roles));
     notes.forEach(t => {
       html += '<p class="note' + (t.md ? ' md' : '') + '">' + (t.md ? '<b>MD</b>' : '') +

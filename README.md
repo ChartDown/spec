@@ -60,7 +60,7 @@ instrument, and eight bars of chords.
 
 | Path | What it is |
 |---|---|
-| `SPEC.md` | The ChartDown specification (version 0.7, draft) |
+| `SPEC.md` | The ChartDown specification (version 0.8, draft) |
 | `docs/guide.md` | Quick guide in English |
 | `docs/guia.md` | Guía rápida en español |
 | `examples/` | Example charts (original songs written for this repo) |
@@ -72,7 +72,7 @@ instrument, and eight bars of chords.
 ## Implementations
 
 - [ChartDown/parser](https://github.com/ChartDown/parser): a JavaScript parser for
-  ChartDown 0.7 that passes every case in `conformance/`. Install it from npm as
+  ChartDown 0.7 that passes every 0.7 case in `conformance/`. Install it from npm as
   [`chartdown`](https://www.npmjs.com/package/chartdown).
 - Building your own? Run `node conformance/run.mjs ./your-adapter.mjs` against it
   and open an issue to be listed here.

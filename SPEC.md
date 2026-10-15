@@ -1,6 +1,6 @@
 # ChartDown Specification
 
-**Version 0.7 (draft)** · File extension: `.chartdown` · Encoding: UTF-8
+**Version 0.8 (draft)** · File extension: `.chartdown` · Encoding: UTF-8
 
 This specification is released under CC0 1.0 Universal. Anyone may implement,
 extend, or redistribute it, with no permission needed.
@@ -49,7 +49,7 @@ Each line is `name: value`. Names are case-insensitive.
 
 | Name | Meaning | Example |
 |---|---|---|
-| `chartdown` | Version of this spec the file was written for | `0.7` |
+| `chartdown` | Version of this spec the file was written for | `0.8` |
 | `instruments` | Extra instrument roles used in this file (see 4.1) | `cello, banjo` |
 | `title` | Song title | `Open Road` |
 | `artists` | Writers or artists | `A, B` |
@@ -187,6 +187,28 @@ line.
 > MD: A touch bigger.
 @use Chorus
 ```
+
+A count after the name plays the copied rows that many times in a row:
+`@use Bridge 2 3x` (or `x3`, as in 10). Each time, the rows play exactly as
+written in the original: their own repeats, endings and cues for one pass
+(see 9.1) start over. So a section that already repeats plays its repeated
+bars count times its own repeat, and its other bars count times.
+
+```
+## Bridge 2
+|: 6m | 4 :| 2x
+1 | 5
+
+## Bridge 3
+> MD: Build every time.
+@use Bridge 2 2x
+```
+
+Bridge 3 plays `6m | 4`, `6m | 4`, `1 | 5`, then all of it again: `6m | 4`
+four times and `1 | 5` twice. The last word of the line is a count when it is
+a number with `x` (`2x`, `x2`); the rest is the section name. `0x` is read as
+`1x`, with a warning. After a D.S. or D.C. jump, the section plays once, the
+same way repeats play their last pass only (see 10.1).
 
 ### 5.3 Pickup bars
 
@@ -344,11 +366,12 @@ as a number followed by `x`, the same way a repeat counts passes (`:| 3x`, see
 - `{2x: text}` is for everyone on the second pass. `{2x drums: text}` is for
   the drummer on the second pass.
 - `> MD 2x: text` and `> MD 2x bass: text` apply to a pass of the repeat in
-  that section.
+  that section. In a section that plays a copy more than once (`@use Name 3x`,
+  see 5.2), they apply to that time through the copy.
 - The pass only counts as a pass when a `:` follows it, with or without
   instruments in between. `{2x louder}` is ordinary cue text.
-- A pass on a bar outside any repeat, or on a note in a section with no repeat,
-  is a warning.
+- A pass on a bar outside any repeat, or on a note in a section with no repeat
+  and no `@use` count, is a warning.
 
 A quoted string `"like this"` attaches a **lyric landmark** to the bar. Keep it
 short: a few words that tell the band where they are. A landmark SHOULD be at
@@ -518,7 +541,7 @@ comment    = "//" *CHAR            ; only at the start of a line
 section    = "##" *"#" *WSP text
 note       = ">" [ " " ] ( md-note / text )
 md-note    = "MD" [ 1*WSP [ passes *WSP ] [ roles ] ] *WSP ":" *WSP text   ; MD in any case
-directive  = "@use" 1*WSP text                    ; directive names in any case
+directive  = "@use" 1*WSP text [ 1*WSP count ]   ; directive names in any case
            / "@key" 1*WSP letter-root [ "m" ]
            / "@meter" 1*WSP 1*DIGIT *WSP "/" *WSP 1*DIGIT
            / "@tempo" 1*WSP number
@@ -542,8 +565,8 @@ cue        = "{" *WSP cue-body *WSP "}"
 lyric      = DQUOTE *( %x20-21 / %x23-7E / UTF8-non-ascii ) DQUOTE
 ```
 
-- A repeat count only follows `:|`. Elsewhere, `x3` is a token that cannot be
-  read (a warning).
+- A repeat count only follows `:|` or ends a `@use` line (5.2). Elsewhere, `x3`
+  is a token that cannot be read (a warning).
 - Pickup, meter and ending open their bar, in that order. Later in the bar
   they cannot be read.
 - Cues and lyric landmarks can sit anywhere in a bar. Tokens are separated by
@@ -601,6 +624,9 @@ Ideas under consideration, not yet part of the format:
 
 ## 17. Changelog
 
+- **0.8** A count on `@use` plays the copied section several times:
+  `@use Bridge 2 3x` (5.2). JSON form: `sections[].times`. In 0.7 the count
+  was read as part of the name, so the section was not found (a warning).
 - **0.7** Chord quality vocabulary with canonical forms and aliases (6). The
   `numbering: 6m` header for minor keys counted from the relative major (3).
   A formal grammar (15). Directive names in any case. JSON form: `numbering`
@@ -637,7 +663,7 @@ know.
 
 ```json
 {
-  "chartdown": "0.7",
+  "chartdown": "0.8",
   "meta": { "title": "Open Road", "key": "G", "tempo": "76" },
   "key": "G",
   "minor": false,
@@ -646,6 +672,7 @@ know.
     {
       "name": "Chorus",
       "use": null,
+      "times": null,
       "notes": [
         { "md": true, "roles": ["drums"], "passes": [2], "text": "Add the crash." }
       ],
@@ -681,6 +708,7 @@ know.
 | `meta` | Every header field, as written (strings) |
 | `key`, `minor` | Home key root and whether it is minor |
 | `numbering` | `1m` or `6m`, from the header (see 3) |
+| `sections[].use`, `times` | The section named by `@use`, and the count after it (see 5.2); `null` when there is none |
 | `rows[].key`, `minor`, `meter`, `tempo` | Key, minor or not, meter and tempo in effect for the row (after `@key`, `@meter`, `@tempo`) |
 | `bars[].number` | Bar number in its section: 0 for a pickup, then 1, 2, ... |
 | `bars[].beats` | Length of the bar in beats (see 5.1, 5.3, 11.2) |
