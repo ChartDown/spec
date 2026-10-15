@@ -22,7 +22,7 @@ typography:
 
 # ChartDown landing design
 
-The landing follows the **ChartDown – Spec** design system. Its brand book is the source of truth for the logo, ink, the two pencils (`md` red for the music director, `dynamic` blue for dynamics and links), type and components. This file records what the landing adds.
+The landing follows the **ChartDown – Spec** design system. The logo is the official ChartDown logo, shared with ChartDown App: one bar of a chart, two bar lines and four slashes, the first in red pencil. `assets/logos/` holds copies from the app's kit (`chartdown-app/design/logo/`; usage rules in `assets/logos/guide.pdf`); the lockup says only "ChartDown". The brand book is the source of truth for ink, the two pencils (`md` red for the music director, `dynamic` blue for dynamics and links), type and components. This file records what the landing adds.
 
 ## Scenes and gels
 

@@ -1,4 +1,4 @@
-# ChartDown
+<h1><picture><source media="(prefers-color-scheme: dark)" srcset="assets/logos/logo-lockup-dark.svg"><img src="assets/logos/logo-lockup.svg" alt="ChartDown" width="320" height="51"></picture></h1>
 
 **An open, plain-text notation for Nashville Number System charts, with music director cues for every player.**
 
