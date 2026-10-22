@@ -1,6 +1,6 @@
 # ChartDown Specification
 
-**Version 0.8 (draft)** · File extension: `.chartdown` · Encoding: UTF-8
+**Version 0.9 (draft)** · File extension: `.chartdown` · Encoding: UTF-8
 
 This specification is released under CC0 1.0 Universal. Anyone may implement,
 extend, or redistribute it, with no permission needed.
@@ -49,12 +49,12 @@ Each line is `name: value`. Names are case-insensitive.
 
 | Name | Meaning | Example |
 |---|---|---|
-| `chartdown` | Version of this spec the file was written for | `0.8` |
+| `chartdown` | Version of this spec the file was written for | `0.9` |
 | `instruments` | Extra instrument roles used in this file (see 4.1) | `cello, banjo` |
 | `title` | Song title | `Open Road` |
 | `artists` | Writers or artists | `A, B` |
 | `key` | Home key. Add `m` for a minor key | `G`, `Bb`, `F#`, `Em` |
-| `tempo` | Beats per minute at the start (see 11.3 for changes) | `72` |
+| `tempo` | The tempo at the start, with an optional beat unit (see 11.3) | `72`, `58 q.`, `74.5` |
 | `meter` | Time signature at the start (see 11.2 for changes) | `4/4`, `3/4`, `6/8`, `12/8` |
 | `feel` | Groove or style, free text | `Slow shuffle` |
 | `numbering` | How numbers count in a minor key: `1m` (default) or `6m` | `6m` |
@@ -476,9 +476,59 @@ A pickup (see 5.3) counts in the meter in effect, and a bar MUST NOT have both
 
 ### 11.3 Tempo
 
-`@tempo N` on its own line changes the tempo (beats per minute) from the next
-row onward, and stays in effect across sections until the next `@tempo`. For gradual changes use the tempo marks `{rit}`, `{accel}` and
-`{a tempo}` (see 9). Renderers SHOULD mark tempo changes.
+`@tempo N` on its own line changes the tempo from the next row onward, and
+stays in effect across sections until the next `@tempo`. For gradual changes
+use the tempo marks `{rit}`, `{accel}` and `{a tempo}` (see 9). Renderers
+SHOULD mark tempo changes.
+
+**The beat unit.** A tempo, in the `tempo:` header or after `@tempo`, is a
+number of beats per minute, optionally followed by the note value that one
+beat is, so the tempo can't be read two ways:
+
+| Unit | One beat is |
+|---|---|
+| `h` | a half note |
+| `h.` | a dotted half note |
+| `q` | a quarter note |
+| `q.` | a dotted quarter note |
+| `e` | an eighth note |
+| `e.` | a dotted eighth note |
+| `s` | a sixteenth note |
+
+```
+---
+meter: 6/8
+tempo: 58 q.
+---
+```
+
+`58 q.`, `87 q` and `174 e` are the same speed. The number MAY have decimals
+(`74.5`), and a space between the number and the unit is optional.
+
+**Without a unit**, a tempo counts the beat of the meter in effect for each
+row: its bottom number (a half note in 2/2, a quarter note in 4/4 and 6/4, an
+eighth note in 7/8, a sixteenth note in 6/16), except in 6/8, 9/8 and 12/8
+(any meter over 8 whose top number is a multiple of 3 greater than 3), where
+it counts the dotted quarter note, the pulse a band feels and the way charts
+and click tracks give these tempos. So `tempo: 58` in 6/8 is `58 q.`, and a
+later `@meter` changes what an unwritten unit counts; a written unit stays.
+
+**Not known yet.** `?` in place of the unit (`tempo: 58 ?`) says the number
+is known but not what it counts, as when a tempo comes from a source that
+doesn't say. The chart is valid; apps SHOULD ask the person to confirm the
+unit (for example by hearing both readings, or by tapping along) and then
+write it in. A tool MUST NOT guess the unit of a tempo it imports in a
+compound meter: it writes `?` instead.
+
+A unit it can't read is a warning (see 13), and the tempo then counts the
+meter's beat. A one-bar meter (`[m:N/D]`, see 11.2) doesn't change the tempo:
+the eighth note keeps its length.
+
+**One speed for every unit.** To compare, convert or play tempos, a tool
+SHOULD turn each into eighth notes per minute: the number times 4 for `h`, 6
+for `h.`, 2 for `q`, 3 for `q.`, 1 for `e`, 1.5 for `e.` and 0.5 for `s`
+(`58 q.` is 174). This is for playback and display only: the file keeps the
+tempo as written.
 
 ## 12. Numbers and letters
 
@@ -544,7 +594,9 @@ md-note    = "MD" [ 1*WSP [ passes *WSP ] [ roles ] ] *WSP ":" *WSP text   ; MD 
 directive  = "@use" 1*WSP text [ 1*WSP count ]   ; directive names in any case
            / "@key" 1*WSP letter-root [ "m" ]
            / "@meter" 1*WSP 1*DIGIT *WSP "/" *WSP 1*DIGIT
-           / "@tempo" 1*WSP number
+           / "@tempo" 1*WSP tempo
+tempo      = number [ *WSP beat-unit ]                    ; see 11.3
+beat-unit  = ( "h" / "q" / "e" ) [ "." ] / "s" / "?"
 ```
 
 Directive names are read in any case (`@Key`, `@TEMPO`). A line that starts
@@ -624,6 +676,13 @@ Ideas under consideration, not yet part of the format:
 
 ## 17. Changelog
 
+- **0.9** A tempo can say what one beat is: `tempo: 58 q.`, `@tempo 87 q`,
+  and `?` when it isn't known yet (11.3). Without a unit, 6/8, 9/8 and 12/8
+  count the dotted quarter note; every other meter counts its bottom number,
+  as before. Tempos can have decimals. JSON form: `rows[].tempoUnit` and
+  `rows[].tempoEpm`. Every 0.8 chart parses the same; only what a tempo in
+  6/8, 9/8 or 12/8 counts is now said.
+
 - **0.8** A count on `@use` plays the copied section several times:
   `@use Bridge 2 3x` (5.2). JSON form: `sections[].times`. In 0.7 the count
   was read as part of the name, so the section was not found (a warning).
@@ -663,7 +722,7 @@ know.
 
 ```json
 {
-  "chartdown": "0.8",
+  "chartdown": "0.9",
   "meta": { "title": "Open Road", "key": "G", "tempo": "76" },
   "key": "G",
   "minor": false,
@@ -678,7 +737,7 @@ know.
       ],
       "rows": [
         {
-          "key": "G", "minor": false, "meter": "4/4", "tempo": 76,
+          "key": "G", "minor": false, "meter": "4/4", "tempo": 76, "tempoUnit": "q", "tempoEpm": 152,
           "bars": [
             {
               "number": 1, "beats": 4, "pickup": false, "meter": null,
@@ -709,7 +768,8 @@ know.
 | `key`, `minor` | Home key root and whether it is minor |
 | `numbering` | `1m` or `6m`, from the header (see 3) |
 | `sections[].use`, `times` | The section named by `@use`, and the count after it (see 5.2); `null` when there is none |
-| `rows[].key`, `minor`, `meter`, `tempo` | Key, minor or not, meter and tempo in effect for the row (after `@key`, `@meter`, `@tempo`) |
+| `rows[].key`, `minor`, `meter`, `tempo` | Key, minor or not, meter and tempo in effect for the row (after `@key`, `@meter`, `@tempo`); `tempo` is the number as written, or `null` |
+| `rows[].tempoUnit`, `tempoEpm` | The beat unit the row's tempo counts, written or from the meter (see 11.3), and that tempo in eighth notes per minute; both `null` with no tempo or with `?` |
 | `bars[].number` | Bar number in its section: 0 for a pickup, then 1, 2, ... |
 | `bars[].beats` | Length of the bar in beats (see 5.1, 5.3, 11.2) |
 | `bars[].meter` | The one-bar meter from `[m:N/D]`, or `null` |

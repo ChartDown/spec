@@ -7,7 +7,7 @@ Las reglas completas están en la [especificación](../SPEC.md) (en inglés).
 
 ```
 ---
-chartdown: 0.8
+chartdown: 0.9
 title: Open Road
 key: G
 tempo: 76
@@ -111,6 +111,12 @@ Para cambiar de tono desde ese punto: `@key A`. El compás y el tempo funcionan
 igual: `@meter 6/8` y `@tempo 72`. Para un solo compás con otra métrica,
 empiézalo con `[m:2/4]`. Cambios graduales de tempo: `{rit}`, `{accel}`,
 `{a tempo}`.
+
+Un tempo puede decir qué figura es un pulso: `tempo: 58 q.` son 58 negras con
+punto por minuto (`h` blanca, `q` negra, `e` corchea, `s` semicorchea, un
+punto para la figura con puntillo). Sin figura, 6/8, 9/8 y 12/8 cuentan la
+negra con punto y los demás compases su número de abajo. ¿No sabes qué cuenta
+un tempo que encontraste? Escribe `58 ?` y la app te lo preguntará.
 
 ### Indicaciones para una sola pasada
 

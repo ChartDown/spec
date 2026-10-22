@@ -60,7 +60,7 @@ instrument, and eight bars of chords.
 
 | Path | What it is |
 |---|---|
-| `SPEC.md` | The ChartDown specification (version 0.8, draft) |
+| `SPEC.md` | The ChartDown specification (version 0.9, draft) |
 | `docs/guide.md` | Quick guide in English |
 | `docs/guia.md` | Guía rápida en español |
 | `examples/` | Example charts (original songs written for this repo) |
