@@ -7,7 +7,7 @@ For every rule, see the [specification](../SPEC.md).
 
 ```
 ---
-chartdown: 0.8
+chartdown: 0.9
 title: Open Road
 key: G
 tempo: 76
@@ -110,6 +110,12 @@ plays the section as written, so a section that repeats 2x, copied with
 To change key from here on: `@key A`. Meter and tempo work the same way:
 `@meter 6/8` and `@tempo 72`. For one bar in another meter, start it with
 `[m:2/4]`. Gradual tempo changes: `{rit}`, `{accel}`, `{a tempo}`.
+
+A tempo can say what one beat is: `tempo: 58 q.` is 58 dotted quarter notes
+a minute (`h` half, `q` quarter, `e` eighth, `s` sixteenth, a dot for dotted).
+Without one, 6/8, 9/8 and 12/8 count the dotted quarter and other meters
+their bottom number. Not sure what a tempo you found counts? Write `58 ?`,
+and the app will ask.
 
 ### Cues for one pass
 

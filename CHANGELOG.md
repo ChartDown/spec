@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.9 (draft)
+- A tempo can say what one beat is: `tempo: 58 q.`, `@tempo 87 q`, with `h`, `h.`, `q`, `q.`, `e`, `e.`, `s`, and `?` when it isn't known yet. Without a unit, 6/8, 9/8 and 12/8 count the dotted quarter note and every other meter its bottom number. Tempos can have decimals. A tool converts tempos to eighth notes per minute to compare or play them (spec 11.3).
+- JSON form: `rows[].tempoUnit` and `rows[].tempoEpm` (Appendix A).
+- Conformance: 8 new cases for beat units (156 in all).
+- Guides, syntax tour and playground: tempo units; the playground shows a tempo with its unit as written.
+- Version 0.9 in the spec, examples, guides, landing and playground.
+
 ## 0.8 (draft)
 - A count on `@use` plays the copied section several times: `@use Bridge 2 3x` (or `x3`). Each time through plays it as written, so its own repeats, endings and cues for one pass start over; after a D.S. or D.C. jump it plays once (spec 5.2). MD notes for one pass in that section need no repeat of their own (spec 9.1).
 - JSON form: `sections[].times` (Appendix A).
