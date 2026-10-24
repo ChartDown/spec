@@ -252,9 +252,7 @@ details dd{margin:0;color:var(--faint)}
     <ul class="warn" id="warn"></ul>
     <div class="examples">
       <p data-i18n="examples">Examples:</p>
-      <button type="button" class="btn" data-sample="road">Open Road</button>
-      <button type="button" class="btn" data-sample="lantern">Lantern Bay (Em, 6/8)</button>
-      <button type="button" class="btn" data-sample="north">Northbound (D.S. al Coda)</button>
+      <button type="button" class="btn" data-sample="grace">Amazing Grace (3/4, public domain)</button>
       <button type="button" class="btn" data-sample="tour" data-i18n="tour">Syntax tour (every feature)</button>
     </div>
     <details>
@@ -541,6 +539,59 @@ feel: Driving eighths
 ## Outro
 > MD: Last time. Hold the end on my cue.
 {coda} {f} 4 | 5 | 6m 5 | <1>~
+`,
+grace: String.raw`---
+chartdown: 0.9
+title: Amazing Grace
+artists: John Newton (words), Virginia Harmony 1831, arr. Edwin O. Excell 1900
+key: G
+tempo: 76 q
+meter: 3/4
+copyright: Public domain
+---
+
+## Intro
+> MD: Keys alone, the last line of the hymn. Vocal comes in on beat 3 of the last bar.
+{p} 6m | 1/5:2 57:1 | 1 | 1
+
+## Verse 1
+> MD: Keys and vocal. Very simple.
+> MD keys: Soft quarter notes in 3/4, left hand on beat 1 of every bar.
+> MD bass, drums, gtr: Out.
+1 "Amazing grace, how sweet the sound" | 1 | 6m:2 4:1 | 1
+1 "That saved a wretch like me" | 1:2 57:1 | 1/3 | 5/2:2 1:1
+1 "I once was lost" | 1 | 4 | 1
+6m "Was blind, but now I see" | 1/5:2 57:1 | 1 | 1
+
+## Verse 2
+> MD: Bass and acoustic guitar come in.
+> MD bass: Long notes on 1, follow the inversions (1/3, 5/2, 1/5).
+> MD gtr: Soft arpeggio, one note per beat.
+@use Verse 1
+
+## Verse 3
+> MD: Drums come in. Build a little.
+> MD drums: Brushes or rim: kick on 1, rim on 2 and 3.
+@use Verse 1
+
+## Verse 4
+> MD: Full band, the biggest so far.
+> MD drums: Cymbals, fill on the last bar.
+@use Verse 1
+
+## Verse 5
+> MD: Band drops out, keys stay. Intimate.
+> MD bass, drums, gtr: Out. Back in on verse 6.
+@use Verse 1
+
+## Verse 6
+> MD: Full band back in, the biggest verse. At the end we repeat the last line.
+@use Verse 1
+
+## Tag
+> MD: Last line again, slowing down. Let the 1 ring until my cue.
+> MD drums: Swell on the last chord, no groove.
+{mp} 6m "Than when we'd first begun" | 1/5:2 57:1 {rit} | 1 | <1>~
 `};
 
 /* ---------- Music helpers ---------- */
@@ -1374,7 +1425,7 @@ document.querySelectorAll('[data-lang]').forEach(b => b.addEventListener('click'
 
 const asked = new URLSearchParams(location.search).get('lang');
 const draft = store.get(DRAFT);
-ed.value = draft || SAMPLES.road;
+ed.value = draft || SAMPLES.grace;
 setLang(asked === 'es' || asked === 'en' ? asked : store.get('chartdown-lang') || ((navigator.language || '').toLowerCase().startsWith('es') ? 'es' : 'en'));
 paint();
 if(draft && isOwn(draft)) say(L.restored);

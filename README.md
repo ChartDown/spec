@@ -63,7 +63,7 @@ instrument, and eight bars of chords.
 | `SPEC.md` | The ChartDown specification (version 0.9, draft) |
 | `docs/guide.md` | Quick guide in English |
 | `docs/guia.md` | Guía rápida en español |
-| `examples/` | Example charts (original songs written for this repo) |
+| `examples/` | Example charts (original songs written for this repo, and the public domain hymn Amazing Grace) |
 | `playground/index.html` | Reference parser and renderer in one HTML file, no dependencies |
 | `conformance/` | Official test cases for parsers, and a runner: `node conformance/run.mjs` |
 | `CHANGELOG.md` | Version history |

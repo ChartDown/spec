@@ -6,6 +6,7 @@
 - Conformance: 8 new cases for beat units (156 in all).
 - Guides, syntax tour and playground: tempo units; the playground shows a tempo with its unit as written.
 - Version 0.9 in the spec, examples, guides, landing and playground.
+- New example: Amazing Grace (public domain hymn, 3/4, six verses with `@use`). The playground's example list shows it and the syntax tour, and opens with it; the made-up songs stay in `examples/` but leave the list.
 
 ## 0.8 (draft)
 - A count on `@use` plays the copied section several times: `@use Bridge 2 3x` (or `x3`). Each time through plays it as written, so its own repeats, endings and cues for one pass start over; after a D.S. or D.C. jump it plays once (spec 5.2). MD notes for one pass in that section need no repeat of their own (spec 9.1).
