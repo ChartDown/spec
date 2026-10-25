@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.10 (draft)
+- How an app writes ChartDown from the JSON form: the canonical text (spec Appendix C). A chart built with a toolbar or a grid saves the same way in every app and reads back as the same chart; writing it again changes nothing. Header order, notes, `@use`, when `@key`, `@meter` and `@tempo` are written, the order of the parts of a bar, one spelling for reserved words, and which `:beats` are written. An editor that changes a hand-written file keeps the lines it doesn't touch, with their comments and spellings (C.6).
+- The syntax doesn't change: every 0.9 chart parses the same.
+- Conformance: 18 writer cases in `C-writing-chartdown.md` (174 in all). With a `write` function in the adapter, the runner also reads back every parser case with no warnings through the writer.
+- Playground: `toChartDown(json)`, the reference writer, and `chartdown: 0.10`.
+- Version 0.10 in the spec, examples, guides, landing and playground.
+
 ## 0.9 (draft)
 - A tempo can say what one beat is: `tempo: 58 q.`, `@tempo 87 q`, with `h`, `h.`, `q`, `q.`, `e`, `e.`, `s`, and `?` when it isn't known yet. Without a unit, 6/8, 9/8 and 12/8 count the dotted quarter note and every other meter its bottom number. Tempos can have decimals. A tool converts tempos to eighth notes per minute to compare or play them (spec 11.3).
 - JSON form: `rows[].tempoUnit` and `rows[].tempoEpm` (Appendix A).

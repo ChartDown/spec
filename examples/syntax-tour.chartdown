@@ -1,5 +1,5 @@
 ---
-chartdown: 0.9
+chartdown: 0.10
 title: Syntax Tour
 key: D
 tempo: 90
@@ -8,7 +8,7 @@ feel: Straight
 instruments: cello
 ---
 
-// Every feature of ChartDown 0.9, one section each.
+// Every feature of ChartDown 0.10, one section each.
 // Each section name starts with its section number in SPEC.md.
 // Lines that start with // are comments and are not shown.
 

@@ -7,7 +7,7 @@ For every rule, see the [specification](../SPEC.md).
 
 ```
 ---
-chartdown: 0.9
+chartdown: 0.10
 title: Open Road
 key: G
 tempo: 76
