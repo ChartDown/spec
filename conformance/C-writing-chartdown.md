@@ -347,6 +347,27 @@ chartdown: 0.10
 {mf} {a tempo} 1 {D.C. al fine} | 4 {fine}
 ```
 
+### C.4 Navigation marks keep their order in nav
+
+```chartdown
+## A
+{segno} 1 | 5 {D.S. al Coda} {to coda}
+## B
+{coda} 1
+```
+
+```canonical
+---
+chartdown: 0.10
+---
+
+## A
+{segno} 1 | 5 {D.S. al coda} {to coda}
+
+## B
+{coda} 1
+```
+
 ### C.5 Chords and marks in their order, qualities in their canonical form
 
 ```chartdown

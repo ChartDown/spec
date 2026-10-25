@@ -3,7 +3,8 @@
 ## 0.10 (draft)
 - How an app writes ChartDown from the JSON form: the canonical text (spec Appendix C). A chart built with a toolbar or a grid saves the same way in every app and reads back as the same chart; writing it again changes nothing. Header order, notes, `@use`, when `@key`, `@meter` and `@tempo` are written, the order of the parts of a bar, one spelling for reserved words, and which `:beats` are written. An editor that changes a hand-written file keeps the lines it doesn't touch, with their comments and spellings (C.6).
 - The syntax doesn't change: every 0.9 chart parses the same.
-- Conformance: 18 writer cases in `C-writing-chartdown.md` (174 in all). With a `write` function in the adapter, the runner also reads back every parser case with no warnings through the writer.
+- Clarified: navigation marks keep their order in `nav` (spec C.4), so `5 {D.S. al coda} {to coda}` writes back as it is.
+- Conformance: 19 writer cases in `C-writing-chartdown.md` (175 in all). With a `write` function in the adapter, the runner also reads back every parser case with no warnings through the writer.
 - Playground: `toChartDown(json)`, the reference writer, and `chartdown: 0.10`.
 - Version 0.10 in the spec, examples, guides, landing and playground.
 

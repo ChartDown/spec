@@ -913,9 +913,13 @@ Inside a bar, the parts are written in this order, separated by one space:
 8. The cues, in order (C.2 says how roles and passes are written):
    `{watch me}`, `{drums: in}`, `{2x: stop}`, `{2x drums: in}`.
 9. The lyric landmark: `"Take the open road"`.
-10. The navigation marks that act at the end of the bar, in order: `{to coda}`,
-    `{fine}`, and the jump, written `{D.S.}`, `{D.S. al coda}`,
-    `{D.S. al fine}`, `{D.C.}`, `{D.C. al coda}` or `{D.C. al fine}`.
+10. The navigation marks that act at the end of the bar: `{to coda}`, `{fine}`,
+    and the jump, written `{D.S.}`, `{D.S. al coda}`, `{D.S. al fine}`,
+    `{D.C.}`, `{D.C. al coda}` or `{D.C. al fine}`.
+
+Navigation marks keep the order they have in `nav`, which is the order they
+were written in, so the text reads back the same (items 4 and 10 only say
+where in the bar each one goes).
 
 ```
 |: {segno} {mf} 1 4 {drums: in} "Take the open road" | 5 :| 3x
