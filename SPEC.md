@@ -1,6 +1,6 @@
 # ChartDown Specification
 
-**Version 0.9 (draft)** · File extension: `.chartdown` · Encoding: UTF-8
+**Version 0.10 (draft)** · File extension: `.chartdown` · Encoding: UTF-8
 
 This specification is released under CC0 1.0 Universal. Anyone may implement,
 extend, or redistribute it, with no permission needed.
@@ -49,7 +49,7 @@ Each line is `name: value`. Names are case-insensitive.
 
 | Name | Meaning | Example |
 |---|---|---|
-| `chartdown` | Version of this spec the file was written for | `0.9` |
+| `chartdown` | Version of this spec the file was written for | `0.10` |
 | `instruments` | Extra instrument roles used in this file (see 4.1) | `cello, banjo` |
 | `title` | Song title | `Open Road` |
 | `artists` | Writers or artists | `A, B` |
@@ -676,6 +676,12 @@ Ideas under consideration, not yet part of the format:
 
 ## 17. Changelog
 
+- **0.10** How an app writes ChartDown from the JSON form: the canonical text
+  (Appendix C), so a chart built with a toolbar or a grid saves the same way
+  in every app, reads back the same, and an editor can change a hand-written
+  file without losing its comments. The syntax doesn't change: every 0.9
+  chart parses the same.
+
 - **0.9** A tempo can say what one beat is: `tempo: 58 q.`, `@tempo 87 q`,
   and `?` when it isn't known yet (11.3). Without a unit, 6/8, 9/8 and 12/8
   count the dotted quarter note; every other meter counts its bottom number,
@@ -722,7 +728,7 @@ know.
 
 ```json
 {
-  "chartdown": "0.9",
+  "chartdown": "0.10",
   "meta": { "title": "Open Road", "key": "G", "tempo": "76" },
   "key": "G",
   "minor": false,
@@ -794,7 +800,166 @@ of this spec, each case a short chart and what a correct parser makes of it.
 A case checks the JSON form (Appendix A) of the chart. Cases for section 12
 check the chords as shown in numbers or letters, and apply only to renderers.
 
-A parser conforms to this version when it passes every case.
+Cases for Appendix C check the canonical text a writer makes of a chart, and
+apply only to writers.
+
+A parser conforms to this version when it passes every case for a parser. A
+writer conforms when it also passes the cases for Appendix C.
 `conformance/README.md` describes the format and how to run the cases against
 any implementation.
 
+## Appendix C. Writing ChartDown
+
+An app that builds a chart without the text, for example with a toolbar or a
+grid of bars, still saves it as ChartDown. It keeps the chart as its JSON form
+(Appendix A) and writes the text from it. This appendix says how, so that every
+app writes the same chart the same way: the **canonical text**.
+
+A writer that follows it MUST meet two rules:
+
+- **Round trip.** For a chart that parses with no warnings, reading the
+  canonical text gives the same JSON form, except `chartdown` and
+  `meta.chartdown` (C.1). Comments and spellings are not in the JSON form, so
+  they are not kept (see C.6 to keep them).
+- **Stable.** Writing the canonical text of a chart that is already canonical
+  gives back the same text, character for character.
+
+The text is UTF-8, with a line feed (LF) at the end of every line and no
+spaces at the end of a line. Lines are written in this order: the header, a
+blank line, then each section, with a blank line between sections.
+
+### C.1 Header
+
+The header is always written, between two `---` lines.
+
+1. `chartdown:` first, with the version the writer writes, whatever `meta`
+   says.
+2. Then every other field in `meta`, as `name: value` with the value as it is
+   in `meta`. The names of 3 come first, in the order of the table there
+   (`instruments`, `title`, `artists`, `key`, `tempo`, `meter`, `feel`,
+   `numbering`), then any other name in the order `meta` has it.
+
+The writer reads `key`, `meter` and `tempo` from `meta` the way a parser does
+(3, 11.2, 11.3), as the starting point for C.3.
+
+```
+---
+chartdown: 0.10
+title: Open Road
+key: G
+tempo: 76
+---
+```
+
+### C.2 Sections and notes
+
+A section is `## ` and its name, then its notes, each on its own line, in
+order:
+
+| Note | Written |
+|---|---|
+| Plain note | `> text` |
+| MD note for everyone | `> MD: text` |
+| MD note for some players | `> MD drums, bass: text` |
+| MD note for one pass | `> MD 2x: text`, `> MD 1x,3x keys: text` |
+
+Roles are written by their name in the JSON form (`everyone` is left out),
+separated by `, `. Passes are written as in 9.1, separated by `,`.
+
+A section with `use` is written as `@use` and the name, with the count when
+`times` is not `null` (`@use Bridge 2 2x`), and none of its rows: they are a
+copy. A section without `use` writes its rows (C.3, C.4).
+
+### C.3 Key, meter and tempo
+
+The writer keeps the key, meter and tempo a parser would have in effect,
+starting from the header. Before each row of a section without `use`, it
+writes, in this order, the directives that make them match the row:
+
+- `@key` when the row's `key` or `minor` differs: `@key E`, `@key F#m`.
+- `@meter` when the row's `meter` differs: `@meter 6/8`.
+- `@tempo` when the row's `tempo` differs, or its `tempoUnit` differs from the
+  unit the parser would count. The unit is left out when the row's
+  `tempoUnit` is the beat of the row's meter (11.3), and written otherwise:
+  `@tempo 87 q`, and `@tempo 58 ?` when the row has a `tempo` and a `null`
+  unit.
+
+The copied rows of a `@use` section keep the meter and tempo of the original
+(5.2), so they don't change what the writer has in effect. Their key is the
+key in effect when the section starts: when it differs, the writer writes the
+`@key` as the last line of the section before.
+
+Numbers (tempos, beats, pickups) are written as decimals with no trailing
+zeros and at most 3 decimal places: `76`, `74.5`, `1.5`.
+
+### C.4 Rows and bars
+
+Each row in the JSON form is one line. Bars are separated by ` | `, with no
+`|` at the start or the end of the line, except for repeats:
+
+- `|: ` at the start when the row's first bar has `repeatStart`.
+- ` :|` at the end when its last bar has `repeatEnd`, then ` 3x` when its
+  `times` is not 2.
+
+Inside a bar, the parts are written in this order, separated by one space:
+
+1. `[p:N]` for a pickup, with its `beats` as `N` (5.3).
+2. `[m:N/D]` for a one-bar meter (11.2).
+3. The ending, its passes separated by `,`: `[1]`, `[1,2]` (10).
+4. The navigation marks that act at the start of the bar: `{segno}`, `{coda}`.
+5. The dynamic: `{mf}`.
+6. The tempo mark: `{rit}`, `{accel}`, `{a tempo}`.
+7. The tokens (C.5).
+8. The cues, in order (C.2 says how roles and passes are written):
+   `{watch me}`, `{drums: in}`, `{2x: stop}`, `{2x drums: in}`.
+9. The lyric landmark: `"Take the open road"`.
+10. The navigation marks that act at the end of the bar, in order: `{to coda}`,
+    `{fine}`, and the jump, written `{D.S.}`, `{D.S. al coda}`,
+    `{D.S. al fine}`, `{D.C.}`, `{D.C. al coda}` or `{D.C. al fine}`.
+
+```
+|: {segno} {mf} 1 4 {drums: in} "Take the open road" | 5 :| 3x
+```
+
+### C.5 Tokens and beats
+
+| Item | Written |
+|---|---|
+| `chord` | Push (`'` or `''`), the chord in `< >` when it is a hold, `:beats` (below), then `!` for a stab and `~` for a fermata: `'4:2!`, `<1>~` |
+| chord itself | `root`, `quality` (in its canonical form, 6), `/` and `bass` when there is one: `6m7`, `1/3`, `Bbmaj7/D` |
+| `rest` | `x`, with `:beats` (below) |
+| `riff` | `R[ ` notes separated by spaces ` ]`, then `:beats` (below). A note is its `root`, or `x` for a rest, with `:beats` (below) |
+| `repeat`, `tie` | `%`, `=` |
+
+**Which beats are written.** In a bar, chords, rests and riffs share its
+beats. The writer writes `:beats` on some of them so that a parser gets the
+same shares back (5.1):
+
+1. If the shares don't add up to the bar's `beats`, every one is written.
+2. Otherwise, the writer leaves out one group of equal shares and writes the
+   rest. The group left out is the one with the most items. On a tie, it is
+   the group whose share can't be written in 3 decimal places (a third of a
+   beat), and then the group of the earliest item.
+
+So a bar of one chord, or of chords that share it evenly, has no `:beats`:
+`1`, `1 4`, `1 4 5`. `1! x:3` is written as it is, `1:3 4:1` is written
+`1 4:1`, and `1:2 4 5 6` keeps its `:2`. The notes of a riff follow the same
+rule, inside the riff's own beats.
+
+### C.6 Editing a file someone wrote
+
+A person may write a chart by hand and then edit it in an app, or the other
+way round. The JSON form doesn't keep their comments, their spellings (`-7`,
+`:| x3`) or their line breaks between notes and rows, so an editor that
+rewrote the whole file would lose them. An editor that changes a file it
+opened SHOULD instead:
+
+- keep every line the change doesn't touch, as it was;
+- rewrite only the lines it changes, each in its canonical form: the row of a
+  changed bar, a changed note, a changed header field;
+- write new lines (a new row, note, section or field) in their canonical form,
+  at the place C.1 to C.4 give them.
+
+A file written this way reads the same as the edited chart. Writing the whole
+file in canonical form is always allowed, for example when the person asks to
+tidy it.

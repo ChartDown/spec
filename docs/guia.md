@@ -7,7 +7,7 @@ Las reglas completas están en la [especificación](../SPEC.md) (en inglés).
 
 ```
 ---
-chartdown: 0.9
+chartdown: 0.10
 title: Open Road
 key: G
 tempo: 76
