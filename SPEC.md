@@ -175,8 +175,9 @@ evenly. This also applies to rests (`x`) and riffs (see 7 and 7.1).
 
 `@use Name` as the only content line of a section copies the rows of the
 earlier section called `Name`. The new section keeps its own notes. If the key
-changed since the original, the copied rows use the current key. They keep the
-meter and tempo they had in the original.
+changed since the original, the copied rows use the key in effect at the `@use`
+line, so a `@key` just before it in the same section applies to the copy. They
+keep the meter and tempo they had in the original.
 
 A section with `@use` and rows of its own keeps its rows, with a warning on the
 `@use` line. A `@use` of a name with no earlier section is a warning on that
@@ -185,6 +186,11 @@ line.
 ```
 ## Chorus 2
 > MD: A touch bigger.
+@use Chorus
+
+## Last chorus
+> MD: Up a whole step.
+@key D
 @use Chorus
 ```
 
@@ -679,8 +685,9 @@ Ideas under consideration, not yet part of the format:
 - **0.10** How an app writes ChartDown from the JSON form: the canonical text
   (Appendix C), so a chart built with a toolbar or a grid saves the same way
   in every app, reads back the same, and an editor can change a hand-written
-  file without losing its comments. The syntax doesn't change: every 0.9
-  chart parses the same.
+  file without losing its comments. A `@key` just before `@use` now applies
+  to the copy (5.2); in 0.9 the copy kept the key the section started in.
+  Every other 0.9 chart parses the same.
 
 - **0.9** A tempo can say what one beat is: `tempo: 58 q.`, `@tempo 87 q`,
   and `?` when it isn't known yet (11.3). Without a unit, 6/8, 9/8 and 12/8
@@ -886,8 +893,8 @@ writes, in this order, the directives that make them match the row:
 
 The copied rows of a `@use` section keep the meter and tempo of the original
 (5.2), so they don't change what the writer has in effect. Their key is the
-key in effect when the section starts: when it differs, the writer writes the
-`@key` as the last line of the section before.
+key in effect at the `@use` line: when it differs, the writer writes the
+`@key` just before `@use`, after the section's notes.
 
 Numbers (tempos, beats, pickups) are written as decimals with no trailing
 zeros and at most 3 decimal places: `76`, `74.5`, `1.5`.

@@ -107,7 +107,8 @@ Agrega un número para tocarla más de una vez: `@use Chorus 2x`. Cada vuelta
 toca la sección tal como está escrita, así que una sección que se repite 2x,
 copiada con `@use ... 2x`, toca sus compases repetidos cuatro veces.
 
-Para cambiar de tono desde ese punto: `@key A`. El compás y el tempo funcionan
+Para cambiar de tono desde ese punto: `@key A`. Ponlo justo antes de `@use`
+para tocar la copia en el tono nuevo. El compás y el tempo funcionan
 igual: `@meter 6/8` y `@tempo 72`. Para un solo compás con otra métrica,
 empiézalo con `[m:2/4]`. Cambios graduales de tempo: `{rit}`, `{accel}`,
 `{a tempo}`.

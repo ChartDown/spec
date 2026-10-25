@@ -281,6 +281,40 @@ tempo: 80
 1
 ```
 
+### C.3 The key of a copy is written just before @use, after the notes
+
+```chartdown
+---
+key: G
+---
+## Chorus
+4 | 1
+## Last chorus
+@key A
+> MD: Up a whole step.
+@use Chorus
+## Tag
+5 | 1
+```
+
+```canonical
+---
+chartdown: 0.10
+key: G
+---
+
+## Chorus
+4 | 1
+
+## Last chorus
+> MD: Up a whole step.
+@key A
+@use Chorus
+
+## Tag
+5 | 1
+```
+
 ### C.4 Bars are separated by " | "; repeat signs at the ends, with the count only when it isn't 2
 
 ```chartdown

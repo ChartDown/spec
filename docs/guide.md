@@ -107,7 +107,8 @@ Add a count to play it more than once: `@use Chorus 2x`. Each time through
 plays the section as written, so a section that repeats 2x, copied with
 `@use ... 2x`, plays its repeated bars four times.
 
-To change key from here on: `@key A`. Meter and tempo work the same way:
+To change key from here on: `@key A`. Put it just before `@use` to play the
+copy in the new key. Meter and tempo work the same way:
 `@meter 6/8` and `@tempo 72`. For one bar in another meter, start it with
 `[m:2/4]`. Gradual tempo changes: `{rit}`, `{accel}`, `{a tempo}`.
 
