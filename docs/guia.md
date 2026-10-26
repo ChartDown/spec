@@ -44,7 +44,8 @@ Para repartir distinto usa tiempos: `1:3 4:1`.
 |---|---|
 | `1` `4` `5` | Acordes mayores |
 | `6m` o `6-` | Menor |
-| `5sus` `4add9` `1maj7` `2m7b5` | Otras calidades |
+| `5sus` `5sus2` | Suspendidos: `sus` solo es sus4, `sus2` es sus2 (`5sus4` se lee `5sus`) |
+| `4add9` `1maj7` `2m7b5` | Otras calidades |
 | `1M7` `7ø` `5+` `5(b9)` | También valen las formas comunes: se leen `1maj7`, `7m7b5`, `5aug`, `5b9` |
 | `1/3` | Acorde con bajo (1 con la tercera en el bajo) |
 | `b7` `#4` | Acordes fuera del tono |
