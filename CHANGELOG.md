@@ -5,6 +5,7 @@
 - The syntax doesn't change. Every 0.9 chart parses the same, except a `@key` just before `@use` (below).
 - Clarified: navigation marks keep their order in `nav` (spec C.4), so `5 {D.S. al coda} {to coda}` writes back as it is.
 - A `@key` just before `@use` in the same section now applies to the copy (spec 5.2): `## Last chorus`, `@key D`, `@use Chorus` plays the chorus in D. In 0.9 the copy kept the key in effect when the section started, so that `@key` only changed the sections after it. Charts without a `@key` between a section name and its `@use` read the same. Guides: one line on it.
+- Guides: `sus` alone is a sus4, and `sus2` is written as it is.
 - Conformance: 20 writer cases in `C-writing-chartdown.md`, and a 5.2 case for `@key` before `@use` (177 in all). With a `write` function in the adapter, the runner also reads back every parser case with no warnings through the writer.
 - Playground: `toChartDown(json)`, the reference writer, and `chartdown: 0.10`.
 - Version 0.10 in the spec, examples, guides, landing and playground.

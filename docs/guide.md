@@ -44,7 +44,8 @@ For an uneven split use beats: `1:3 4:1`.
 |---|---|
 | `1` `4` `5` | Major chords |
 | `6m` or `6-` | Minor |
-| `5sus` `4add9` `1maj7` `2m7b5` | Other qualities |
+| `5sus` `5sus2` | Suspended: `sus` alone is a sus4, `sus2` is a sus2 (`5sus4` reads as `5sus`) |
+| `4add9` `1maj7` `2m7b5` | Other qualities |
 | `1M7` `7ø` `5+` `5(b9)` | Common spellings work too: they read as `1maj7`, `7m7b5`, `5aug`, `5b9` |
 | `1/3` | Slash chord (1 over the 3rd in the bass) |
 | `b7` `#4` | Chords outside the key |
