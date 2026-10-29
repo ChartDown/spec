@@ -951,5 +951,6 @@ setLang(first, true);
 loadParser().then(p => { pg = p; ui.typed = -1; setRole(ui.role, true); setKey(ui.key, true); frame(true); })
   .catch(() => { ["#sheet1","#sheet2"].forEach(s => { $(s).innerHTML = `<p class="sh-empty">${esc(T[ui.lang].failed)}</p>`; }); });
 </script>
+<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "afde1a7b0b09456caa08b39c4971c4ac"}'></script><!-- End Cloudflare Web Analytics -->
 </body>
 </html>
